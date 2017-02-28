@@ -1,0 +1,35 @@
+{
+	"Projects": [
+		{
+			"Crm_id": "c206470a-9014-4474-a2ac-9fba4423c4e3",
+			"Cod": "Proj_16XXXXXXXXXXXXXXXXXXXX",
+			"ProjectName": "Proyecto Description",
+			"ProjectDescription": "Esta es la descripción del proyecto",
+			"ProjectAlias": "Alias del proyecto",
+			"ProjectStatus": "Enabled",
+			"ProjectOwners": [
+				"cramirez",
+				"jreategui"
+			],
+			"ProjectWorkers": [
+				"cramirez",
+				"jreategui"
+			]
+		},
+		{
+			"Crm_id": "aa858fc6-710f-4300-a83f-b6c67ffe2b93",
+			"Cod": "Proj_17XXXXXXXXXXXXXXXXXXXX",
+			"ProjectName": "Proyecto Description",
+			"ProjectDescription": "Esta es la descripción del proyecto",
+			"ProjectAlias": "Alias del proyecto",
+			"ProjectStatus": "Disabled",
+			"ProjectOwners": [
+				"jreategui"
+			],
+			"ProjectWorkers": [ 
+				"cramirez",
+				"jreategui"
+			]
+		}
+	]
+}

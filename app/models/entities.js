@@ -120,31 +120,31 @@ module.exports = function(mongoose) {
         createdAt: { type: Date, default: Date.now }
     }, { collection: 'spents' });
 
-    var UserSchema = new Schema({
-        candidatoId: { type: Number, trim: true },
-        username: { type: String, trim: true, index: true },
-        password: { type: String, trim: true },
-        name: { type: String, trim: true, index: true },
-        surname: { type: String, trim: true, index: true },
-        nif: { type: String, trim: true, index: true },
-        createdAt: { type: Date, default: Date.now },
-        lastLoginDate: { type: Date },
-        enabled: { type: Boolean, index: true, default: true },
-        defaultPassword: { type: Boolean, index: true, default: true },
-        activationDate: { type: Date },
-        birthdate: { type: Date },
-        locale: { type: String, trim: true, default: 'es' },
-        sex: { type: String, trim: true },
-        phone: { type: String, trim: true },
-        uuid: { type: String, trim: true, index: true },
-        roles: { type: Array, default: ['ROLE_USER'] },
-        zimbra_cosID: { type: String, trim: true, index: true },
-        zimbra_server: { type: String, trim: true, index: true },
-        holidayScheme: { type: Schema.Types.ObjectId, ref: 'HolidayScheme' },
-        workloadScheme: { type: Schema.Types.ObjectId, ref: 'WorkloadScheme' },
-        superior: { type: Schema.Types.ObjectId, ref: 'User' },
-        company: { type: String }
-
+    var UserSchema = new Schema( {
+        candidatoId :      { type : Number, trim : true },
+        username :         { type : String, trim : true, index : true },
+        password :         { type : String, trim : true },
+        name :             { type : String, trim : true, index : true },
+        surname :          { type : String, trim : true, index : true },
+        nif :              { type : String, trim : true, index : true },
+        enabled :          { type : Boolean, index : true, default : true },
+        defaultPassword :  { type : Boolean, index : true, default : true },
+        createdAt :        { type : Date, default : Date.now },
+        activationDate :   { type : Date, default : Date.now },
+        lastLoginDate :    { type : Date, default : Date.now },
+        lastModifiedDate : { type : Date, default : Date.now },
+        birthdate :        { type : Date },
+        locale :           { type : String, trim : true, default : 'es' },
+        sex :              { type : String, trim : true },
+        phone :            { type : String, trim : true },
+        uuid :             { type : String, trim : true, index : true },
+        roles :            { type : Array, default : ['ROLE_USER'] },
+        zimbra_cosID :     { type : String, trim : true, index : true },
+        zimbra_server :    { type : String, trim : true, index : true },
+        holidayScheme :    { type : Schema.Types.ObjectId, ref : 'HolidayScheme' },
+        workloadScheme :   { type : Schema.Types.ObjectId, ref : 'WorkloadScheme' },
+        superior :         { type : Schema.Types.ObjectId, ref : 'User' },
+        company :          { type : String }
     }, { collection: 'users' });
 
     var CecoSchema = new Schema({

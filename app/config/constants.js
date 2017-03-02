@@ -1,6 +1,6 @@
-var express = require('express');
+// var express = require('express');
 
-var contants = {
+var constants = {
     reviewNotificationTime: 86400000, //24h
     newItemDurationTime: 172800000, //48h.
     draft: 'draft',
@@ -28,4 +28,4 @@ var contants = {
 }
 
 
-module.exports = contants
+module.exports = constants;

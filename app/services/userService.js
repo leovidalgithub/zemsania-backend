@@ -1,16 +1,13 @@
-var express = require('express');
-var router = express.Router();
-var async = require('async');
-var mailService = require('./mailService');
-var passwordHash = require('password-hash');
-var mongoose = require('mongoose');
-var ObjectId = require('mongoose').Types.ObjectId;
-var moment = require('moment');
+// var express = require('express');
+// var router = express.Router();
+// var async = require('async');
+// var mailService = require('./mailService');
+var passwordHash = require( 'password-hash' );
+    mongoose     = require( 'mongoose' );
+    ObjectId     = require( 'mongoose' ).Types.ObjectId;
+    moment       = require( 'moment' );
 
-/*
- * Busca usuarios
- */
-
+ // * Busca usuarios
 function searchUsers(form, onSuccess, onError) {
 
     var query = [];
@@ -119,50 +116,71 @@ function getAllUsers(onSuccess, onError) {
 }
 
 /**
- * Actualización del perfil del usuario
+ * User Profile update
  **/
-function updateProfile(userId, form, onSuccess, onError) {
+function updateProfile( userId, form, onSuccess, onError ) { // ***************** LEO WAS HERE *****************
+// security roles filter: it verifies if user roles exist in the constant object so save them back to BDD 
     var roles = ['ROLE_USER'];
-    if (form.roles && form.roles.length > 0) {
-        for (var i = 0; i < form.roles.length; i++) {
-            if (roles.indexOf(form.roles[i]) == -1 && constants.roles.indexOf(form.roles[i]) != -1) {
-                roles.push(form.roles[i]);
-            }
-        }
-    }
-    models.User.findOne({
-        _id: new ObjectId(userId)
-    }, function (err, user) {
-        if (user) {
+    if ( form.roles && form.roles.length > 0 ) {
+        for ( var i = 0; i < form.roles.length; i++ ) {
+            if ( roles.indexOf( form.roles[i] ) == -1 && constants.roles.indexOf( form.roles[i] ) != -1 ) {
+                roles.push( form.roles[i] );
+            };
+        };
+    };
 
-            if (form.birthdate) {
-                user.birthdate = moment(form.birthdate, 'DD/MM/YYYY').toISOString();
+    models.User.findOne({ // global.models (server-app.js)
+        _id: new ObjectId( userId )
+    }, function ( err, user ) {
+        if ( user ) {
+            if ( form.birthdate ) { 
+                   user.birthdate = moment( form.birthdate, 'DD/MM/YYYY' ).toISOString();
+            };
+            user.zimbra_cosID     = form.zimbra_cosID;
+            user.locale           = form.locale;
+            user.nif              = form.nif;
+            user.name             = form.name;
+            user.sex              = form.sex;
+            user.roles            = roles;
+            user.surname          = form.surname;
+            user.birthdate        = form.birthdate;
+            user.lastModifiedDate = Date.now();
 
-            }
-            user.zimbra_cosID = form.zimbra_cosID;
-            user.locale = form.locale;
-            user.nif = form.nif;
-            user.name = form.name;
-            user.sex = form.sex;
-            user.roles = roles;
-            user.surname = form.surname;
-            user.birthdate = form.birthdate;
-            
-            if (form.workloadScheme) user.workloadScheme = form.workloadScheme;
-            if (form.holidayScheme) user.holidayScheme = form.holidayScheme;
-            if (form.superior) user.superior = form.superior;
-            if (form.company) user.company = form.company
+            if ( form.workloadScheme ) user.workloadScheme = form.workloadScheme;
+            if ( form.holidayScheme ) user.holidayScheme = form.holidayScheme;
+            if ( form.superior ) user.superior = form.superior;
+            if ( form.company ) user.company = form.company
 
-            //Falta actualizar todas las ubicaciones de los productos del usuario
-            user.save(function (err) {
-                if (err) throw err;
-                console.log('Profile for user %s saved successfully', userId);
-                onSuccess({success: true});
+            user.save( function ( err, doc ) {
+                if ( err ) {
+                    onError( { success: false, code: 500, msg: 'Error updating User Profile.' } );
+                    // throw err;  
+                } else {
+                    console.log( 'Profile for user %s saved successfully', userId );
+                    onSuccess( { success: true, code: 200, msg: 'User Profile updated correctly' } );                    
+                }
             });
-        }
-        else {
-            onSuccess({success: false, code: 101, message: 'User not found.'});
-        }
+        } else {
+            onError( { success: false, code: 500, msg: 'User not found.' } );
+        };
+    });
+}
+/**
+    * verifyUniqueUserEmail - Verifies if email given already exist in BDD
+ **/
+function verifyUniqueUserEmail( emailToVerify, onSuccess, onError ) { // ***************** LEO WAS HERE *****************
+    models.User.findOne({ // global.models (server-app.js)
+        'username' : emailToVerify
+    }, function ( err, emailFound ) {
+        if ( err ) {
+            onError( { success: false, code: 500, msg: 'Error on BDD access!' } );            
+        } else {
+            if ( emailFound ) {
+                onSuccess( { success: true, code: 200, found: true, msg: 'Email already exists' } );
+            } else {
+                onSuccess( { success: true, code: 200, found: false, msg: 'Email not exists' } );
+            }            
+        };
     });
 }
 
@@ -228,10 +246,13 @@ function getProfile(userId, onSuccess, onError) {
 module.exports = {
     getProfile: getProfile,
     updateProfile: updateProfile,
+    verifyUniqueUserEmail : verifyUniqueUserEmail,
     searchUsers: searchUsers,
     queryUsers: queryUsers,
     changePassword: changePassword,
     getAllUsers: getAllUsers,
     deleteUser: deleteUser
 };
+
+
 

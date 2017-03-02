@@ -3,11 +3,10 @@
  * resourcePath: /user
  * description: Utilidades para usuarios
  */
-var express = require('express');
-var router = express.Router();
-var userService = require('../services/userService');
-var notificationService = require('../services/notificationService');
-
+var express             = require( 'express' ),
+    router              = express.Router(),
+    userService         = require( '../services/userService' ),
+    notificationService = require( '../services/notificationService' );
 
 /**
  * @swagger
@@ -158,47 +157,41 @@ router.get('/profile', userTokenValidation, function (req, res) {
  *          paramType: body
  *          dataType: UserProfile
  */
-router.put('/profile', userTokenValidation, function (req, res) {
-    //Form validation
+router.put( '/profile', userTokenValidation, function ( req, res ) { // ***************** LEO WAS HERE *****************
+    // MAKE ALL VALIDATIONS
+    // req.checkBody( 'birthdate','is not an email' ).isEmail();
+    // req.checkBody( 'nif','is not a number' ).isInt();
 
-    req.checkBody('birthdate','is not an email').isEmail();
-    req.checkBody('nif','is not a number').isInt();
-    // const util = require('util');
-
-    req.getValidationResult().then(function(result) {
-        if (!result.isEmpty()) {
-            // res.status(400).send('errors: ' + util.inspect(result.array()));
-            // var errors = result.useFirstErrorOnly().array();
+    req.getValidationResult().then(function( result ) {
+        if ( !result.isEmpty() ) {
             var errors = result.array();
             errors.forEach( function( element ) {
                 console.log( element.param + ' / ' + element.msg);
             });
-            // console.log(result.useFirstErrorOnly().array());
-            res.status(400).send(errors);
+            globalMethods.sendResponse( res, { success: false, code: 400, msg: 'Error validating User Profile', errors: errors } );
             return;
-        }
-        res.status(200).json({
-            urlparam: req.params.urlparam,
-            getparam: req.params.getparam,
-            postparam: req.params.postparam
-            // body: req.body
-        });
+        };
+        userService.updateProfile( req.userId, req.body,
+            function ( data ) {
+                globalMethods.sendResponse( res, data ); 
+            },
+            function ( err ) {
+                globalMethods.sendResponse( res, err );
+            });
     });
-//*************************************************************
-// NEXT IS THE ORIGINAL VALIDATION FROM PROGRAMMER STRANGE MIND
-//*************************************************************
-    // var errors = req.validationErrors();
-    // if (errors) {
-    //     res.json({success: false, errors: errors});
-    // }
-    // else {
-    //     userService.updateProfile(req.userId, req.body,
-    //         function (data) {
-    //             res.status(200).jsonp(data);
-    //         }, function (result) {
-    //             globalMethods.error(res, result, 500);
-    //         });
-    // }
+});
+
+// verifyUniqueUserEmail - Verifies if email given already exist in BDD
+router.get( '/profile/:emailToVerify', userTokenValidation, function ( req, res ) { // ***************** LEO WAS HERE *****************
+    var emailToVerify = req.params.emailToVerify;
+
+    userService.verifyUniqueUserEmail( emailToVerify,
+        function ( data ) {
+            globalMethods.sendResponse( res, data ); 
+        },
+        function ( err ) {
+            globalMethods.sendResponse( res, err );
+        });
 
 });
 
@@ -218,19 +211,19 @@ router.put('/profile', userTokenValidation, function (req, res) {
  *          paramType: path
  *          dataType: UserProfile
  */
-router.put('/profile/:userId', backofficeTokenValidation, function (req, res) {
-    //Form validation
-    if (!req.params.userId) {
-        res.json({success: false, errors: 'NOT USER!'});
-    } else {
-        userService.updateProfile(req.params.userId, req.body,
-            function (data) {
-                res.status(200).jsonp(data);
-            }, function (result) {
-                globalMethods.error(res, result, 500);
-            });
-    }
-});
+// router.put('/profile/:userId', backofficeTokenValidation, function (req, res) {
+//     //Form validation
+//     if (!req.params.userId) {
+//         res.json({success: false, errors: 'NOT USER!'});
+//     } else {
+//         userService.updateProfile(req.params.userId, req.body,
+//             function (data) {
+//                 res.status(200).jsonp(data);
+//             }, function (result) {
+//                 globalMethods.error(res, result, 500);
+//             });
+//     }
+// });
 
 /**
  * @swagger

@@ -1,15 +1,14 @@
-var express = require('express'),
-    app = express(),
-    bodyParser = require('body-parser'),
-    methodOverride = require('method-override'),
-    mongoskin = require('mongoskin'),
-    multer = require('multer'),
-    fs = require('fs'),
-    Grid = require('gridfs-stream'),
-    expressValidator = require('express-validator'),
-    cors = require('cors'),
-    mongoose = require('mongoose');
-
+var express          = require( 'express' ),
+    app              = express(),
+    bodyParser       = require( 'body-parser' ),
+    fs               = require( 'fs' ),
+    mongoose         = require( 'mongoose' );
+    methodOverride   = require( 'method-override' ),
+    mongoskin        = require( 'mongoskin' ),
+    multer           = require( 'multer' ),
+    Grid             = require( 'gridfs-stream' ),
+    expressValidator = require( 'express-validator' ),
+    cors             = require( 'cors' ),
     mongoose.Promise = Promise;
 
 //--> https://github.com/andris9/Nodemailer
@@ -127,8 +126,6 @@ app.use( function ( req, res, next ) {
     next();
 });
 
-
-
 app.use('/project', require('./controllers/projectController'));
 app.use('/projectUsers', require('./controllers/projectUsersController'));
 app.use('/spents', require('./controllers/spentsController'));
@@ -143,11 +140,9 @@ app.use('/test', require('./controllers/testController'));
 // ---------------------------------------------------------
 // route middleware to authenticate and check token. From this point, a token is required
 // ---------------------------------------------------------
-
 app.use(function (req, res, next) {
     securityService.userTokenValidation(req, res, next);
 });
-//A partir de aqui, se requiere token de seguridad
 
 
 // Start server

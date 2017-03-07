@@ -24,23 +24,24 @@ var authnService = require('../services/securityService');
  *          dataType: RememberPasswordDto
  *
  */
-router.post('/password/remember', function (req, res) {
-    req.checkBody('email', 'required').notEmpty();
-    req.checkBody('email', 'email').isEmail();
-    var errors = req.validationErrors();
-
-    if (errors) {
-        res.json({success: false, errors: errors});
-    }
-    else {
-        authnService.rememberPassword(req.body.email,
-            function (err, data) {
-                if (err)
-                    res.status(500).jsonp(err);
-                else res.status(200).jsonp(data);
+router.post( '/password/remember', function ( req, res ) { // ********** LEO WORKING HERE **********
+    // req.checkBody('email', 'required').notEmpty();
+    // req.checkBody('email', 'email').isEmail();
+    // var errors = req.validationErrors();
+    // if (errors) {
+    //     res.json({success: false, errors: errors});
+    // }
+    // else {
+        
+        authnService.rememberPassword( req.body.email,
+            function ( err, data ) {
+                if ( err ) {
+                    res.status( 500 ).jsonp( err );
+                } else {
+                  res.status( 200 ).jsonp( data );  
+                }
             });
-
-    }
+    // }
 });
 
 
@@ -160,23 +161,27 @@ router.post('/signup', backofficeTokenValidation, function (req, res) {
  *          dataType: UserLogin
  *
  */
-router.post('/login', function (req, res) {
+router.post('/login', function (req, res) { // LEO WORKING HERE
     //Form validation
-    req.checkBody('username', 'required').notEmpty();
-    req.checkBody('password', 'required').notEmpty();
-    var errors = req.validationErrors();
+    // req.checkBody('username', 'required').notEmpty();
+    // req.checkBody('password', 'required').notEmpty();
+    // var errors = req.validationErrors();
 
-    if (errors) {
-        res.json({success: false, errors: errors});
-    }
-    else {
-        authnService.login(req.body,
-            function (data) {
-                res.status(200).jsonp(data);
-            }, function (result) {
-                globalMethods.error(res, result, 401);
+    // if (errors) {
+    //     res.json({success: false, errors: errors});
+    // }
+    // else {
+
+        authnService.login( req.body,
+            function ( data ) {
+                globalMethods.successResponse( res, data );
+            }, function ( err ) {
+                globalMethods.errorResponse( res, err );
             });
-    }
+    // }
+
+
+
 });
 
 

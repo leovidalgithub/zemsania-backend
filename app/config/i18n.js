@@ -1,4 +1,4 @@
-var express = require('express');
+// var express = require('express');
 
 var i18n = {
 	es: {
@@ -11,8 +11,8 @@ var i18n = {
 		},
 		errors: {
 			holidaysAlreadyRequested : 'Día ya solicitado',
-			exceededHolidays : 'Excedido el número máximo de dias disponibles',
-			unallocated_project_user : "Proyecto Usario sin asignar"
+			exceededHolidays : 'Excedido el número máximo de días disponibles',
+			unallocated_project_user : "Proyecto Usuario sin asignar"
 		}
 	}
 }

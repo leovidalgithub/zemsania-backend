@@ -1,8 +1,18 @@
 // var express = require('express');
 
-var sendResponse = function ( res, obj ) {
+var sendResponse = function ( res, obj ) { // LEO WAS HERE
+
+    console.log(obj);
     // console.log( msg );
     return res.status( obj.code ).jsonp( obj );
+    // return res.status( 200 ).jsonp( obj );
+};
+
+var successResponse = function ( res, obj ) { // LEO WAS HERE
+    return res.status( 200 ).jsonp( obj );
+};
+var errorResponse = function ( res, obj ) { // LEO WAS HERE
+    return res.status( 400 ).jsonp( obj );
 };
 
 // var error = function ( res, msg, code ) {
@@ -26,7 +36,7 @@ function parse(str) {
 
 module.exports = {
     sendResponse : sendResponse,
-    // error: error,
-    // success: success,
+    successResponse : successResponse,
+    errorResponse : errorResponse,
     parse: parse
 };

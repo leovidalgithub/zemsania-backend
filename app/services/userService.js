@@ -147,9 +147,9 @@ function updateProfile( userId, form, onSuccess, onError ) { // ****************
             user.lastModifiedDate = Date.now();
 
             if ( form.workloadScheme ) user.workloadScheme = form.workloadScheme;
-            if ( form.holidayScheme ) user.holidayScheme = form.holidayScheme;
-            if ( form.superior ) user.superior = form.superior;
-            if ( form.company ) user.company = form.company
+            if ( form.holidayScheme ) user.holidayScheme   = form.holidayScheme;
+            if ( form.superior ) user.superior             = form.superior;
+            if ( form.company ) user.company               = form.company
 
             user.save( function ( err, doc ) {
                 if ( err ) {
@@ -186,28 +186,42 @@ function verifyUniqueUserEmail( emailToVerify, onSuccess, onError ) { // *******
 
 
 /**
- * getProfile from userId if exists
+ * change password
  **/
-function changePassword(userId, form, onSuccess, onError) {
-    // find the user
-    models.User.findOne({
-        _id: new ObjectId(userId)
-    }, function (err, user) {
-        if (!user) {
-            onSuccess({success: false, code: 101, message: 'User not found.'});
+function changePassword( userId, form, onSuccess, onError ) { // LEO WORKING HERE
+// console.log('changePassword');
+// console.log(form);
+// var aa = passwordHash.generate( '1234' );
+// Rush2112_ // sha1$f93499e8$1$905fd45e92568f76c132dbea760cf6fe61875bcc
+// 1234      // sha1$3af50874$1$45fc65cf162f382dd805f13bfd2e82e6890e995b
+// console.log(aa);
+
+    models.User.findOne( {
+        _id: new ObjectId( userId )
+    }, function ( err, user ) {
+
+        if ( err ) {
+            onError( { success: false, code: 401, message: 'Error finding User.'} );
         } else {
-            // check if password matches
-            if (!passwordHash.verify(form.oldPassword, user.password)) {
-                onSuccess({success: false, code: 100, message: 'Wrong password'});
+            if ( !user ) {
+                onSuccess( { success: false, code: 101, message: 'User not found.'} );
             } else {
-                user.password = passwordHash.generate(form.newPassword);
-                user.defaultPassword = false;
-                user.save(function (err) {
-                    if (err) throw err;
-                    onSuccess({success: true});
-                });
+                if ( !passwordHash.verify( form.currentPassword, user.password ) ) {
+                    onSuccess( { success: false, code: 102, message: 'Wrong current password.' } );
+                } else {
+                    user.password = passwordHash.generate( form.newPassword );
+                    user.defaultPassword = false;
+                    user.save( function ( err ) {
+                        if ( err ) {
+                            onError( { success: false, code: 402, message: 'Error saving new password.'} );
+                        } else {
+                            onSuccess( { success: true, code: 200, message: 'Password changed successfully.' } );
+                        };
+                    });
+                }
             }
         }
+
     });
 }
 

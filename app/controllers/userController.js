@@ -100,22 +100,27 @@ router.delete('/delete', backofficeTokenValidation, function (req, res) {
  *          dataType: PasswordForm
  *
  */
-router.post('/password', userTokenValidation, function (req, res) {
-    req.checkBody('newPassword', 'required').notEmpty();
-    req.checkBody('oldPassword', 'required').notEmpty();
-    var errors = req.validationErrors();
+router.post( '/password', userTokenValidation, function ( req, res ) { // LEO WORKING HERE 
+    // req.checkBody('newPassword', 'required').notEmpty();
+    // req.checkBody('oldPassword', 'required').notEmpty();
+    // var errors = req.validationErrors();
 
-    if (errors) {
-        res.json({success: false, errors: errors});
-    }
-    else {
-        userService.changePassword(req.userId, req.body,
-            function (data) {
-                res.status(200).jsonp(data);
-            }, function (result) {
-                globalMethods.error(res, result, 401);
+    // if (errors) {
+    //     res.json({success: false, errors: errors});
+    // } else {
+        userService.changePassword( req.userId, req.body,
+            function ( data ) {
+                globalMethods.successResponse( res, data );
+                // globalMethods.sendResponse( res, data );
+            }, function ( err ) {
+                globalMethods.errorResponse( res, err );
+                // globalMethods.sendResponse( res, err );
             });
-    }
+    // };
+
+
+    // onSuccess( { success: true, code: 200, message: 'Password changed successfully.' } );
+
 });
 
 

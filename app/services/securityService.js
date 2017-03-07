@@ -117,32 +117,6 @@ var checkToken = function(req, callback) {
     } else return callback(null);
 }
 
-/*
- * Private method to create the user token response
- */
-function createUserToken(user) {
-    var token = {
-        userId: user._id,
-        username: user.username,
-        roles: user.roles
-    };
-    var token = jwt.sign(token, config.secret, {
-        ignoreExpiration: true
-    });
-
-    user.password = null;
-    user.deviceType = null;
-    user.deviceToken = null;
-
-    return {
-        success: true,
-        user: user,
-        token: token
-    };
-
-}
-
-
 /**
  * Registro de usuarios
  **/
@@ -202,14 +176,14 @@ function signup(form, onSuccess, onError) {
 }
 
 /**
- * Recordatorio de contraseña.
+ * Password remember
  Genera un uuid nuevo para realizar el recuerdo de contraseña
  */
-function rememberPassword(username, callback) {
+function rememberPassword( username, callback ) { // ********** LEO WORKING HERE **********
     // find the user
     models.User.findOne({
         username: username
-    }, function(err, user) {
+    }, function( err, user ) {
 
         if (err) throw err;
 
@@ -294,39 +268,77 @@ function validate(userUUID, callback) {
 }
 
 
-/**
- * Login de usuarios
- **/
-
-function login(form, onSuccess, onError) {
-    if (form.ldap) {
-        verityActiveDirectoryUser(form, function(err, ADVerified) {
-            if (ADVerified) {
-                models.User.findOne({ username: form.username }).exec(function(err, user) {
-                    if (user) return onSuccess(createUserToken(user));
-                    form.enabled = true;
-                    signup(form, function(response) {
-                        if (!response.user) onError('User not returned after creating new account');
-                        onSuccess(createUserToken(response.user));
-                    }, loginFailed);
-                });
-            } else loginFailed();
-        });
-    } else models.User.findOne({ username: form.username }, function(err, user) {
-        if (err || !user) return loginFailed();
-        // check if password matches
-        if (!passwordHash.verify(form.password, user.password))
-            return loginFailed('Authentication failed. Wrong password.');
-        onSuccess(createUserToken(user));
+/*
+ * Token create
+ */
+function createUserToken( user ) { // LEO WAS HERE
+    var token = {
+            userId   : user._id,
+            username : user.username,
+            roles    : user.roles
+    };
+    var token = jwt.sign( token, config.secret, {
+            ignoreExpiration: true
     });
 
-    function loginFailed(message) {
-        message = message || 'Authentication failed. User not found.';
-        onError({
-            success: false,
-            message: message
-        });
+    user.password    = null;
+    user.deviceType  = null;
+    user.deviceToken = null;
+
+    return {
+        success : true,
+        code    : 200,
+        user    : user,
+        token   : token,
+        message : 'Authentication Ok.'
     }
+}
+
+/**
+ * User login
+ **/
+function login( form, onSuccess, onError ) { // LEO WAS HERE
+
+    // if (form.ldap) {
+    //     verityActiveDirectoryUser(form, function(err, ADVerified) {
+    //         if (ADVerified) {
+    //             models.User.findOne({ username: form.username }).exec(function(err, user) {
+    //                 if (user) return onSuccess(createUserToken(user));
+    //                 form.enabled = true;
+    //                 signup(form, function(response) {
+    //                     if (!response.user) onError('User not returned after creating new account');
+    //                     onSuccess(createUserToken(response.user));
+    //                 }, loginFailed);
+    //             });
+    //         } else loginFailed();
+    //     });
+    // } else {}
+
+    models.User.findOne( { username: form.username }, 
+        function( err, user ) {
+            if( err ) {
+                onError( { success: false, code: 401, message: 'Error finding User.'} );
+            } else {
+                if ( !user ) {
+                    onSuccess( { success: false, code: 101, message: 'User not found.'} );
+                } else {
+                    if ( passwordHash.verify( form.password, user.password ) ) {
+                        onSuccess( createUserToken( user ) ); // Authentication OK
+                    } else {
+                        onSuccess( { success: false, code: 102, message: 'Authentication failed. Wrong password.' } );
+                    }
+                }
+            }
+        });
+
+
+    // function loginFailed(message) {
+    //     message = message || 'Authentication failed. User not found.';
+    //     onError({
+    //         success: false,
+    //         message: message
+    //     });
+    // }
 }
 
 /**

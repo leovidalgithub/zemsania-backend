@@ -1,9 +1,12 @@
-var express = require('express');
+// var express = require('express');
 
 var smtpTransport = require('nodemailer-smtp-transport');
 var EmailTemplate = require('email-templates').EmailTemplate;
 var path = require('path');
 var nodemailer = require('nodemailer');
+
+// mailer.zemsania@gmail.com
+// pass: Zemsania_99
 
 var transporter = null,
     SMTP_config = {
@@ -91,23 +94,19 @@ function execEmail(options, SCCallback, ERCallback) {
     })
 }
 
-
-
-
-
 function sendWelcomeEmail(user) {
     var data = { user: user, urls: config.email.urls }
-    sendEmail(user.email, data, 'es/welcome-user', i18n.es.subjects.welcome);
+    sendEmail(user.username, data, 'es/welcome-user', i18n.es.subjects.welcome);
 }
 
 function sendRememberPassword(user) {
     var data = { user: user, urls: config.email.urls }
-    sendEmail(user.email, data, 'es/rememberPassword', i18n.es.subjects.rememberPassword);
+    sendEmail(user.username, data, 'es/rememberPassword', i18n.es.subjects.rememberPassword);
 }
 
 function sendTest(user) {
     var data = { user: user, urls: config.email.urls }
-    sendEmail(user.email, data, 'es/test', i18n.es.subjects.test);
+    sendEmail(user.username, data, 'es/test', i18n.es.subjects.test);
 }
 
 module.exports = {

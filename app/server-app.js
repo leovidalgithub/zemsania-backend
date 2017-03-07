@@ -107,45 +107,36 @@ app.use(multer({dest: './uploads/'}))
 //     });
 // });
 
-app.use('/absences', require('./controllers/absencesController'));
-app.use('/authn', require('./controllers/authController'));
-app.use('/calendar', require('./controllers/calendarController'));
-app.use('/config', require('./controllers/configController'));
-app.use('/dailyReport', require('./controllers/dailyReportController'));
-app.use('/holidays', require('./controllers/holidaysController'));
-app.use('/files', require('./controllers/filesApi'));
+// app.use('/absences', require('./controllers/absencesController'));
+app.use( '/authn', require( './controllers/authController' ));
+// app.use('/calendar', require('./controllers/calendarController'));
+// app.use('/config', require('./controllers/configController'));
+// app.use('/dailyReport', require('./controllers/dailyReportController'));
+// app.use('/holidays', require('./controllers/holidaysController'));
+// app.use('/files', require('./controllers/filesApi'));
+app.use( '/notifications', require( './controllers/notificationsController' ));
+// app.use('/project', require('./controllers/projectController'));
+// app.use('/projectUsers', require('./controllers/projectUsersController'));
+// app.use('/spents', require('./controllers/spentsController'));
+// app.use('/timesheets', userTokenValidation, require('./controllers/timesheetController'));
+// app.use('/holidaySchemes', userTokenValidation, require('./controllers/holidaySchemesController'));
+// app.use('/workloadSchemes', userTokenValidation, require('./controllers/workloadSchemesController'))
 
-app.use( function ( req, res, next ) {
-    console.log( 'BEFORE!' );
-    next();
-});
-app.use('/notifications', require('./controllers/notificationsController'));
+// app.use('/mcollections', require('./controllers/masterCollectionsController'));
+app.use( '/user',   require( './controllers/userController' ));
+app.use( '/verify', require( './controllers/verifyController' ));
+// app.use('/test', require('./controllers/testController'));
 
-app.use( function ( req, res, next ) {
-    console.log( 'AFTER!' );
-    next();
-});
-
-app.use('/project', require('./controllers/projectController'));
-app.use('/projectUsers', require('./controllers/projectUsersController'));
-app.use('/spents', require('./controllers/spentsController'));
-app.use('/timesheets', userTokenValidation, require('./controllers/timesheetController'));
-app.use('/holidaySchemes', userTokenValidation, require('./controllers/holidaySchemesController'));
-app.use('/workloadSchemes', userTokenValidation, require('./controllers/workloadSchemesController'))
-
-app.use('/mcollections', require('./controllers/masterCollectionsController'));
-app.use('/user', require('./controllers/userController'));
-app.use('/test', require('./controllers/testController'));
 
 // ---------------------------------------------------------
 // route middleware to authenticate and check token. From this point, a token is required
 // ---------------------------------------------------------
-app.use(function (req, res, next) {
-    securityService.userTokenValidation(req, res, next);
-});
+// app.use(function (req, res, next) {
+//     securityService.userTokenValidation(req, res, next);
+// });
 
 
 // Start server
-app.listen(3000, function () {
-    console.log('Node server running on http://localhost:3000 from process: ' + process.pid);
+app.listen( 3000, function () {
+    console.log( 'Node server running on port 3000 from process: ' + process.pid );
 });

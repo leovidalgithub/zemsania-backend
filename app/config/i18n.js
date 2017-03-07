@@ -4,7 +4,8 @@ var i18n = {
 	es: {
 		subjects : {
 			welcome: 'Bienvenido',
-			rememberPassword: 'Recuerdo de contraseña',
+			rememberPassword: 'Generar nueva contraseña',
+			newPassword: 'Envío nueva contraseña',
 			test: 'TEST',
 			textHoursSent : 'Usuario %s %s ha enviado sus horas desde %s - %s',
 			textHoursValidated : 'Usuario %s %s ha validado sus horas desde %s - %s'

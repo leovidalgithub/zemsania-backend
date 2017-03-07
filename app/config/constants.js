@@ -1,4 +1,3 @@
-// var express = require('express');
 
 var constants = {
     reviewNotificationTime: 86400000, //24h
@@ -24,8 +23,8 @@ var constants = {
     approved: 'approved',
     rejected: 'rejected',
     defaultPassword: 'Zemsania$15',
-    roles: ['ROLE_USER', 'ROLE_BACKOFFICE', 'ROLE_MANAGER', 'ROLE_DELIVERY']
+    roles: ['ROLE_USER', 'ROLE_BACKOFFICE', 'ROLE_MANAGER', 'ROLE_DELIVERY'],
+    verifyResetPassTime : 60
 }
-
 
 module.exports = constants;

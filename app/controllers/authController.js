@@ -6,7 +6,7 @@
 var express = require('express');
 var router = express.Router();
 var authnService = require('../services/securityService');
-
+var url = require('url');
 
 /**
  * @swagger
@@ -32,16 +32,24 @@ router.post( '/password/remember', function ( req, res ) { // ********** LEO WOR
     //     res.json({success: false, errors: errors});
     // }
     // else {
-        
-        authnService.rememberPassword( req.body.email,
-            function ( err, data ) {
-                if ( err ) {
-                    res.status( 500 ).jsonp( err );
-                } else {
-                  res.status( 200 ).jsonp( data );  
-                }
+
+var urlLocation = getFormattedUrl( req );
+var data = { username : req.body.email,
+            urlLocation : urlLocation };
+
+        authnService.rememberPassword( data,
+            function ( data ) {
+                // if ( err ) {
+                //     res.status( 500 ).jsonp( err );
+                // } else {
+                //   res.status( 200 ).jsonp( data );  
+                // }
+            },
+            function( err ) {
+
             });
     // }
+res.end();
 });
 
 
@@ -242,3 +250,11 @@ router.post('/login', function (req, res) { // LEO WORKING HERE
  */
 
 module.exports = router;
+
+// it returns location.hostname from a request object
+function getFormattedUrl(req) {
+    return url.format({
+        protocol: req.protocol,
+        host: req.get('host')
+    });
+};

@@ -8,12 +8,15 @@ var nodemailer = require('nodemailer');
 // mailer.zemsania@gmail.com
 // pass: Zemsania_99
 
+// user: 'devxcdn@gmail.com',
+// pass: 'ycrstsrfccfzsyue'
+
 var transporter = null,
     SMTP_config = {
         service: "Gmail",
         auth: {
-            user: 'devxcdn@gmail.com',
-            pass: 'ycrstsrfccfzsyue'
+            user: 'mailer.zemzania@gmail.com',
+            pass: 'Zemsania_99'
         }
     },
     CONFIG = {
@@ -42,35 +45,27 @@ function initTransporter() {
 /**
  * Generic function to send emails
  */
-function sendEmail(email, data, template, subject) {
-    if (transporter == null)
+function sendEmail( email, data, template, subject ) { // LEO WORKING HERE
+    if ( transporter == null )
         initTransporter();
 
-
-    var templateDir = path.join(__dirname, '../templates', template);
-    var newsletter = new EmailTemplate(templateDir);
-
-
-    newsletter.render(data, function(err, results) {
-        if (err) {
-            console.log(err);
+    var templateDir = path.join( __dirname, '../templates', template );
+    var newsletter = new EmailTemplate( templateDir );
+    newsletter.render( data, function( err, result ) {
+        if ( err ) {
+            console.log( err );
         } else {
-            // setup e-mail data with unicode symbols
             var mailOptions = {
-                to: email, // list of receivers
-                subject: subject, // Subject line
-                html: results.html // html body
+                to: email,
+                subject: subject,
+                html: result.html
             };
-
-            // send mail with defined transport object
-            transporter.sendMail(mailOptions, function(error, info) {
-                if (error) {
-                    console.log(error);
+            transporter.sendMail( mailOptions, function( error, info ) {
+                if ( error ) {
+                    console.log( error );
                 }
-
-            });
-        }
-
+            })
+        };
     });
 }
 
@@ -95,24 +90,31 @@ function execEmail(options, SCCallback, ERCallback) {
 }
 
 function sendWelcomeEmail(user) {
-    var data = { user: user, urls: config.email.urls }
+    var data = { user: user, urls: config.email.urls };
     sendEmail(user.username, data, 'es/welcome-user', i18n.es.subjects.welcome);
-}
+};
 
-function sendRememberPassword(user) {
-    var data = { user: user, urls: config.email.urls }
-    sendEmail(user.username, data, 'es/rememberPassword', i18n.es.subjects.rememberPassword);
-}
+function sendRememberPassword( data ) { // LEO WORKING HERE
+    // var data = { user: user, urls: config.email.urls };
+    sendEmail( data.username, data, 'es/rememberPassword', i18n.es.subjects.rememberPassword );
+};
+
+function sendNewPassword( data ) { // LEO WORKING HERE
+    console.log('sendNewPassword');
+    console.log(data);
+    // sendEmail( data.username, data, 'es/NewPassword', i18n.es.subjects.newPassword );
+};
 
 function sendTest(user) {
-    var data = { user: user, urls: config.email.urls }
+    var data = { user: user, urls: config.email.urls };
     sendEmail(user.username, data, 'es/test', i18n.es.subjects.test);
-}
+};
 
 module.exports = {
     sendEmail: sendEmail,
     sendTest: sendTest,
     sendWelcomeEmail: sendWelcomeEmail,
     sendRememberPassword: sendRememberPassword,
+    sendNewPassword: sendNewPassword,
     execEmail: execEmail
 };

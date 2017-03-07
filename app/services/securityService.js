@@ -179,26 +179,34 @@ function signup(form, onSuccess, onError) {
  * Password remember
  Genera un uuid nuevo para realizar el recuerdo de contraseña
  */
-function rememberPassword( username, callback ) { // ********** LEO WORKING HERE **********
-    // find the user
+function rememberPassword( data, onSuccess, onError ) { // ********** LEO WORKING HERE **********
     models.User.findOne({
-        username: username
+        username: data.username
     }, function( err, user ) {
+        if ( err ) {
+            onError( { success: false, code: 401, message: 'Error finding User.'} );
+        } else {
+            if (!user) {
+                onSuccess( { success: false, code: 101, message: 'User not found.'} );
+            } else {
 
-        if (err) throw err;
+                var expiresInOneHour = new Date();
+                    user.uuid = uuid.v1( {
+                        msecs: expiresInOneHour.setMinutes( expiresInOneHour.getMinutes() + constants.verifyResetPassTime )
+                    });
 
-        if (!user) {
-            callback({ code: 101, message: 'User not found.' });
-        } else if (user) {
-
-            user.uuid = uuid.v4();
-            user.save(function(err) {
-                if (err) throw err;
-                callback(null, { success: true, name: user.name, uuid: user.uuid });
-            });
-            mailService.sendRememberPassword(user);
+                user.save( function( err ) {
+                    if ( err ) {
+                        onError( { success: false, code: 402, message: 'Error saving uuid.'} );
+                    } else {
+                        // onSuccess( { success: false, code: 101, message: 'User not found.'} );
+                        // callback(null, { success: true, name: user.name, uuid: user.uuid });
+                        data.user = user;
+                        mailService.sendRememberPassword( data );
+                    }
+                });
+            }
         }
-
     });
 }
 

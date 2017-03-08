@@ -1,14 +1,18 @@
-// var express = require('express');
 
 var i18n = {
 	es: {
 		subjects : {
 			welcome: 'Bienvenido',
-			rememberPassword: 'Generar nueva contraseña',
-			newPassword: 'Envío nueva contraseña',
 			test: 'TEST',
 			textHoursSent : 'Usuario %s %s ha enviado sus horas desde %s - %s',
 			textHoursValidated : 'Usuario %s %s ha validado sus horas desde %s - %s'
+		},
+		resetPassword : {
+			rememberPassword : 'Generar nueva contraseña',
+			newPassword      : 'Envío nueva contraseña',
+			passwordSend     : '<h4>Acabamos de enviar un correo con tu nueva contraseña!</h4>',
+			generalError     : '<h4>No pudo completarse la operación!<br><br>Por favor, inténtalo de nuevo.</h4>',
+			unvalidToken     : '<h4>Ocurrió un problema verificando la información de reinicio de contraseña.<br>Es posible que el identificador único haya expirado o ya haya sido utilizado.<br><br>Por favor, inténtalo de nuevo.</h4>'
 		},
 		errors: {
 			holidaysAlreadyRequested : 'Día ya solicitado',
@@ -16,8 +20,6 @@ var i18n = {
 			unallocated_project_user : "Proyecto Usuario sin asignar"
 		}
 	}
-}
+};
 
-
-
-module.exports = i18n
+module.exports = i18n;

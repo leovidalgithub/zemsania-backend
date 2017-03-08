@@ -162,32 +162,32 @@ router.get('/profile', userTokenValidation, function (req, res) {
  *          paramType: body
  *          dataType: UserProfile
  */
-router.put( '/profile', userTokenValidation, function ( req, res ) { // ***************** LEO WAS HERE *****************
+router.put( '/profile', userTokenValidation, function ( req, res ) { // ******* LEO WAS HERE *******
     // MAKE ALL VALIDATIONS
     // req.checkBody( 'birthdate','is not an email' ).isEmail();
     // req.checkBody( 'nif','is not a number' ).isInt();
 
-    req.getValidationResult().then(function( result ) {
-        if ( !result.isEmpty() ) {
+    req.getValidationResult().then( function( result ) {
+        if ( !result.isEmpty() ) { // some error found
             var errors = result.array();
             errors.forEach( function( element ) {
-                console.log( element.param + ' / ' + element.msg);
+                console.log( element.param + ' / ' + element.msg );
             });
             globalMethods.sendResponse( res, { success: false, code: 400, msg: 'Error validating User Profile', errors: errors } );
-            return;
-        };
-        userService.updateProfile( req.userId, req.body,
-            function ( data ) {
-                globalMethods.sendResponse( res, data ); 
-            },
-            function ( err ) {
-                globalMethods.sendResponse( res, err );
-            });
+        } else { // not errors found
+            userService.updateProfile( req.userId, req.body,
+                function ( data ) {
+                    globalMethods.sendResponse( res, data ); 
+                },
+                function ( err ) {
+                    globalMethods.sendResponse( res, err );
+                });
+        }
     });
 });
 
 // verifyUniqueUserEmail - Verifies if email given already exist in BDD
-router.get( '/profile/:emailToVerify', userTokenValidation, function ( req, res ) { // ***************** LEO WAS HERE *****************
+router.get( '/profile/:emailToVerify', userTokenValidation, function ( req, res ) { // ******* LEO WAS HERE *******
     var emailToVerify = req.params.emailToVerify;
 
     userService.verifyUniqueUserEmail( emailToVerify,

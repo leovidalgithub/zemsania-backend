@@ -33,23 +33,19 @@ router.post( '/password/remember', function ( req, res ) { // ********** LEO WOR
     // }
     // else {
 
-var urlLocation = getFormattedUrl( req );
-var data = { username : req.body.email,
-            urlLocation : urlLocation };
+    var urlLocation = getFormattedUrl( req );
+    var data = { 
+            username    : req.body.email,
+            urlLocation : urlLocation
+            };
 
         authnService.rememberPassword( data,
             function ( data ) {
-                // if ( err ) {
-                //     res.status( 500 ).jsonp( err );
-                // } else {
-                //   res.status( 200 ).jsonp( data );  
-                // }
+                globalMethods.successResponse( res, data );
             },
             function( err ) {
-
+                globalMethods.errorResponse( res, err );
             });
-    // }
-res.end();
 });
 
 
@@ -249,12 +245,12 @@ router.post('/login', function (req, res) { // LEO WORKING HERE
  *
  */
 
-module.exports = router;
-
-// it returns location.hostname from a request object
-function getFormattedUrl(req) {
+// returns location.hostname from a request object
+function getFormattedUrl( req ) {
     return url.format({
         protocol: req.protocol,
-        host: req.get('host')
+        host: req.get( 'host' )
     });
 };
+
+module.exports = router;

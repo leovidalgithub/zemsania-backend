@@ -1,7 +1,6 @@
 var express       = require( 'express' ),
     router        = express.Router(),
     verifyService = require( '../services/verifyService' );
-var passwordHash = require('password-hash');
 
 // VERIFY RESETPASSWORD-TOKEN IS VALID TO GENERATE A NEW PASSWORD AND SEND TO USER EMAIL
 router.get( '/:username', function ( req, res ) { // ***************** LEO WORKING HERE *****************
@@ -10,18 +9,26 @@ router.get( '/:username', function ( req, res ) { // ***************** LEO WORKI
             token    : req.query.token
     };
     var html = '';
+
     verifyService.verifyResetPasswordToken( data,
         function ( data ) {
             if ( data.success ) {
-                console.log('ON-TIME');
-                
-                verifyService.sendNewPassword( res, data );
-
-                // html = '<h3>TODO BIEN. SE ENVIARÁ EL CORREO CON UNA NUEVA CONTRASEÑA</h3>';                
+                console.log( 'link-token valid' );
+                verifyService.newPassword( res, data )
+                    .then( function( data ) {
+                        console.log( 'New password send' );
+                        html = i18n.es.resetPassword.passwordSend;
+                    })
+                    .catch( function( err ) {
+                        console.log( 'Error sending new password' );
+                        html = i18n.es.resetPassword.generalError;
+                    })
+                    .then( function() { // finally
+                        res.send( html );
+                    })
             } else {
-
-                console.log('OUT OF TIME');
-                html = '<h4>Ocurrió un problema verificando la información de reinicio de contraseña.<br>Es posible que su identificador único haya expirado o ya haya sido utilizado.<br>Por favor, inténtenlo de nuevo.</h4>';
+                console.log( 'link-token not valid' );                
+                html = i18n.es.resetPassword.unvalidToken;
                 res.send( html );
             }
         });

@@ -177,7 +177,7 @@ function signup(form, onSuccess, onError) {
 
 /**
  * Password remember
- Genera un uuid nuevo para realizar el recuerdo de contraseña
+ GENERATES NEW UUID WITH LIMIT OF TIME - SAVES INTO BDD - USES MAILSERVICE TO SEND A LINK TO THE USER EMAIL
  */
 function rememberPassword( data, onSuccess, onError ) { // ********** LEO WORKING HERE **********
     models.User.findOne({
@@ -186,7 +186,7 @@ function rememberPassword( data, onSuccess, onError ) { // ********** LEO WORKIN
         if ( err ) {
             onError( { success: false, code: 401, message: 'Error finding User.'} );
         } else {
-            if (!user) {
+            if ( !user ) {
                 onSuccess( { success: false, code: 101, message: 'User not found.'} );
             } else {
 
@@ -199,10 +199,14 @@ function rememberPassword( data, onSuccess, onError ) { // ********** LEO WORKIN
                     if ( err ) {
                         onError( { success: false, code: 402, message: 'Error saving uuid.'} );
                     } else {
-                        // onSuccess( { success: false, code: 101, message: 'User not found.'} );
-                        // callback(null, { success: true, name: user.name, uuid: user.uuid });
                         data.user = user;
-                        mailService.sendRememberPassword( data );
+                        mailService.sendRememberPassword( data )
+                            .then( function( data ) {
+                                onSuccess( { success: true, code: 200, message: 'Email link send.'} );
+                            })
+                            .catch( function( err ) {
+                                onError( { success: false, code: 403, message: 'Error sending email.'} );
+                            });
                     }
                 });
             }

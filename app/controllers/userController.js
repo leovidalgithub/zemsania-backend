@@ -175,7 +175,7 @@ router.put( '/profile', userTokenValidation, function ( req, res ) { // ******* 
             });
             globalMethods.sendResponse( res, { success: false, code: 400, msg: 'Error validating User Profile', errors: errors } );
         } else { // not errors found
-            userService.updateProfile( req.userId, req.body,
+            userService.updateProfile( req.body,
                 function ( data ) {
                     globalMethods.sendResponse( res, data ); 
                 },
@@ -246,11 +246,20 @@ router.get( '/profile/:emailToVerify', userTokenValidation, function ( req, res 
  *          paramType: body
  *          dataType: SearchUserProfile
  */
-router.post('/search', managerTokenValidation, function (req, res) {
-    userService.searchUsers(req.body, function (data) {
-        res.status(200).jsonp(data);
-    }, function (result) {
-        globalMethods.error(res, result, 500);
+router.post( '/search', managerTokenValidation, function ( req, res ) { // LEO WORKING HERE
+    userService.searchUsers( req.body, function ( data ) {
+        res.status( 200 ).jsonp( data );
+    }, function ( result ) {
+        globalMethods.error( res, result, 500 );
+    });
+});
+
+// GET USER PROFILE FOR MANAGER-EMPLOYEE-EDIT WITH COMPANY-ENTERPRISE POPULATED 
+router.post( '/newSearch', managerTokenValidation, function ( req, res ) { // LEO WORKING HERE
+    userService.newSearchUsers( req.body, function ( data ) {
+        globalMethods.successResponse( res, data );
+    }, function ( err ) {
+        globalMethods.errorResponse( res, err );
     });
 });
 

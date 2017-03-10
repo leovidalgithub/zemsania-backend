@@ -15,15 +15,25 @@ function getCecoCollection(onSuccess) {
     });
 }
 
-function getEnterprisesCollection(onSuccess) {
-    models.Enterprises.find({}, function (err, results) {
-        if (err) throw err;
-        var response = {
-            success : true,
-            collection : results
-        };
-        onSuccess(response);
-    });
+function getEnterprisesCollection( onSuccess, onError ) { // lEO WAS HERE
+    models.Enterprises.find( { "enabled" : true }, function ( err, results ) {
+        if ( err ) {
+            onError( { success: false, code: 500, msg: 'Error getting Enterprises collection.' } );
+        } else {
+            onSuccess( { success: true, code: 200, msg: 'Enterprises collection.', results: results } );
+        }
+    })
+}
+
+// returns all supervisors except the user itself if MANAGER (supervisor)
+function getSupervisors( _id, onSuccess, onError ) { // lEO WORKING HERE
+    models.User.find( {"_id" : { $ne:_id }, "roles" : "ROLE_MANAGER", "enabled" : true }, function ( err, results ) {
+        if ( err ) {
+            onError( { success: false, code: 500, msg: 'Error getting Enterprises collection.' } );
+        } else {
+            onSuccess( { success: true, code: 200, msg: 'Enterprises collection.', results: results } );                    
+        }
+    })
 }
 
 function getProductsCollection(onSuccess) {
@@ -51,6 +61,7 @@ function getZonesCollection(onSuccess) {
 module.exports = {
     getCecoCollection: getCecoCollection,
     getEnterprisesCollection: getEnterprisesCollection,
+    getSupervisors: getSupervisors,
     getProductsCollection: getProductsCollection,
     getZonesCollection: getZonesCollection
 };

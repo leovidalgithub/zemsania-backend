@@ -11,7 +11,6 @@ var passwordHash = require( 'password-hash' );
 function searchUsers(form, onSuccess, onError) {
 
     var query = [];
-
     if (form.username) {
         query.push({
             username: form.username
@@ -75,7 +74,6 @@ function searchUsers(form, onSuccess, onError) {
 
     //aggregate.push(projection);
 
-
     var page = form.page == undefined ? 0 : form.page;
     var rows = form.rows == undefined ? 10 : form.rows;
 
@@ -93,6 +91,20 @@ function searchUsers(form, onSuccess, onError) {
     models.User.aggregate(aggregate, function (err, users) {
         if (err) throw err;
         onSuccess({success: true, users: users});
+    });
+}
+
+// GET USER PROFILE FOR MANAGER-EMPLOYEE-EDIT WITH COMPANY-ENTERPRISE POPULATED 
+function newSearchUsers( data, onSuccess, onError ) { // LEO WORKING HERE
+    var id = data._id;
+    models.User.findOne( { _id: new ObjectId( id ) })
+        .populate( 'company','enterpriseName' )
+        .exec( function ( err, user ) {
+            if ( err ) {
+                onError( { success: false, code: 500, msg: 'Error getting User Profile.' } );
+            } else {
+                onSuccess( { success: true, code: 200, msg: 'User Profile', user: user } );
+            }
     });
 }
 
@@ -116,40 +128,41 @@ function getAllUsers(onSuccess, onError) {
 }
 
 /**
- * User Profile update
+ * User Profile update. Either from #!/profile or EmployeeManager.
  **/
-function updateProfile( userId, form, onSuccess, onError ) { // ***************** LEO WAS HERE *****************
-// security roles filter: it verifies if user roles exist in the constant object so save them back to BDD 
+function updateProfile( userProfile, onSuccess, onError ) { // ***************** LEO WAS HERE *****************
+    var userId = userProfile._id;
+
+    // security roles filter: it verifies if user roles exist in the constant object so save them back to BDD
     var roles = ['ROLE_USER'];
-    if ( form.roles && form.roles.length > 0 ) {
-        for ( var i = 0; i < form.roles.length; i++ ) {
-            if ( roles.indexOf( form.roles[i] ) == -1 && constants.roles.indexOf( form.roles[i] ) != -1 ) {
-                roles.push( form.roles[i] );
+    if ( userProfile.roles && userProfile.roles.length > 0 ) {
+        for ( var i = 0; i < userProfile.roles.length; i++ ) {
+            if ( roles.indexOf( userProfile.roles[i] ) == -1 && constants.roles.indexOf( userProfile.roles[i] ) != -1 ) {
+                roles.push( userProfile.roles[i] );
             };
         };
     };
-
     models.User.findOne({ // global.models (server-app.js)
         _id: new ObjectId( userId )
     }, function ( err, user ) {
         if ( user ) {
-            if ( form.birthdate ) { 
-                   user.birthdate = moment( form.birthdate, 'DD/MM/YYYY' ).toISOString();
+            if ( userProfile.birthdate ) { 
+                   user.birthdate = moment( userProfile.birthdate, 'DD/MM/YYYY' ).toISOString();
             };
-            user.zimbra_cosID     = form.zimbra_cosID;
-            user.locale           = form.locale;
-            user.nif              = form.nif;
-            user.name             = form.name;
-            user.sex              = form.sex;
+            user.zimbra_cosID     = userProfile.zimbra_cosID;
+            user.locale           = userProfile.locale;
+            user.nif              = userProfile.nif;
+            user.name             = userProfile.name;
+            user.sex              = userProfile.sex;
             user.roles            = roles;
-            user.surname          = form.surname;
-            user.birthdate        = form.birthdate;
+            user.surname          = userProfile.surname;
+            user.birthdate        = userProfile.birthdate;
             user.lastModifiedDate = Date.now();
 
-            if ( form.workloadScheme ) user.workloadScheme = form.workloadScheme;
-            if ( form.holidayScheme ) user.holidayScheme   = form.holidayScheme;
-            if ( form.superior ) user.superior             = form.superior;
-            if ( form.company ) user.company               = form.company
+            if ( userProfile.workloadScheme ) user.workloadScheme = userProfile.workloadScheme;
+            if ( userProfile.holidayScheme ) user.holidayScheme   = userProfile.holidayScheme;
+            if ( userProfile.superior ) user.superior             = userProfile.superior;
+            if ( userProfile.company ) user.company               = userProfile.company
 
             user.save( function ( err, doc ) {
                 if ( err ) {
@@ -262,6 +275,7 @@ module.exports = {
     updateProfile: updateProfile,
     verifyUniqueUserEmail : verifyUniqueUserEmail,
     searchUsers: searchUsers,
+    newSearchUsers: newSearchUsers,
     queryUsers: queryUsers,
     changePassword: changePassword,
     getAllUsers: getAllUsers,

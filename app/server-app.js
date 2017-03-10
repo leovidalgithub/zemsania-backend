@@ -122,7 +122,7 @@ app.use( '/notifications', require( './controllers/notificationsController' ));
 // app.use('/holidaySchemes', userTokenValidation, require('./controllers/holidaySchemesController'));
 // app.use('/workloadSchemes', userTokenValidation, require('./controllers/workloadSchemesController'))
 
-// app.use('/mcollections', require('./controllers/masterCollectionsController'));
+app.use( '/mcollections', require('./controllers/masterCollectionsController' ));
 app.use( '/user',   require( './controllers/userController' ));
 app.use( '/verify', require( './controllers/verifyController' ));
 // app.use('/test', require('./controllers/testController'));

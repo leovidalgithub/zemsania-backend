@@ -32,7 +32,7 @@ var validateToken = function(req, res, next, role) {
     var token = req.query.api_key || req.params.token || req.headers['x-auth-token'];
 
 
-//*********************************************************************
+//********************************************************************* // LEO WAS HERE
 // console.log("*******************models users**********************");
 //     // models.User.findOne({'name':'Daniel'}, function(err, user) {
 //     //     user.populate('User')

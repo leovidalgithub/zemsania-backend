@@ -144,7 +144,7 @@ module.exports = function(mongoose) {
         holidayScheme :    { type : Schema.Types.ObjectId, ref : 'HolidayScheme' },
         workloadScheme :   { type : Schema.Types.ObjectId, ref : 'WorkloadScheme' },
         superior :         { type : Schema.Types.ObjectId, ref : 'User' },
-        company :          { type : String }
+        company :          { type : Schema.Types.ObjectId, ref : 'Enterprises' }
     }, { collection: 'users' });
 
     var CecoSchema = new Schema({
@@ -154,12 +154,14 @@ module.exports = function(mongoose) {
     }, { collection: 'ceco' });
 
     var EnterprisesSchema = new Schema({
-        enterpriseName: { type: String, index: true },
-        band: { type: Boolean, trim: true, default: false },
-        status: { type: Boolean, trim: true, default: true },
-        createdAt: { type: Date, default: Date.now }
-    }, { collection: 'enterprises' });
-
+        enterpriseName : { type : String, index: true },
+        band           : { type : Boolean, trim: true, default: false },
+        enabled        : { type : Boolean, index : true, default : true },
+        createdAt      : { type : Date, default: Date.now },
+        modifiedAt     : { type : Date, default : Date.now },
+        disabledAt     : { type : Date, default : Date.now }
+    }, { collection : 'enterprises' });
+    
     var ProductsSchema = new Schema({
         productName: { type: String, index: true },
         status: { type: Boolean, trim: true, default: true },

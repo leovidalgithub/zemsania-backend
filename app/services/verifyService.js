@@ -31,6 +31,7 @@ function newPassword( res, data ) { // LEO WAS HERE
 
     user.password = passwordHash.generate( newPassword );
     user.uuid = ''; // remove uuid because it already has been used
+    user.defaultPassword = true; // user has to change this new password when login
 
     return new Promise( function( resolve, reject ) {
         user.save( function( err, user ) {

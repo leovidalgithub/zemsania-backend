@@ -44,11 +44,11 @@ router.post('/all', managerTokenValidation, function (req, res) {
  *      consumes:
  *        - application/json
  */
-router.get('/all', managerTokenValidation, function (req, res) {
-    userService.getAllUsers(function (data) {
-        res.status(200).jsonp(data);
-    }, function (result) {
-        globalMethods.error(res, result, 500);
+router.get( '/all', managerTokenValidation, function ( req, res ) { // LEO WAS HERE
+    userService.getAllUsers( function ( data ) {
+        globalMethods.successResponse( res, data );
+    }, function ( err ) {
+        globalMethods.errorResponse( res, err );
     });
 });
 
@@ -165,7 +165,7 @@ router.get('/profile', userTokenValidation, function (req, res) {
 router.put( '/profile', userTokenValidation, function ( req, res ) { // ******* LEO WAS HERE *******
     // MAKE ALL VALIDATIONS
     // req.checkBody( 'birthdate','is not an email' ).isEmail();
-    // req.checkBody( 'nif','is not a number' ).isInt();
+    // req.checkBody( 'nif','is not a number' ).isIxnt();
 
     req.getValidationResult().then( function( result ) {
         if ( !result.isEmpty() ) { // some error found
@@ -235,7 +235,7 @@ router.get( '/profile/:emailToVerify', userTokenValidation, function ( req, res 
  * path: /user/search
  * operations:
  *   -  httpMethod: POST
- *      summary: Busca y devuelve listado paginado de los usuarios
+ *      summary: returns pagination users list for advanced serach
  *      notes: Requiere token de autenticación manager(x-auth-token).
  *      nickname: searchUsers
  *      consumes:
@@ -248,9 +248,9 @@ router.get( '/profile/:emailToVerify', userTokenValidation, function ( req, res 
  */
 router.post( '/search', managerTokenValidation, function ( req, res ) { // LEO WORKING HERE
     userService.searchUsers( req.body, function ( data ) {
-        res.status( 200 ).jsonp( data );
-    }, function ( result ) {
-        globalMethods.error( res, result, 500 );
+        globalMethods.successResponse( res, data );
+    }, function ( err ) {
+        globalMethods.errorResponse( res, err );
     });
 });
 

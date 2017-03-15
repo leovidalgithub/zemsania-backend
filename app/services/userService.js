@@ -7,9 +7,8 @@ var passwordHash = require( 'password-hash' );
     ObjectId     = require( 'mongoose' ).Types.ObjectId;
     moment       = require( 'moment' );
 
- // * Busca usuarios
-function searchUsers(form, onSuccess, onError) {
-
+// finding users for advanced serach
+function searchUsers( form, onSuccess, onError ) { // LEO WAS HERE
     var query = [];
     if (form.username) {
         query.push({
@@ -47,15 +46,15 @@ function searchUsers(form, onSuccess, onError) {
         });
     }
 
-    if (form.enabled) {
-        query.push({
-            enabled: form.enabled
-        });
-    } else {
-        query.push({
-            enabled: true
-        });
-    }
+    // if (form.enabled) {
+    //     query.push({
+    //         enabled: form.enabled
+    //     });
+    // } else {
+    //     query.push({
+    //         enabled: true
+    //     });
+    // }
 
     if (form.activated) {
         query.push({
@@ -88,9 +87,12 @@ function searchUsers(form, onSuccess, onError) {
         });
     }
 
-    models.User.aggregate(aggregate, function (err, users) {
-        if (err) throw err;
-        onSuccess({success: true, users: users});
+    models.User.aggregate( aggregate, function ( err, users ) {
+        if ( err ) {
+            onError( { success: false, code: 500, msg: 'Error getting Users Profile.' } );
+        } else {
+            onSuccess( { success: true, code: 200, msg: 'Users Profile', users: users } );
+        }
     });
 }
 
@@ -116,23 +118,30 @@ function queryUsers(query, callback) {
 
 
 /*
- * Sacar todos los usuarios
+ * return all users. No counts enabled
  */
-function getAllUsers(onSuccess, onError) {
-    models.User.find({
-        enabled: true
-    }, function (err, users) {
-        if (err) throw err;
-        onSuccess({success: true, users: users});
+function getAllUsers( onSuccess, onError ) { // LEO WAS HERE
+    models.User.find( {},
+     function ( err, users ) {
+        if ( err ) {
+            onError( { success: false, code: 500, msg: 'Error getting all users.' } );
+        } else {
+            onSuccess( { success: true, code: 200, msg: 'All users list', users : users } );
+        }
     });
 }
+
+
+
+
+
+
 
 /**
  * User Profile update. Either from #!/profile or EmployeeManager.
  **/
 function updateProfile( userProfile, onSuccess, onError ) { // ***************** LEO WAS HERE *****************
     var userId = userProfile._id;
-
     // security roles filter: it verifies if user roles exist in the constant object so save them back to BDD
     var roles = ['ROLE_USER'];
     if ( userProfile.roles && userProfile.roles.length > 0 ) {
@@ -149,6 +158,8 @@ function updateProfile( userProfile, onSuccess, onError ) { // *****************
             if ( userProfile.birthdate ) { 
                    user.birthdate = moment( userProfile.birthdate, 'DD/MM/YYYY' ).toISOString();
             };
+            // user.username          = userProfile.username; // does not overwirte email
+            user.enabled          = userProfile.enabled;
             user.zimbra_cosID     = userProfile.zimbra_cosID;
             user.locale           = userProfile.locale;
             user.nif              = userProfile.nif;
@@ -239,33 +250,34 @@ function changePassword( userId, form, onSuccess, onError ) { // LEO WORKING HER
 }
 
 /**
- * Elimina el usuario
+ * User delete
  **/
-function deleteUser(userId, form, onSuccess, onError) {
-    models.User.findOneAndUpdate({_id: new ObjectId(userId)}, {enable: false}, function (err, result) {
-        if (!err && result > 0) {
-            console.log('User %s deleted successfully');
-            onSuccess({success: true});
-        } else if (err) {
-            throw err
-        } else {
-            onError({error: 'User not found'});
-        }
-    });
-}
+// it functionality is not in use because the manager user directly set user enabled to false
+// function deleteUser(userId, form, onSuccess, onError) { // LEO WORKING HERE
+//     models.User.findOneAndUpdate({_id: new ObjectId(userId)}, {enable: false}, function (err, result) {
+//         if (!err && result > 0) {
+//             console.log('User %s deleted successfully');
+//             onSuccess({success: true});
+//         } else if (err) {
+//             throw err
+//         } else {
+//             onError({error: 'User not found'});
+//         }
+//     });
+// }
 
 /**
  * Actualización del perfil del usuario
  **/
-function getProfile(userId, onSuccess, onError) {
+function getProfile( userId, onSuccess, onError ) {
     models.User.findOne({
-        _id: new ObjectId(userId)
-    }, function (err, user) {
-        if (user) {
-            onSuccess(user);
+        _id: new ObjectId( userId )
+    }, function ( err, user ) {
+        if ( user ) {
+            onSuccess( user );
         }
         else {
-            onSuccess({success: false, code: 101, message: 'User not found.'});
+            onSuccess( { success: false, code: 101, message: 'User not found.' } );
         }
     });
 }
@@ -278,8 +290,8 @@ module.exports = {
     newSearchUsers: newSearchUsers,
     queryUsers: queryUsers,
     changePassword: changePassword,
-    getAllUsers: getAllUsers,
-    deleteUser: deleteUser
+    getAllUsers: getAllUsers
+    // deleteUser: deleteUser
 };
 
 

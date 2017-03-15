@@ -12,44 +12,40 @@ var express          = require( 'express' ),
     mongoose.Promise = Promise;
 
 //--> https://github.com/andris9/Nodemailer
-var environment = process.env.NODE_ENV || 'dev';
-var swagger = require('swagger-express'); // swagger
-var config = require('./config/' + environment);
-var securityService = require('./services/securityService');
-var constants = require('./config/constants');
-var i18n = require('./config/i18n');
-var globalFunctions = require('./global/globalFunctions');
-var gridSchema = new mongoose.Schema({}, {strict: false});
-var fileGrid = mongoose.model('Grid', gridSchema, 'docs.files');
+var environment     = process.env.NODE_ENV || 'dev',
+    swagger         = require( 'swagger-express' ),
+    config          = require( './config/' + environment ),
+    securityService = require( './services/securityService' ),
+    constants       = require( './config/constants' ),
+    i18n            = require( './config/i18n' ),
+    globalFunctions = require( './global/globalFunctions' ),
+    gridSchema      = new mongoose.Schema( {}, {strict: false} ),
+    fileGrid        = mongoose.model( 'Grid', gridSchema, 'docs.files' );
 
 //Carga de los modelos:
-var models = require('./models/entities')(mongoose); // get our mongoose model
+var models    = require( './models/entities' )(mongoose); // get our mongoose model
 global.models = models;
 
 //Configuracion global de la app
-global.config = config;
-global.constants = constants;
-global.i18n = i18n;
+global.config        = config;
+global.constants     = constants;
+global.i18n          = i18n;
 global.globalMethods = globalFunctions;
 
 //Variables globales
-global.db = mongoskin.db(config.database, {safe: true});
-global.userTokenValidation = securityService.userTokenValidation;
+global.db                        = mongoskin.db( config.database, {safe: true} );
+global.userTokenValidation       = securityService.userTokenValidation;
 global.backofficeTokenValidation = securityService.backofficeTokenValidation;
-global.managerTokenValidation = securityService.managerTokenValidation;
-global.deliveryTokenValidation = securityService.deliveryTokenValidation;
-global.fs = fs;
-global.fileGrid = fileGrid;
+global.managerTokenValidation    = securityService.managerTokenValidation;
+global.deliveryTokenValidation   = securityService.deliveryTokenValidation;
+global.fs                        = fs;
+global.fileGrid                  = fileGrid;
 
+mongoose.connect( config.database );
 
-// configuration ===================================================
-// =================================================================
-
-mongoose.connect(config.database); // connect to database
-
-var conn = mongoose.connection;
+var conn   = mongoose.connection;
 Grid.mongo = mongoose.mongo;
-var gfs = Grid(conn.db);
+var gfs    = Grid( conn.db );
 global.gfs = gfs;
 
 // Middlewares
@@ -60,8 +56,8 @@ app.use( methodOverride() );
 app.use( cors() );
 
 //configuracion upload de ficheros
-app.use('/uploads', express.static(__dirname + '/uploads'));
-app.use(multer({dest: './uploads/'}))
+app.use( '/uploads', express.static( __dirname + '/uploads' ) );
+app.use( multer( {dest: './uploads/'} ) )
 
 //configuracion swagger
 // app.use(swagger.init(app, {
@@ -127,14 +123,12 @@ app.use( '/user',   require( './controllers/userController' ));
 app.use( '/verify', require( './controllers/verifyController' ));
 // app.use('/test', require('./controllers/testController'));
 
-
 // ---------------------------------------------------------
 // route middleware to authenticate and check token. From this point, a token is required
 // ---------------------------------------------------------
 // app.use(function (req, res, next) {
 //     securityService.userTokenValidation(req, res, next);
 // });
-
 
 // Start server
 app.listen( 3000, function () {

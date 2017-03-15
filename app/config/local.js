@@ -1,5 +1,3 @@
-var express = require('express');
-
 var ids = {
     //database: 'mongodb://dev-db.zemsania.com:27017/zemtime',
     database: 'mongodb://192.168.16.40:27017/zemtime',

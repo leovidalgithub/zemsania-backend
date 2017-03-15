@@ -118,59 +118,57 @@ var checkToken = function(req, callback) {
 }
 
 /**
- * Registro de usuarios
+ * NEW USER REGISTER
  **/
-function signup(form, onSuccess, onError) {
+function signup( credentials, onSuccess, onError ) {  // LEO WAS HERE
+    // security roles filter: it verifies if user roles exist in the constant object so save them back to BDD
     var roles = ['ROLE_USER'];
-    if (form.roles && form.roles.length > 0) {
-        for (var i = 0; i < form.roles.length; i++) {
-            if (roles.indexOf(form.roles[i]) == -1 && constants.roles.indexOf(form.roles[i]) != -1) {
-                roles.push(form.roles[i]);
-            }
-        }
-    }
+    if ( credentials.roles && credentials.roles.length > 0 ) {
+        for ( var i = 0; i < credentials.roles.length; i++ ) {
+            if ( roles.indexOf( credentials.roles[i] ) == -1 && constants.roles.indexOf( credentials.roles[i] ) != -1 ) {
+                roles.push( credentials.roles[i] );
+            };
+        };
+    };
 
-    models.User.findOne({
-        username: form.username
-    }, function(err, user) {
-        if (err) throw err;
-        if (user) {
-            onError({
-                success: false,
-                message: 'User already exists.'
-            });
+    models.User.findOne( {
+        username: credentials.username
+    }, function( err, user ) {
+        if ( err ) {
         } else {
-            // create a sample user
-            var user = new models.User({
-                candidatoId: form.candidatoId,
-                username: form.username,
-                name: form.name,
-                password: passwordHash.generate(form.password),
-                roles: roles,
-                uuid: uuid.v4(),
-                surname: form.surname,
-                nif: form.nif,
-                enabled: form.enabled,
-                birthdate: moment(form.birthdate, 'DD/MM/YYYY').toISOString(),
-                locale: form.locale,
-                sex: form.sex,
-                zimbra_cosID: form.zimbra_cosID,
-                zimbra_server: form.zimbra_server,
-                workloadScheme: form.workloadScheme,
-                holidayScheme: form.holidayScheme,
-                superior: form.superior,
-                company: form.company
-            });
-
-            user.save(function(err, user) {
-                if (err) throw err;
-                console.log('User %s created successfully', form.username);
-                onSuccess({
-                    success: true,
-                    user: user
+            if ( user ) {
+                onSuccess( { success: false, code: 101, msg: 'User already exists.' } );
+            } else {
+                var user = new models.User( {
+                    candidatoId    : credentials.candidatoId,
+                    username       : credentials.username,
+                    name           : credentials.name,
+                    password       : passwordHash.generate( constants.defaultPassword ),
+                    roles          : roles,
+                    uuid           : uuid.v4(),
+                    surname        : credentials.surname,
+                    nif            : credentials.nif,
+                    enabled        : credentials.enabled,
+                    birthdate      : moment( credentials.birthdate, 'DD/MM/YYYY' ).toISOString(),
+                    locale         : credentials.locale,
+                    sex            : credentials.sex,
+                    zimbra_cosID   : credentials.zimbra_cosID,
+                    zimbra_server  : credentials.zimbra_server,
+                    workloadScheme : credentials.workloadScheme,
+                    holidayScheme  : credentials.holidayScheme,
+                    superior       : credentials.superior,
+                    company        : credentials.company
                 });
-            });
-            //mailService.sendWelcomeEmail(user);
+
+                user.save( function( err, user ) {
+                    if ( err ) {
+                        onError( { success: false, code: 500, msg: 'Error saving new User.' } );
+                    } else {                        
+                        console.log( 'User %s created successfully', credentials.username );
+                        onSuccess( { success: true, code: 200, msg: 'New User saved successfully.' } );                    
+                    }
+                });
+            }
         }
     });
 }
@@ -334,10 +332,14 @@ function login( form, onSuccess, onError ) { // LEO WAS HERE
                 if ( !user ) {
                     onSuccess( { success: false, code: 101, message: 'User not found.'} );
                 } else {
-                    if ( passwordHash.verify( form.password, user.password ) ) {
-                        onSuccess( createUserToken( user ) ); // Authentication OK
+                    if ( !user.enabled ) {
+                            onSuccess( { success: false, code: 103, message: 'User disabled.' } );
                     } else {
-                        onSuccess( { success: false, code: 102, message: 'Authentication failed. Wrong password.' } );
+                        if ( passwordHash.verify( form.password, user.password ) ) {
+                            onSuccess( createUserToken( user ) ); // Authentication OK
+                        } else {
+                            onSuccess( { success: false, code: 102, message: 'Authentication failed. Wrong password.' } );
+                        }                        
                     }
                 }
             }

@@ -124,28 +124,26 @@ router.get('/validate/:uuid', function (req, res) {
  *          dataType: UserSignup
  *
  */
-
-router.post('/signup', backofficeTokenValidation, function (req, res) {
-
+router.post( '/signup', backofficeTokenValidation, function ( req, res ) { // LEO WORKING HERE
     //Form validation
-    req.checkBody('username', 'required').notEmpty();
-    req.checkBody('username', 'email').isEmail();
-    req.checkBody('name', 'required').notEmpty();
-    req.checkBody('surname', 'required').notEmpty();
-    req.checkBody('password', 'required').notEmpty();
-    var errors = req.validationErrors();
-
-    if (errors) {
-        res.json({success: false, errors: errors});
-    } else {
-        authnService.signup(req.body,
-            function (data) {
-                res.status(200).jsonp(data);
-            }, function (result) {
-                globalMethods.error(res, result, 500);
+    // req.checkBody( 'username', 'required' ).notEmpty();
+    // req.checkBody( 'username', 'email' ).isEmail();
+    // req.checkBody( 'name', 'required' ).notEmpty();
+    // req.checkBody( 'surname', 'required' ).notEmpty();
+    // req.checkBody( 'password', 'required' ).notEmpty();
+    // var errors = req.validationErrors();
+    // if ( errors ) {
+    //     res.json({success: false, errors: errors});
+    // } else {
+        authnService.signup( req.body,
+            function ( data ) {
+                // res.status( 200 ).jsonp( data );
+                globalMethods.successResponse( res, data );
+            }, function ( err ) {
+                // globalMethods.error( res, result, 500 );
+                globalMethods.errorResponse( res, err );
             });
-
-    }
+    // }
 });
 
 

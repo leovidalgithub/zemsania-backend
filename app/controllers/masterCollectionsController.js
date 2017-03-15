@@ -48,21 +48,57 @@ router.get( '/enterprises', managerTokenValidation, function ( req, res ) {  // 
 
 /**
  * @swagger
- * path: /mcollections/supervisors
+ * path: /mcollections/supervisorsExceptID/:_id
  * operations:
  *   -  httpMethod: GET
  *      summary: returns all supervisors except the user itself if MANAGER
- *      nickname: getSupervisors
+ *      nickname: supervisorsExceptID
  *      consumes:
  *        - application/json
  *
  */
-router.get( '/supervisors/:_id', managerTokenValidation, function ( req, res ) {  // lEO WORKING HERE
+router.get( '/supervisorsExceptID/:_id', managerTokenValidation, function ( req, res ) {  // lEO WAS HERE
     var _id = req.params;
-    masterCollectionService.getSupervisors( _id, function ( data ) {
+    masterCollectionService.getSupervisorsExceptID( _id, function ( data ) {
         globalMethods.successResponse( res, data );
     }, function ( err ) {
         globalMethods.errorResponse( res, err );
+    });
+});
+
+/**
+ * @swagger
+ * path: /mcollections/allSupervisors
+ * operations:
+ *   -  httpMethod: GET
+ *      summary: returns all supervisors
+ *      nickname: allSupervisors
+ *      consumes:
+ *        - application/json
+ *
+ */
+router.get( '/allSupervisors', managerTokenValidation, function ( req, res ) {  // lEO WAS HERE
+    masterCollectionService.getAllSupervisors( function ( data ) {
+        globalMethods.successResponse( res, data );
+    }, function ( err ) {
+        globalMethods.errorResponse( res, err );
+    });
+});
+
+/**
+ * @swagger
+ * path: /mcollections/defaultPassword
+ * operations:
+ *   -  httpMethod: GET
+ *      summary: returns the default password from constants object
+ *      nickname: defaultPassword
+ *      consumes:
+ *        - application/json
+ *
+ */
+router.get( '/defaultPassword', managerTokenValidation, function ( req, res ) {  // lEO WAS HERE
+    masterCollectionService.getDefaultPassword( function ( data ) {
+        globalMethods.successResponse( res, data );
     });
 });
 

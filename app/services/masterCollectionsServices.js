@@ -26,14 +26,30 @@ function getEnterprisesCollection( onSuccess, onError ) { // lEO WAS HERE
 }
 
 // returns all supervisors except the user itself if MANAGER (supervisor)
-function getSupervisors( _id, onSuccess, onError ) { // lEO WORKING HERE
+function getSupervisorsExceptID( _id, onSuccess, onError ) { // lEO WORKING HERE    
     models.User.find( {"_id" : { $ne:_id }, "roles" : "ROLE_MANAGER", "enabled" : true }, function ( err, results ) {
         if ( err ) {
-            onError( { success: false, code: 500, msg: 'Error getting Enterprises collection.' } );
+            onError( { success: false, code: 500, msg: 'Error getting Supervisors.' } );
         } else {
-            onSuccess( { success: true, code: 200, msg: 'Enterprises collection.', results: results } );                    
+            onSuccess( { success: true, code: 200, msg: 'Supervisors collection.', results: results } );                    
         }
     })
+}
+
+// returns all supervisors
+function getAllSupervisors( onSuccess, onError ) { // lEO WORKING HERE    
+    models.User.find( { "roles" : "ROLE_MANAGER", "enabled" : true }, function ( err, results ) {
+        if ( err ) {
+            onError( { success: false, code: 500, msg: 'Error getting Supervisors.' } );
+        } else {
+            onSuccess( { success: true, code: 200, msg: 'Supervisors collection.', results: results } );                    
+        }
+    })
+}
+
+// returns the default password from constants object
+function getDefaultPassword( callback ) { // lEO WAS HERE
+    callback( { success: true, code: 200, msg: 'Default password.', defaultPassword: constants.defaultPassword } );
 }
 
 function getProductsCollection(onSuccess) {
@@ -61,7 +77,9 @@ function getZonesCollection(onSuccess) {
 module.exports = {
     getCecoCollection: getCecoCollection,
     getEnterprisesCollection: getEnterprisesCollection,
-    getSupervisors: getSupervisors,
+    getSupervisorsExceptID: getSupervisorsExceptID,
+    getAllSupervisors: getAllSupervisors,
+    getDefaultPassword: getDefaultPassword,
     getProductsCollection: getProductsCollection,
     getZonesCollection: getZonesCollection
 };

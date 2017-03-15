@@ -79,7 +79,19 @@ function verifyUuid( uuidEmail, uuidUser ) { // LEO WAS HERE
 
 // GENERATE RANDOM PASSWORD
     function generateRandomPassword() { // LEO WAS HERE
-        return Math.random().toString( 36 ).slice( -6 );    
+        var charLength = 5,
+        numLength      = 2,
+        charSet        = 'abcdefghijkmnopqrstuvwxyzABCDEFGHIJKLMNPQRSTUVWXYZ',
+        numSet         = '0123456789',
+        charRetVal     = '',
+        numRetVal      = '';
+        for ( var i = 0, n = charSet.length; i < charLength; ++i ) {
+            charRetVal += charSet.charAt( Math.floor( Math.random() * n ) );
+        };
+        for ( var i = 0, n = numSet.length; i < numLength; ++i ) {
+            numRetVal += numSet.charAt( Math.floor( Math.random() * n ) );
+        };
+        return charRetVal + numRetVal;
     };
 
 module.exports = {

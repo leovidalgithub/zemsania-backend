@@ -18,15 +18,15 @@ module.exports = function(mongoose) {
         createdAt: { type: Date, default: Date.now }
     }, { collection: 'absences' });
 
-    var CalendarSchema = new Schema({
-        name: { type: String, trim: true, index: true },
-        bankHoliDays: [Date],
-        nonWorkingDays: [Date],
-        intensiveDays: [Date],
-        specialDays: [Date],
-        enabled: { type: Boolean, index: true, default: true },
-        createdAt: { type: Date, default: Date.now }
-    }, { collection: 'calendars' });
+    // var CalendarSchema = new Schema({
+    //     name: { type: String, trim: true, index: true },
+    //     bankHoliDays: [Date],
+    //     nonWorkingDays: [Date],
+    //     intensiveDays: [Date],
+    //     specialDays: [Date],
+    //     enabled: { type: Boolean, index: true, default: true },
+    //     createdAt: { type: Date, default: Date.now }
+    // }, { collection: 'calendars' });
 
     var CalendarUserSchema = new Schema({
         calendarId: { type: Schema.Types.ObjectId, ref: 'Calendar', index: true },
@@ -129,10 +129,8 @@ module.exports = function(mongoose) {
         nif :              { type : String, trim : true, index : true },
         enabled :          { type : Boolean, index : true, default : true },
         defaultPassword :  { type : Boolean, index : true, default : true },
-        createdAt :        { type : Date, default : Date.now },
         activationDate :   { type : Date, default : Date.now },
         lastLoginDate :    { type : Date, default : Date.now },
-        lastModifiedDate : { type : Date, default : Date.now },
         birthdate :        { type : Date },
         locale :           { type : String, trim : true, default : 'es' },
         sex :              { type : String, trim : true },
@@ -145,7 +143,7 @@ module.exports = function(mongoose) {
         workloadScheme :   { type : Schema.Types.ObjectId, ref : 'WorkloadScheme' },
         superior :         { type : Schema.Types.ObjectId, ref : 'User' },
         company :          { type : Schema.Types.ObjectId, ref : 'Enterprises' }
-    }, { collection: 'users' });
+    }, { collection: 'users', timestamps: { createdAt: 'created_at' } });
 
     var CecoSchema = new Schema({
         cecoName: { type: String, index: true },
@@ -223,9 +221,38 @@ module.exports = function(mongoose) {
         default: { type: Boolean }
     }, { collection: 'workload_schemes' });
 
+//****************************************************************************************
+// testing timestamps - createdAt and updatedAt
+    // var thingSchema = new Schema({
+    //     productName: { type: String, index: true }
+    // }, { timestamps: { createdAt: 'created_at' } });
+//****************************************************************************************
+// CALENDARS WORKING
+    var hours = {   
+                    initialHour : { type : String, required: true },
+                    endHour     : { type : String, required: true }
+                };
+    var groupDays = {
+                        type : { type  : String, index: true, required: true },
+                        days : { days  : [ { type : Date } ],
+                                 hours :  [ hours ]                                            
+                               }
+                    };
+
+    var CalendarSchema = new Schema({
+        isLocal       : { type   : Boolean, required: true },
+        inheritedFrom : { type   : Schema.Types.ObjectId, ref: 'Calendar' },
+        name          : { type   : String, trim : true, index : true, required: true },
+        groupDays     : [ groupDays ],
+        enabled       : { type   : Boolean, default: true }
+    }, { collection   : 'calendar', timestamps: { createdAt: 'created_at' } });
+
     var models = {
+        Calendar  : mongoose.model( 'Calendar' , CalendarSchema ),
+
+        // Thing: mongoose.model('Thing', thingSchema),
         Absence: mongoose.model('Absence', AbsenceSchema),
-        Calendar: mongoose.model('Calendar', CalendarSchema),
+        // Calendar: mongoose.model('Calendar', CalendarSchema),
         CalendarUser: mongoose.model('CalendarUser', CalendarUserSchema),
         ConceptDaily: mongoose.model('ConceptDaily', ConceptDailySchema),
         ConceptSpent: mongoose.model('ConceptSpent', ConceptSpentSchema),
@@ -241,7 +268,6 @@ module.exports = function(mongoose) {
         HolidayScheme: mongoose.model('HolidayScheme', HolidaySchemeSchema),
         HolidaySchemeEntry: mongoose.model('HolidaySchemeEntry', HolidaySchemeEntrySchema),
         WorkloadScheme: mongoose.model('WorkloadScheme', WorkloadSchemeSchema),
-
         Ceco: mongoose.model('Ceco', CecoSchema),
         Enterprises: mongoose.model('Enterprises', EnterprisesSchema),
         Products: mongoose.model('Products', ProductsSchema),

@@ -134,3 +134,108 @@ app.use( '/verify', require( './controllers/verifyController' ));
 app.listen( 3000, function () {
     console.log( 'Node server running on port 3000 from process: ' + process.pid );
 });
+
+app.get( '/mongo', function( req, res, next ) {
+
+        // var thing = new models.Thing( {
+        //     productName    : 'productName'
+        // });
+        // thing.save();
+
+    // var calendar = new models.Calendar ({
+    //     isLocal       : true,
+    //     name          : 'Calendario de La Coruña',
+    //     groupDays     : [   {
+    //                             type    : 'holidays',
+    //                             days    : { days  : [ new Date('01/17/2014'), new Date('06/28/2014'), new Date('02/27/2014'), new Date('04/11/2014') ],
+    //                                         hours : [ 
+    //                                                     {   
+    //                                                         initialHour : '0800',
+    //                                                         endHour     : '1230'
+    //                                                     },
+    //                                                     { 
+    //                                                         initialHour : '0230',
+    //                                                         endHour     : '1800'
+    //                                                     }
+    //                                                 ]                                            
+    //                                       },
+    //                                 },
+    //                                 {
+    //                             type    : 'working',
+    //                             days    : { days  : [ new Date('03/09/2014'), new Date('05/21/2014'), new Date('04/13/2014') ],
+    //                                         hours : [ 
+    //                                                     {   
+    //                                                         initialHour : '0800',
+    //                                                         endHour     : '1230'
+    //                                                     },
+    //                                                     { 
+    //                                                         initialHour : '0230',
+    //                                                         endHour     : '1800'
+    //                                                     }
+    //                                                 ]                                            
+    //                                       }
+    //                                 },
+    //                                 {
+    //                             type    : 'intensive',
+    //                             days    : { days  : [ new Date('03/31/2014'), new Date('03/30/2014'), new Date('06/18/2014') ],
+    //                                         hours : [ 
+    //                                                     {   
+    //                                                         initialHour : '0800',
+    //                                                         endHour     : '1730'
+    //                                                     }
+    //                                                 ]                                            
+    //                                       }
+    //                                 }
+    //                      ],
+    //     enabled       : true
+    // });
+    // calendar.save();
+    // res.send('GET /mongo here');
+
+    mongoose     = require( 'mongoose' );
+    ObjectId     = require( 'mongoose' ).Types.ObjectId;
+    models.Calendar.findOne( { _id: new ObjectId( '58cfbd83e8e8440b84c185e1' ) }, function(err,doc){
+        res.send(doc);
+    });
+
+
+    // mongoose     = require( 'mongoose' );
+    // ObjectId     = require( 'mongoose' ).Types.ObjectId;
+    // models.Thing.findOne( { _id: new ObjectId( '58ca448a950fba0e9c492a2a' ) }, function(err,doc){
+    //     doc.productName = 'newProductName';
+    //     doc.save();
+    // });
+
+    // db.collection('Thing').aggregate([
+    //   {$project: {
+    //       duration: {$divide: [{$subtract: ["$updatedAt", "$created_at"]}, 3600000]}
+    //   }}
+    // ], function(err,doc){
+    //     console.log(err);
+    // });
+
+    // models.Thing.find({}, function(err,docs) {
+    //     res.send(docs);            
+    // });
+
+    // res.send('/mongo');
+});
+
+
+
+
+
+        // groupDays     : [ {
+        //                         type    : 'holidays',
+        //                         days    : [ new Date('01/17/2014'), new Date('06/28/2014')  ],
+        //                         hours   : [ { 
+        //                                         initialHour : '0800',
+        //                                         endHour     : '1230'
+        //                                   },
+        //                                   { 
+        //                                         initialHour : '0230',
+        //                                         endHour     : '1800'
+        //                                   }
+        //                                    ]
+        //                 } ],
+

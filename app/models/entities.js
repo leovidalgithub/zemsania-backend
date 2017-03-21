@@ -235,7 +235,7 @@ module.exports = function(mongoose) {
     var groupDays = {
                         type : { type  : String, index: true, required: true },
                         days : { days  : [ { type : Date } ],
-                                 hours :  [ hours ]                                            
+                                 hours : [ hours ]                                            
                                }
                     };
 

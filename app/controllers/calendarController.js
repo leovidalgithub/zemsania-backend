@@ -31,7 +31,7 @@ router.get( '/getCalendars', managerTokenValidation, function ( req, res ) {
  * path: /calendar/getCalendarById
  * operations:
  *   -  httpMethod: GET
- *      summary: Return a calendar by its ID
+ *      summary: Return a calendar by its ID / range of hours and total of hours by type
  *      notes: Requiere token de autenticación manager (x-auth-token).
  *      nickname: calendarByID
  *      consumes:

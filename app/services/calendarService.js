@@ -1,8 +1,8 @@
 'use strict';
 // var async = require('async');
-var mongoose = require('mongoose');
-var moment = require('moment');
-var ObjectId = require('mongoose').Types.ObjectId;
+var mongoose = require( 'mongoose' );
+var ObjectId = require( 'mongoose' ).Types.ObjectId;
+var moment   = require( 'moment' );
 // var holidaysService = require('../services/holidaysService');
 
 /*
@@ -20,18 +20,100 @@ function getAllCalendars( onSuccess, onError ) {
 }
 
 /*
- * Returns calendar by its ID
+ * Returns calendar by its ID / range of hours and total of hours by type
  */
 function getCalendarById( calendarID, onSuccess, onError ) {
     models.Calendar.findOne( {_id: new ObjectId( calendarID ) }, function ( err, calendar ) {
         if ( err ) {
             onError( { success: false, code: 500, msg: 'Error getting Calendar.' } );
         } else {
-            onSuccess( { success: true, code: 200, msg: 'Calendar', calendar: calendar } );
+            var eventHours = getHours( calendar );
+            onSuccess( { success: true, code: 200, msg: 'Calendar', calendar: calendar, eventHours : eventHours } );
         }
     });
 }
 
+function getHours( calendar ) {
+        var eventDates = {};
+        var eventHours = {};
+        var totalPerType = {};
+        eventHours[ 'holidays'    ] = [];
+        eventHours[ 'working'     ] = [];
+        eventHours[ 'friday'      ] = [];
+        eventHours[ 'non_working' ] = [];
+        eventHours[ 'intensive'   ] = [];
+        eventHours[ 'special'     ] = [];
+        eventHours[ 'totalPerType'   ] = {};
+        eventHours[ 'eventDates'  ] = {};
+
+        calendar.groupDays.forEach( function( element ) {
+            element.days.hours.forEach( function( hours ) {
+                eventHours[ element.type ].push( { initialHour : hours.initialHour, endHour : hours.endHour } );
+            });
+            element.days.days.forEach( function( day ) {
+                eventDates[ new Date( day ) ] = { date : new Date( day ), type : element.type };
+            });
+        });
+
+        for( var key in eventHours ) {
+            if( eventHours[ key ].length ) {
+                var accumMilliseconds = 0;
+                eventHours[ key ].forEach( function( element ) {
+                    var start  = moment.utc( element.initialHour, "HH:mm" );
+                    var end    = moment.utc( element.endHour, "HH:mm" );
+                    var differ = moment.duration( end.diff( start ) );
+                    accumMilliseconds = accumMilliseconds + differ;
+                });
+
+                var tempTime = moment.duration( accumMilliseconds );
+                totalPerType[ key ] = { milliseconds: accumMilliseconds, hours : Math.floor( tempTime.asHours() ), minutes : tempTime.minutes() };
+            }
+        }
+
+        eventHours[ 'totalPerType'  ] = totalPerType;
+        eventHours[ 'eventDates' ] = eventDates;
+
+        // calculating all hours and minutes from all years month by month
+        eventHours.totalPerYear = {};
+        var years = getYearsArray( eventDates ); // array of all years inside calendar
+        for( var i = 0; i < years.length; i++ ) { // 2017
+
+            var currentYear = years[i];
+            eventHours.totalPerYear[ currentYear ] = {};
+
+            var accumMonth = 0;            
+            for ( var currentMonth = 0; currentMonth < 12; currentMonth++ ) { // january
+                for ( var date in eventDates ) { // all dates
+                    var thisDate = new Date( date );
+                    if ( thisDate.getFullYear() == currentYear && thisDate.getMonth() == currentMonth ) {
+                        var type = eventDates[ date ].type;
+                        if ( eventHours.totalPerType[ type ] ) { // no holidays nor non_working
+                            accumMonth = accumMonth + eventHours.totalPerType[ type ].milliseconds;
+                        }
+                    }                
+                } // all dates
+
+            var tempTime = moment.duration( accumMonth );
+            var hours = Math.floor( tempTime.asHours() );
+            var minutes = tempTime.minutes();
+            eventHours.totalPerYear[ currentYear ][ currentMonth ] = { hours : hours, minutes : minutes };
+            accumMonth = 0;
+            } // currentMonth
+        } // year
+
+    return eventHours;
+}
+
+function getYearsArray( eventDates ) {
+        var years = []; // array of all years inside calendar
+        for( var key in eventDates ) {
+            var year = new Date( key ).getFullYear();
+            if ( years.indexOf( year ) == -1 ) {
+                years.push( year );
+            }
+        }
+        return years;
+}
 // /*
 //  * Saca todos los calendarios
 //  */

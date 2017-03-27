@@ -3,7 +3,7 @@ var EmailTemplate = require( 'email-templates' ).EmailTemplate;
 var path          = require( 'path' );
 var nodemailer    = require( 'nodemailer' );
 
-// mailer.zemsania@gmail.com
+// mailer.zemzania@gmail.com
 // pass: Zemsania_99
 
 // user: 'devxcdn@gmail.com',

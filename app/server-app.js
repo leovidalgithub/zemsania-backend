@@ -19,21 +19,19 @@ var environment     = process.env.NODE_ENV || 'dev',
     constants       = require( './config/constants' ),
     i18n            = require( './config/i18n' ),
     globalFunctions = require( './global/globalFunctions' ),
-    gridSchema      = new mongoose.Schema( {}, {strict: false} ),
-    fileGrid        = mongoose.model( 'Grid', gridSchema, 'docs.files' );
-
-//Carga de los modelos:
-var models    = require( './models/entities' )(mongoose); // get our mongoose model
-global.models = models;
+    gridSchema      = new mongoose.Schema( {}, { strict: false } ),
+    fileGrid        = mongoose.model( 'Grid', gridSchema, 'docs.files' ),
+    models          = require( './models/entities' )( mongoose ); // mongoose models
 
 //Configuracion global de la app
+global.models        = models;
 global.config        = config;
 global.constants     = constants;
 global.i18n          = i18n;
 global.globalMethods = globalFunctions;
 
 //Variables globales
-global.db                        = mongoskin.db( config.database, {safe: true} );
+global.db                        = mongoskin.db( config.database, { safe: true } );
 global.userTokenValidation       = securityService.userTokenValidation;
 global.backofficeTokenValidation = securityService.backofficeTokenValidation;
 global.managerTokenValidation    = securityService.managerTokenValidation;
@@ -49,7 +47,7 @@ var gfs    = Grid( conn.db );
 global.gfs = gfs;
 
 // Middlewares
-app.use( bodyParser.urlencoded( {extended: false} ) );
+app.use( bodyParser.urlencoded( { extended: false } ) );
 app.use( bodyParser.json() );
 app.use( expressValidator() );
 app.use( methodOverride() );
@@ -57,7 +55,7 @@ app.use( cors() );
 
 //configuracion upload de ficheros
 app.use( '/uploads', express.static( __dirname + '/uploads' ) );
-app.use( multer( {dest: './uploads/'} ) )
+app.use( multer( { dest: './uploads/' } ) )
 
 //configuracion swagger
 // app.use(swagger.init(app, {
@@ -103,14 +101,17 @@ app.use( multer( {dest: './uploads/'} ) )
 //     });
 // });
 
+app.use( '/authn'        , require( './controllers/authController' ));
+app.use( '/calendar'     , require( './controllers/calendarController' ));
+app.use( '/notifications', require( './controllers/notificationsController' ));
+app.use( '/mcollections' , require( './controllers/masterCollectionsController' ));
+app.use( '/user'         , require( './controllers/userController' ));
+app.use( '/verify'       , require( './controllers/verifyController' ));
 // app.use('/absences', require('./controllers/absencesController'));
-app.use( '/authn', require( './controllers/authController' ));
-app.use( '/calendar', require( './controllers/calendarController' ));
 // app.use('/config', require('./controllers/configController'));
 // app.use('/dailyReport', require('./controllers/dailyReportController'));
 // app.use('/holidays', require('./controllers/holidaysController'));
 // app.use('/files', require('./controllers/filesApi'));
-app.use( '/notifications', require( './controllers/notificationsController' ));
 // app.use('/project', require('./controllers/projectController'));
 // app.use('/projectUsers', require('./controllers/projectUsersController'));
 // app.use('/spents', require('./controllers/spentsController'));
@@ -118,9 +119,6 @@ app.use( '/notifications', require( './controllers/notificationsController' ));
 // app.use('/holidaySchemes', userTokenValidation, require('./controllers/holidaySchemesController'));
 // app.use('/workloadSchemes', userTokenValidation, require('./controllers/workloadSchemesController'))
 
-app.use( '/mcollections', require('./controllers/masterCollectionsController' ));
-app.use( '/user',   require( './controllers/userController' ));
-app.use( '/verify', require( './controllers/verifyController' ));
 // app.use('/test', require('./controllers/testController'));
 
 // ---------------------------------------------------------
@@ -132,10 +130,33 @@ app.use( '/verify', require( './controllers/verifyController' ));
 
 // Start server
 app.listen( 3000, function () {
-    console.log( 'Node server running on port 3000 from process: ' + process.pid );
+    console.log( 'Zemtime server running on port 3000 from process: ' + process.pid );
 });
 
-app.get( '/mongo', function( req, res, next ) {
+
+// *************************************************************** ***************************************************************
+// ACCESS COLLECTION THROUGHT mongoose.connection OBJECT
+// var connection = mongoose.connection;
+// connection.db.collection("projects", function(err, collection){
+//         collection.find({}).toArray(function(err, data){
+//             console.log(data); // it will print your collection data
+//         })
+// });
+
+// app.get( '/mongo', function( req, res, next ) {
+
+// ****************************************
+    // var test = new models.Test ({
+    //     isLocal : false,
+    //     name : 'Leo',
+    //     enabled : false
+    // });
+    // test.save( function(err,data) {
+    //     console.log('saved!');
+    //     res.send(data);        
+    // });
+// ****************************************
+
 
     // var calendar = new models.Calendar ({
     //     isLocal       : true,
@@ -635,25 +656,4 @@ app.get( '/mongo', function( req, res, next ) {
     //     doc.save();
     //     res.send( doc.groupDays );
     // });
-
-
-});
-
-
-
-
-
-        // groupDays     : [ {
-        //                         type    : 'holidays',
-        //                         days    : [ new Date('01/17/2014'), new Date('06/28/2014')  ],
-        //                         hours   : [ { 
-        //                                         initialHour : '0800',
-        //                                         endHour     : '1230'
-        //                                   },
-        //                                   { 
-        //                                         initialHour : '0230',
-        //                                         endHour     : '1800'
-        //                                   }
-        //                                    ]
-        //                 } ],
-
+// });

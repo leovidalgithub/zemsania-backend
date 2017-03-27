@@ -1,11 +1,11 @@
 /**
  * @swagger
  * resourcePath: /calendar
- * description: Utilidades para la gestión de calendarios
+ * description: Calendar utilities
  */
-var express = require('express');
-var router = express.Router();
-var calendarService = require('../services/calendarService');
+var express         = require( 'express' ),
+    router          = express.Router(),
+    calendarService = require( '../services/calendarService' );
 
 /**
  * @swagger
@@ -13,7 +13,7 @@ var calendarService = require('../services/calendarService');
  * operations:
  *   -  httpMethod: GET
  *      summary: Return all calendars
- *      notes: Requiere token de autenticación manager (x-auth-token).
+ *      notes: Requiere token de autenticación manager (x-auth-token)
  *      nickname: AllCalendars
  *      consumes:
  *        - application/json
@@ -32,7 +32,7 @@ router.get( '/getCalendars', managerTokenValidation, function ( req, res ) {
  * operations:
  *   -  httpMethod: GET
  *      summary: Return a calendar by its ID / range of hours and total of hours by type
- *      notes: Requiere token de autenticación manager (x-auth-token).
+ *      notes: Requiere token de autenticación manager (x-auth-token)
  *      nickname: calendarByID
  *      consumes:
  *        - application/json
@@ -51,7 +51,7 @@ router.get( '/getCalendarById/:id', managerTokenValidation, function ( req, res 
 //  * operations:
 //  *   -  httpMethod: GET
 //  *      summary: Devuelve todos los calendarios
-//  *      notes: Requiere token de autenticación manager (x-auth-token).
+//  *      notes: Requiere token de autenticación manager (x-auth-token)
 //  *      nickname: calendar
 //  *      consumes:
 //  *        - application/json
@@ -71,7 +71,7 @@ router.get( '/getCalendarById/:id', managerTokenValidation, function ( req, res 
 //  * operations:
 //  *   -  httpMethod: POST
 //  *      summary: Devuelve los datos del calendario pasado por parametros
-//  *      notes: Requiere token de autenticación manager (x-auth-token).
+//  *      notes: Requiere token de autenticación manager (x-auth-token)
 //  *      nickname: calendar
 //  *      consumes:
 //  *        - application/json
@@ -104,7 +104,7 @@ router.get( '/getCalendarById/:id', managerTokenValidation, function ( req, res 
 //  * operations:
 //  *   -  httpMethod: POST
 //  *      summary: Inserta un nuevo calendario
-//  *      notes: Requiere token de autenticación manager (x-auth-token).
+//  *      notes: Requiere token de autenticación manager (x-auth-token)
 //  *      nickname: calendar
 //  *      consumes:
 //  *        - application/json
@@ -136,7 +136,7 @@ router.get( '/getCalendarById/:id', managerTokenValidation, function ( req, res 
 //  * operations:
 //  *   -  httpMethod: PUT
 //  *      summary: Actualiza un calendario
-//  *      notes: Requiere token de autenticación manager (x-auth-token).
+//  *      notes: Requiere token de autenticación manager (x-auth-token)
 //  *      nickname: calendar
 //  *      consumes:
 //  *        - application/json
@@ -169,7 +169,7 @@ router.get( '/getCalendarById/:id', managerTokenValidation, function ( req, res 
 //  * operations:
 //  *   -  httpMethod: DELETE
 //  *      summary: Elimina un calendario
-//  *      notes: Requiere token de autenticación manager (x-auth-token).
+//  *      notes: Requiere token de autenticación manager (x-auth-token)
 //  *      nickname: calendar
 //  *      consumes:
 //  *        - application/json
@@ -198,7 +198,7 @@ router.get( '/getCalendarById/:id', managerTokenValidation, function ( req, res 
 //  * operations:
 //  *   -  httpMethod: GET
 //  *      summary: Devuelve el calendario del usuario
-//  *      notes: Requiere token de autenticación (x-auth-token).
+//  *      notes: Requiere token de autenticación (x-auth-token)
 //  *      nickname: calendar
 //  *      consumes:
 //  *        - application/json
@@ -219,7 +219,7 @@ router.get( '/getCalendarById/:id', managerTokenValidation, function ( req, res 
 //  * operations:
 //  *   -  httpMethod: GET
 //  *      summary: Devuelve el calendario del usuario pasado por path
-//  *      notes: Requiere token de autenticación manager (x-auth-token).
+//  *      notes: Requiere token de autenticación manager (x-auth-token)
 //  *      nickname: calendar
 //  *      consumes:
 //  *        - application/json
@@ -249,7 +249,7 @@ router.get( '/getCalendarById/:id', managerTokenValidation, function ( req, res 
 //  * operations:
 //  *   -  httpMethod: POST
 //  *      summary: Asigna el calendario un usuario
-//  *      notes: Requiere token de autenticación manager (x-auth-token).
+//  *      notes: Requiere token de autenticación manager (x-auth-token)
 //  *      nickname: calendar
 //  *      consumes:
 //  *        - application/json
@@ -282,7 +282,7 @@ router.get( '/getCalendarById/:id', managerTokenValidation, function ( req, res 
 //  * operations:
 //  *   -  httpMethod: PUT
 //  *      summary: Actualiza el calendario de un usuario
-//  *      notes: Requiere token de autenticación manager (x-auth-token).
+//  *      notes: Requiere token de autenticación manager (x-auth-token)
 //  *      nickname: calendar
 //  *      consumes:
 //  *        - application/json
@@ -316,7 +316,7 @@ router.get( '/getCalendarById/:id', managerTokenValidation, function ( req, res 
 //  * operations:
 //  *   -  httpMethod: DELETE
 //  *      summary: Elimina un calendario
-//  *      notes: Requiere token de autenticación manager (x-auth-token).
+//  *      notes: Requiere token de autenticación manager (x-auth-token)
 //  *      nickname: calendar
 //  *      consumes:
 //  *        - application/json

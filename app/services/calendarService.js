@@ -1,13 +1,11 @@
 'use strict';
 // var async = require('async');
+// var holidaysService = require('../services/holidaysService');
 var mongoose = require( 'mongoose' );
 var ObjectId = require( 'mongoose' ).Types.ObjectId;
 var moment   = require( 'moment' );
-// var holidaysService = require('../services/holidaysService');
 
-/*
- * Returns all availables calendars
- */
+// RETURNS ALL AVAILABLES CALENDARS
 function getAllCalendars( onSuccess, onError ) {
     models.Calendar.find( {}, 
         function ( err, calendars ) {
@@ -19,32 +17,30 @@ function getAllCalendars( onSuccess, onError ) {
     });
 }
 
-/*
- * Returns calendar by its ID / range of hours and total of hours by type
- */
+// RETURNS CALENDAR BY ITS ID / RANGE OF HOURS BY TYPE / TOTAL OF HOURS BY TYPE
 function getCalendarById( calendarID, onSuccess, onError ) {
-    models.Calendar.findOne( {_id: new ObjectId( calendarID ) }, function ( err, calendar ) {
+    models.Calendar.findOne( { _id: new ObjectId( calendarID ) }, function ( err, calendar ) {
         if ( err ) {
             onError( { success: false, code: 500, msg: 'Error getting Calendar.' } );
         } else {
             var eventHours = getHours( calendar );
-            onSuccess( { success: true, code: 200, msg: 'Calendar', calendar: calendar, eventHours : eventHours } );
+            onSuccess( { success: true, code: 200, msg: 'Calendar', calendar: calendar, eventHours : eventHours } );                
         }
     });
 }
 
 function getHours( calendar ) {
-        var eventDates = {};
-        var eventHours = {};
+        var eventDates   = {};
+        var eventHours   = {};
         var totalPerType = {};
-        eventHours[ 'holidays'    ] = [];
-        eventHours[ 'working'     ] = [];
-        eventHours[ 'friday'      ] = [];
-        eventHours[ 'non_working' ] = [];
-        eventHours[ 'intensive'   ] = [];
-        eventHours[ 'special'     ] = [];
-        eventHours[ 'totalPerType'   ] = {};
-        eventHours[ 'eventDates'  ] = {};
+        eventHours[ 'holidays'     ] = [];
+        eventHours[ 'working'      ] = [];
+        eventHours[ 'friday'       ] = [];
+        eventHours[ 'non_working'  ] = [];
+        eventHours[ 'intensive'    ] = [];
+        eventHours[ 'special'      ] = [];
+        eventHours[ 'totalPerType' ] = {};
+        eventHours[ 'eventDates'   ] = {};
 
         calendar.groupDays.forEach( function( element ) {
             element.days.hours.forEach( function( hours ) {
@@ -62,7 +58,7 @@ function getHours( calendar ) {
                     var start  = moment.utc( element.initialHour, "HH:mm" );
                     var end    = moment.utc( element.endHour, "HH:mm" );
                     var differ = moment.duration( end.diff( start ) );
-                    accumMilliseconds = accumMilliseconds + differ;
+                    accumMilliseconds += differ;
                 });
 
                 var tempTime = moment.duration( accumMilliseconds );
@@ -71,26 +67,24 @@ function getHours( calendar ) {
         }
 
         eventHours[ 'totalPerType'  ] = totalPerType;
-        eventHours[ 'eventDates' ] = eventDates;
+        eventHours[ 'eventDates'    ] = eventDates;
 
         // calculating all hours and minutes from all years month by month
         eventHours.totalPerYear = {};
         var years = getYearsArray( eventDates ); // array of all years inside calendar
         for( var i = 0; i < years.length; i++ ) { // 2017
-
             var currentYear = years[i];
             eventHours.totalPerYear[ currentYear ] = {};
-
-            var accumMonth = 0;            
-            for ( var currentMonth = 0; currentMonth < 12; currentMonth++ ) { // january
+            var accumMonth = 0;
+            for ( var currentMonth = 0; currentMonth < 12; currentMonth++ ) { // currentMonth
                 for ( var date in eventDates ) { // all dates
                     var thisDate = new Date( date );
                     if ( thisDate.getFullYear() == currentYear && thisDate.getMonth() == currentMonth ) {
                         var type = eventDates[ date ].type;
                         if ( eventHours.totalPerType[ type ] ) { // no holidays nor non_working
-                            accumMonth = accumMonth + eventHours.totalPerType[ type ].milliseconds;
+                            accumMonth += eventHours.totalPerType[ type ].milliseconds;
                         }
-                    }                
+                    }
                 } // all dates
 
             var tempTime = moment.duration( accumMonth );
@@ -114,6 +108,10 @@ function getYearsArray( eventDates ) {
         }
         return years;
 }
+
+
+// *******************************************************************************************************************
+// *******************************************************************************************************************
 // /*
 //  * Saca todos los calendarios
 //  */

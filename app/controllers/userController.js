@@ -246,7 +246,7 @@ router.get( '/profile/:emailToVerify', userTokenValidation, function ( req, res 
  *          paramType: body
  *          dataType: SearchUserProfile
  */
-router.post( '/search', managerTokenValidation, function ( req, res ) { // LEO WORKING HERE
+router.post( '/search', managerTokenValidation, function ( req, res ) { // LEO WAS HERE
     userService.searchUsers( req.body, function ( data ) {
         globalMethods.successResponse( res, data );
     }, function ( err ) {
@@ -254,8 +254,8 @@ router.post( '/search', managerTokenValidation, function ( req, res ) { // LEO W
     });
 });
 
-// GET USER PROFILE FOR MANAGER-EMPLOYEE-EDIT WITH COMPANY-ENTERPRISE POPULATED 
-router.post( '/newSearch', managerTokenValidation, function ( req, res ) { // LEO WORKING HERE
+// GET USER PROFILE FOR MANAGER-EMPLOYEE-EDIT WITH COMPANY-ENTERPRISE POPULATED
+router.post( '/newSearch', managerTokenValidation, function ( req, res ) { // LEO WAS HERE
     userService.newSearchUsers( req.body, function ( data ) {
         globalMethods.successResponse( res, data );
     }, function ( err ) {

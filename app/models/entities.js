@@ -8,18 +8,24 @@ var constants  = require( '../config/constants' );
 module.exports = function( mongoose ) {
 
     // CALENDARS
-    var hours = {   
+    var hours = {
                     initialHour : { type : String, required: true },
                     endHour     : { type : String, required: true }
                 };
+
     var groupDays = {
                         type : { type  : String, index: true, required: true },
                         days : { days  : [ { type : Date } ],
-                                 hours : [ hours ]                                            
+                                 hours : [ hours ]
                                }
                     };
 
-        var UserSchema = new Schema( {
+    var years = {
+                    year :  { type : Number, trim : true },
+                    groupDays : [ groupDays ]
+                };
+
+    var UserSchema = new Schema( {
         candidatoId :      { type : Number, trim : true },
         username :         { type : String, trim : true, index : true },
         password :         { type : String, trim : true },
@@ -38,8 +44,7 @@ module.exports = function( mongoose ) {
         roles :            { type : Array, default : ['ROLE_USER'] },
         zimbra_cosID :     { type : String, trim : true, index : true },
         zimbra_server :    { type : String, trim : true, index : true },
-        holidayScheme :    { type : Schema.Types.ObjectId, ref : 'HolidayScheme' },
-        workloadScheme :   { type : Schema.Types.ObjectId, ref : 'WorkloadScheme' },
+        calendarID :       { type : Schema.Types.ObjectId, ref : 'Calendar' },
         superior :         { type : Schema.Types.ObjectId, ref : 'User' },
         company :          { type : Schema.Types.ObjectId, ref : 'Enterprises' }
     }, { collection: 'users', timestamps: { createdAt: 'created_at' } });
@@ -52,12 +57,34 @@ module.exports = function( mongoose ) {
     }, { collection : 'enterprises', timestamps: { createdAt: 'created_at' } });
 
     var CalendarSchema = new Schema({
-        isLocal       : { type   : Boolean, required: true },
-        inheritedFrom : { type   : Schema.Types.ObjectId, ref: 'Calendar' },
-        name          : { type   : String, trim : true, index : true, required: true },
-        groupDays     : [ groupDays ],
+        isLocal       : { type : Boolean, required: true },
+        inheritedFrom : { type : Schema.Types.ObjectId, ref: 'Calendar' },
+        name          : { type : String, trim : true, index : true, required: true },
+        description   : { type : String, trim : true, index : false, required: false },
+        years         : [ years ],
         enabled       : { type   : Boolean, default: true }
     }, { collection   : 'calendar', timestamps: { createdAt: 'created_at' } });
+
+    // var TimesheetSchema = new mongoose.Schema({
+    //     employee: { type: ObjectId, ref: 'User', required: true },
+    //     project: { type: ObjectId, ref: 'Project', required: true },
+    //     container: { type: String, default: 'horas' },
+    //     type: { type: String, required: true },
+    //     status: { type: String, default: 'pending' },
+    //     date: { type: Date, required: true },
+    //     value: {},
+    //     comment: String,
+    //     requestedDate: { type: Date, default: new Date() },
+    //     processingDate: Date,
+    //     verifierReason: String,
+    //     company: String
+    // }, { collection: 'timesheets', timestamps: { createdAt: 'created_at' } });
+
+    // TimesheetSchema.pre('save', function(next) {
+    //     var timesheet = this;
+    //     if (!timesheet.requestedDate) timesheet.requestedDate = new Date();
+    //     next();
+    // });
 
     // var AbsenceSchema = new Schema({
     //     date: { type: Date, index: true },
@@ -190,27 +217,6 @@ module.exports = function( mongoose ) {
     //     createdAt: { type: Date, default: Date.now }
     // }, { collection: 'zonas' });
 
-    // var TimesheetSchema = new mongoose.Schema({
-    //     employee: { type: ObjectId, ref: 'User', required: true },
-    //     project: { type: ObjectId, ref: 'Project', required: true },
-    //     container: { type: String, default: 'horas' },
-    //     type: { type: String, required: true },
-    //     status: { type: String, default: 'pending' },
-    //     date: { type: Date, required: true },
-    //     value: {},
-    //     comment: String,
-    //     requestedDate: { type: Date, default: new Date() },
-    //     processingDate: Date,
-    //     verifierReason: String,
-    //     company: String
-    // }, { collection: 'timesheets' });
-
-    // TimesheetSchema.pre('save', function(next) {
-    //     var timesheet = this;
-    //     if (!timesheet.requestedDate) timesheet.requestedDate = new Date();
-    //     next();
-    // });
-
     // var HolidaySchemeSchema = new Schema({
     //     name: { type: String, required: true, index: { unique: true } },
     //     description: { type: String },
@@ -238,6 +244,15 @@ module.exports = function( mongoose ) {
     //     date: { type: Date, required: true },
     //     default: { type: Boolean }
     // }, { collection: 'workload_schemes' });
+
+// ***************************************** *****************************************
+    // var TestSchema = new Schema({
+    //     name: { type: String, required: true, index: true, lowercase: true },
+    //     // date: { type: FormatDate, format: 'YYYY-MM-DD', default: Date.now }
+    //     date: { type: Date, required: true, default: Date.now }
+    // }, { collection: 'test', timestamps: { createdAt: 'created_at' } });
+// ***************************************** *****************************************
+
 
     var models = {
         // Thing: mongoose.model('Thing', thingSchema),
@@ -267,3 +282,220 @@ module.exports = function( mongoose ) {
 
     return models;
 };
+
+// ***************************************** *****************************************
+// TIMESHEET DATA MODELING
+    // var ts_impute = {
+    //                 date   : { type : Date, required   : true },
+    //                 value  : { type : Number, required : true },
+    //                 status : { type : String, required : true }
+    //             };
+
+// function ts_impute( _date, _value, _status ) {
+//     this.date   = _date;
+//     this.value  = _value;
+//     this.status = _status;
+// }     
+    //  var group_ts_impute_subtype = {
+    //                 subtype: { type : String, required: true },
+    //                 ts_impute : [ ts_impute ]
+    //             };
+
+    // var group_ts_impute_type = {
+    //                  type: { type  : String, required: true },
+    //                  group_ts_impute_subtype : [ group_ts_impute_subtype ]
+    //  };
+
+    // var group_ts_impute_project = {
+    //                  idProject: { type  : id, required: true },
+    //                  group_ts_impute_type: [ group_ts_impute_type ]
+    //  };
+
+    //  var group_ts_impute_projects = [ group_ts_impute_project ]
+
+// ***************************************** *****************************************
+
+    // var TimesheetSchema = new mongoose.Schema( {
+    //     employee        : { type: ObjectId, ref: 'User', required: true },
+    //     project         : { type: ObjectId, ref: 'Project', required: true },
+    //     type            : { type: String, required: true },
+    //     subType         : { type: String, default: 'horas' },
+    //     status          : { type: String, default: 'pending' },
+    //     date            : { type: Date, required: true },
+    //     value           : { type: Number, trim: true },
+    //     comment         : { type: String },
+    //     requestedDate   : { type: Date, default: new Date() },
+    //     processingDate  : { type: Date, default: new Date() },
+    //     verifierReason  : { type : String },
+    //     company         : { type : String }
+    // }, { collection: 'timesheets', timestamps: { createdAt: 'created_at' } });
+
+
+
+// var obj = [
+// {
+//     employee : '58dd07eecbcb6303e41ef404',
+//     project : 'PRO-1',
+//     type : 'Horas',
+//     subType : "Hora",
+//     date : '12-mar-2016',
+//     value : 8,
+//     status : 'Draft'
+// },
+// {
+//     employee : '58dd07eecbcb6303e41ef404',
+//     project : 'PRO-2',
+//     type : 'Horas',
+//     subType : "Hora",
+//     date : '15-mar-2016',
+//     value : 6,
+//     status : 'Draft'
+// },
+// {
+//     employee : '58dd07eecbcb6303e41ef404',
+//     project : 'PRO-1',
+//     type : 'Horas',
+//     subType : "Hora",
+//     date : '21-mar-2016',
+//     value : 8,
+//     status : 'Draft'
+// },
+// {
+//     employee : '58dd07eecbcb6303e41ef404',
+//     project : 'PRO-2',
+//     type : 'Horas',
+//     subType : "Hora",
+//     date : '30-mar-2016',
+//     value : 5,
+//     status : 'Draft'
+// },
+// {
+//     employee : '58dd07eecbcb6303e41ef404',
+//     project : 'PRO-1',
+//     type : 'Horas',
+//     subType : "Hora",
+//     date : '04-jun-2016',
+//     value : 8,
+//     status : 'Draft'
+// },
+// {
+//     employee : '58dd07eecbcb6303e41ef404',
+//     project : 'PRO-2',
+//     type : 'Horas',
+//     subType : "Hora",
+//     date : '05-jun-2016',
+//     value : 8,
+//     status : 'Draft'
+// },
+// {
+//     employee : '58dd07eecbcb6303e41ef404',
+//     project : 'PRO-2',
+//     type : 'Horas',
+//     subType : "Hora",
+//     date : '17-jun-2016',
+//     value : 8,
+//     status : 'Draft'
+// },
+// {
+//     employee : '58dd07eecbcb6303e41ef404',
+//     project : 'PRO-2',
+//     type : 'Horas',
+//     subType : "Hora",
+//     date : '22-jun-2016',
+//     value : 7,
+//     status : 'Draft'
+// },
+
+
+// //*******
+// {
+//     employee : '58dd07eecbcb6303e41ef404',
+//     project : 'PRO-2',
+//     type : 'Guardias',
+//     subType : "Turnicidad",
+//     date : '23-jun-2016',
+//     value : 1,
+//     status : 'Draft'
+// },
+// {
+//     employee : '58dd07eecbcb6303e41ef404',
+//     project : 'PRO-1',
+//     type : 'Guardias',
+//     subType : "Turnicidad",
+//     date : '24-jun-2016',
+//     value : 1,
+//     status : 'Draft'
+// },
+// {
+//     employee : '58dd07eecbcb6303e41ef404',
+//     project : 'PRO-2',
+//     type : 'Guardias',
+//     subType : "Turnicidad",
+//     date : '25-jun-2016',
+//     value : 1,
+//     status : 'Draft'
+// },
+// {
+//     employee : '58dd07eecbcb6303e41ef404',
+//     project : 'PRO-2',
+//     type : 'Guardias',
+//     subType : "Turnicidad",
+//     date : '26-jun-2016',
+//     value : 0,
+//     status : 'Draft'
+// },
+// {
+//     employee : '58dd07eecbcb6303e41ef404',
+//     project : 'PRO-2',
+//     type : 'Guardias',
+//     subType : "Guardia",
+//     date : '27-jun-2016',
+//     value : 1,
+//     status : 'Draft'
+// },
+// {
+//     employee : '58dd07eecbcb6303e41ef404',
+//     project : 'PRO-2',
+//     type : 'Guardias',
+//     subType : "Guardia",
+//     date : '28-jun-2016',
+//     value : 1,
+//     status : 'Draft'
+// },
+// {
+//     employee : '58dd07eecbcb6303e41ef404',
+//     project : 'PRO-2',
+//     type : 'Guardias',
+//     subType : "Guardia",
+//     date : '29-jun-2016',
+//     value : 0,
+//     status : 'Draft'
+// },
+// {
+//     employee : '58dd07eecbcb6303e41ef404',
+//     project : 'PRO-1',
+//     type : 'Guardias',
+//     subType : "Turnicidad",
+//     date : '30-jun-2016',
+//     value : 1,
+//     status : 'Draft'
+// },
+// {
+//     employee : '58dd07eecbcb6303e41ef404',
+//     project : 'PRO-2',
+//     type : 'Guardias',
+//     subType : "Turnicidad",
+//     date : '01-jul-2016',
+//     value : 1,
+//     status : 'Draft'
+// },
+// {
+//     employee : '58dd07eecbcb6303e41ef404',
+//     project : 'PRO-2',
+//     type : 'Guardias',
+//     subType : "Turnicidad",
+//     date : '02-jul-2016',
+//     value : 1,
+//     status : 'Draft'
+// }
+// ];

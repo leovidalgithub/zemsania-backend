@@ -7,94 +7,119 @@ var passwordHash = require( 'password-hash' );
     ObjectId     = require( 'mongoose' ).Types.ObjectId;
     moment       = require( 'moment' );
 
-// finding users for advanced serach
+// USERS FINDER FOR ADVANCED SEARCH IN EMPLOYEE-MANAGER
 function searchUsers( form, onSuccess, onError ) { // LEO WAS HERE
-    var query = [];
-    if (form.username) {
-        query.push({
-            username: form.username
-        });
-    }
+    var textToFind = form.textToFind;
+    var regExp = new RegExp( '' + textToFind );
 
-    if (form._id) {
-        query.push({
-            _id: new ObjectId(form._id)
-        });
-    }
-
-    if (form.name) {
-        query.push({
-            name: {
-                '$regex': form.name
-            }
-        });
-    }
-
-    if (form.surname) {
-        query.push({
-            surname: {
-                '$regex': form.surname
-            }
-        });
-    }
-
-    if (form.nif) {
-        query.push({
-            nif: {
-                '$regex': form.nif
-            }
-        });
-    }
-
-    // if (form.enabled) {
-    //     query.push({
-    //         enabled: form.enabled
-    //     });
-    // } else {
-    //     query.push({
-    //         enabled: true
-    //     });
-    // }
-
-    if (form.activated) {
-        query.push({
-            activated: form.activated
-        });
-    }
-
-    var aggregate = [];
-    if (query.length > 0) {
-        aggregate.push({
-            '$match': {
-                $and: query
-            }
-        });
-    }
-
-    //aggregate.push(projection);
-
-    var page = form.page == undefined ? 0 : form.page;
-    var rows = form.rows == undefined ? 10 : form.rows;
-
-    if (page > -1) {
-
-        aggregate.push({
-            '$skip': (page * rows)
-        });
-
-        aggregate.push({
-            '$limit': rows
-        });
-    }
+    aggregate = [
+                    { '$match' : { '$or' : [ 
+                                                { name     : { '$regex' : regExp, '$options' : 'i' } },
+                                                { username : { '$regex' : regExp, '$options' : 'i' } },
+                                                { surname  : { '$regex' : regExp, '$options' : 'i' } },
+                                                { nif      : { '$regex' : regExp, '$options' : 'i' } }
+                                         ] } }
+    ];
+                    // { $project : { name : 1, username : 1 } }
 
     models.User.aggregate( aggregate, function ( err, users ) {
         if ( err ) {
             onError( { success: false, code: 500, msg: 'Error getting Users Profile.' } );
         } else {
-            onSuccess( { success: true, code: 200, msg: 'Users Profile', users: users } );
+            onSuccess( { success: true, code: 200, msg: 'Users by Advanced search', users: users } );
         }
     });
+
+
 }
+
+// OLD FINDING USERS FOR ADVANCED SEARCH
+// function OLDsearchUsers( form, onSuccess, onError ) { // LEO WAS HERE
+//     var query = [];
+//     if (form.username) {
+//         query.push({
+//             username: form.username
+//         });
+//     }
+
+//     if (form._id) {
+//         query.push({
+//             _id: new ObjectId(form._id)
+//         });
+//     }
+
+//     if (form.name) {
+//         query.push({
+//             name: {
+//                 '$regex': form.name
+//             }
+//         });
+//     }
+
+//     if (form.surname) {
+//         query.push({
+//             surname: {
+//                 '$regex': form.surname
+//             }
+//         });
+//     }
+
+//     if (form.nif) {
+//         query.push({
+//             nif: {
+//                 '$regex': form.nif
+//             }
+//         });
+//     }
+
+//     // if (form.enabled) {
+//     //     query.push({
+//     //         enabled: form.enabled
+//     //     });
+//     // } else {
+//     //     query.push({
+//     //         enabled: true
+//     //     });
+//     // }
+
+//     if (form.activated) {
+//         query.push({
+//             activated: form.activated
+//         });
+//     }
+
+//     var aggregate = [];
+//     if (query.length > 0) {
+//         aggregate.push({
+//             '$match': {
+//                 $and: query
+//             }
+//         });
+//     }
+//     //aggregate.push(projection);
+//     var page = form.page == undefined ? 0 : form.page;
+//     var rows = form.rows == undefined ? 10 : form.rows;
+
+//     if (page > -1) {
+//         aggregate.push({
+//             '$skip': (page * rows)
+//         });
+//         aggregate.push({
+//             '$limit': rows
+//         });
+//     }
+//     models.User.aggregate( aggregate, function ( err, users ) {
+//         if ( err ) {
+//             onError( { success: false, code: 500, msg: 'Error getting Users Profile.' } );
+//         } else {
+//             console.log(users);
+//             onSuccess( { success: true, code: 200, msg: 'Users Profile', users: users } );
+//         }
+//     });
+// }
+
+
+
 
 // GET USER PROFILE FOR MANAGER-EMPLOYEE-EDIT WITH COMPANY-ENTERPRISE POPULATED 
 function newSearchUsers( data, onSuccess, onError ) { // LEO WORKING HERE
@@ -160,6 +185,7 @@ function updateProfile( userProfile, onSuccess, onError ) { // *****************
             };
             // user.username          = userProfile.username; // does not overwirte email
             user.enabled          = userProfile.enabled;
+            user.calendarID       = userProfile.calendarID;
             user.zimbra_cosID     = userProfile.zimbra_cosID;
             user.locale           = userProfile.locale;
             user.nif              = userProfile.nif;

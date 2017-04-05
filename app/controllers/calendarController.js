@@ -9,6 +9,74 @@ var express         = require( 'express' ),
 
 /**
  * @swagger
+ * path: /calendar/getCalendarById
+ * operations:
+ *   -  httpMethod: GET
+ *      summary: Returns a calendar by its ID and with options of specific year and/or month (one or every)
+ *      notes: Requiere token de autenticación manager (x-auth-token)
+ *      nickname: calendarByID
+ *      consumes:
+ *        - application/json
+ */
+router.get( '/getCalendarById/:id', managerTokenValidation, function ( req, res ) {
+    var data = {
+        calendarID : req.params.id,
+        month : req.query.month,
+        year : req.query.year
+    }
+    calendarService.getCalendarById( data, function ( data ) {
+        globalMethods.successResponse( res, data );
+    }, function ( err ) {
+        globalMethods.errorResponse( res, err );
+    });
+});
+
+/**
+ * @swagger
+ * path: /calendar/getRefreshCalendarData
+ * operations:
+ *   -  httpMethod: POST
+ *      summary: Receives a calendar object and recalculates all data (range of hours and total of hours by type)
+ *      notes: Requiere token de autenticación manager (x-auth-token)
+ *      nickname: getRefreshCalendarData
+ *      consumes:
+ *        - application/json
+ */
+router.post( '/getRefreshCalendarData', managerTokenValidation, function ( req, res ) {
+    var calendar = req.body;
+    calendarService.getRefreshCalendarData( calendar, function ( data ) {
+        globalMethods.successResponse( res, data );
+    }, function ( err ) {
+        globalMethods.errorResponse( res, err );
+    });
+});
+
+/**
+ * @swagger
+ * path: /calendar/getCalendarNames
+ * operations:
+ *   -  httpMethod: POST
+ *      summary: Returns all enabled calendars names and description
+ *      notes: Requiere token de autenticación manager (x-auth-token)
+ *      nickname: getCalendarNames
+ *      consumes:
+ *        - application/json
+ */
+router.get( '/getCalendarNames', managerTokenValidation, function ( req, res ) {
+      calendarService.getCalendarNames( function ( data ) {
+        globalMethods.successResponse( res, data );
+    }, function ( err ) {
+        globalMethods.errorResponse( res, err );
+    });
+});
+
+
+
+
+// *********************************************** ***********************************************
+// *********************************************** ***********************************************
+/**
+ * @swagger
  * path: /calendar/getCalendars
  * operations:
  *   -  httpMethod: GET
@@ -18,13 +86,13 @@ var express         = require( 'express' ),
  *      consumes:
  *        - application/json
  */
-router.get( '/getCalendars', managerTokenValidation, function ( req, res ) {
-      calendarService.getAllCalendars( function ( data ) {
-        globalMethods.successResponse( res, data );
-    }, function ( err ) {
-        globalMethods.errorResponse( res, err );
-    });
-});
+// router.get( '/getCalendars', managerTokenValidation, function ( req, res ) {
+//       calendarService.getAllCalendars( function ( data ) {
+//         globalMethods.successResponse( res, data );
+//     }, function ( err ) {
+//         globalMethods.errorResponse( res, err );
+//     });
+// });
 
 /**
  * @swagger
@@ -37,14 +105,32 @@ router.get( '/getCalendars', managerTokenValidation, function ( req, res ) {
  *      consumes:
  *        - application/json
  */
-router.get( '/getCalendarById/:id', managerTokenValidation, function ( req, res ) {
-      calendarService.getCalendarById( req.params.id, function ( data ) {
-        globalMethods.successResponse( res, data );
-    }, function ( err ) {
-        globalMethods.errorResponse( res, err );
-    });
-});
+// *********************************************** ***********************************************
+// /**
+//  * @swagger
+//  * path: /calendar/getCalendarByIdByMonth
+//  * operations:
+//  *   -  httpMethod: GET
+//  *      summary: Return a specific month/year calendar by its ID
+//  *      notes: Requiere token de autenticación manager (x-auth-token)
+//  *      nickname: getCalendarByIdByMonth
+//  *      consumes:
+//  *        - application/json
+//  */
+// router.get( '/getCalendarByIdByMonth/:id', managerTokenValidation, function ( req, res ) {
+//     var data = {
+//         calendarID : req.params.id,
+//         month      : req.query.month,
+//         year       : req.query.year
+//     };
 
+//       calendarService.getCalendarByIdByMonth( data, function ( data ) {
+//         globalMethods.successResponse( res, data );
+//     }, function ( err ) {
+//         globalMethods.errorResponse( res, err );
+//     });
+// });
+// *********************************************** ***********************************************
 // /**
 //  * @swagger
 //  * path: /calendar
@@ -63,8 +149,7 @@ router.get( '/getCalendarById/:id', managerTokenValidation, function ( req, res 
 //         globalMethods.error(res, result, 500);
 //     });
 // });
-
-
+// *********************************************** ***********************************************
 // /**
 //  * @swagger
 //  * path: /calendar/get
@@ -96,8 +181,7 @@ router.get( '/getCalendarById/:id', managerTokenValidation, function ( req, res 
 //             });
 //     }
 // });
-
-
+// *********************************************** ***********************************************
 // /**
 //  * @swagger
 //  * path: /calendar/insert

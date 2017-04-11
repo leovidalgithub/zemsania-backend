@@ -30,7 +30,7 @@ function getRefreshCalendarData( calendar, onSuccess, onError ) {
 
 // API - RETURNS ALL ENABLED CALENDARS NAME AND DESCRIPTION
 function getCalendarNames( onSuccess, onError ) {
-    models.Calendar.find( { "enabled" : 1 }, { "name" : 1, "description" : 1 }, function ( err, calendars ) {
+    models.Calendar.find( { "enabled" : 1 }, { "name" : 1, "description" : 1, "enabled" : 1 }, function ( err, calendars ) {
         if ( err ) {
             onError( { success: false, code: 500, msg: 'Error getting Calendar.' } );
         } else {

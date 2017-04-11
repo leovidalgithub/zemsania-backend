@@ -107,15 +107,15 @@ app.use( '/notifications', require( './controllers/notificationsController' ) );
 app.use( '/mcollections' , require( './controllers/masterCollectionsController' ) );
 app.use( '/user'         , require( './controllers/userController' ) );
 app.use( '/verify'       , require( './controllers/verifyController' ) );
+app.use( '/projectUsers' , require( './controllers/projectUsersController' ) );
+app.use( '/timesheets'   , userTokenValidation, require( './controllers/timesheetController' ) );
 // app.use('/absences', require('./controllers/absencesController'));
 // app.use('/config', require('./controllers/configController'));
 // app.use('/dailyReport', require('./controllers/dailyReportController'));
 // app.use('/holidays', require('./controllers/holidaysController'));
 // app.use('/files', require('./controllers/filesApi'));
 // app.use('/project', require('./controllers/projectController'));
-// app.use('/projectUsers', require('./controllers/projectUsersController'));
 // app.use('/spents', require('./controllers/spentsController'));
-// app.use('/timesheets', userTokenValidation, require('./controllers/timesheetController'));
 // app.use('/holidaySchemes', userTokenValidation, require('./controllers/holidaySchemesController'));
 // app.use('/workloadSchemes', userTokenValidation, require('./controllers/workloadSchemesController'))
 
@@ -128,25 +128,15 @@ app.use( '/verify'       , require( './controllers/verifyController' ) );
 //     securityService.userTokenValidation(req, res, next);
 // });
 
+app.use( '/mongo', require( './mongo' ) );
 // Start server
 app.listen( 3000, function () {
     console.log( 'Zemtime server running on port 3000 from process: ' + process.pid );
 });
 
 
-// *************************************************************** ***************************************************************
-// ACCESS COLLECTION THROUGHT mongoose.connection OBJECT
-// var connection = mongoose.connection;
-// connection.db.collection("projects", function(err, collection){
-//         collection.find({}).toArray(function(err, data){
-//             console.log(data); // it will print your collection data
-//         })
-// });
 
 // app.get( '/mongo', function( req, res, next ) {
-//     mongoose     = require( 'mongoose' );
-//     ObjectId     = require( 'mongoose' ).Types.ObjectId;
-    // var newId = ObjectId();
 
 // ****************************************
     // var test = new models.Test ({

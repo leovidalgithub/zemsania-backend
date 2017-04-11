@@ -65,26 +65,49 @@ module.exports = function( mongoose ) {
         enabled       : { type   : Boolean, default: true }
     }, { collection   : 'calendar', timestamps: { createdAt: 'created_at' } });
 
-    // var TimesheetSchema = new mongoose.Schema({
-    //     employee: { type: ObjectId, ref: 'User', required: true },
-    //     project: { type: ObjectId, ref: 'Project', required: true },
-    //     container: { type: String, default: 'horas' },
-    //     type: { type: String, required: true },
-    //     status: { type: String, default: 'pending' },
-    //     date: { type: Date, required: true },
-    //     value: {},
-    //     comment: String,
-    //     requestedDate: { type: Date, default: new Date() },
-    //     processingDate: Date,
-    //     verifierReason: String,
-    //     company: String
-    // }, { collection: 'timesheets', timestamps: { createdAt: 'created_at' } });
+    var TimesheetSchema = new mongoose.Schema( {
+        userId          : { type: ObjectId, ref: 'User', required: true },
+        projectId       : { type: ObjectId, ref: 'Project', required: true },
+        type            : { type: String, required: true },
+        subType         : { type: String, default: 'horas' },
+        status          : { type: String, default: 'pending' },
+        date            : { type: Date, required: true },
+        value           : { type: Number, trim: true },
+        comment         : { type: String },
+        requestedDate   : { type: Date, default: new Date() },
+        processingDate  : { type: Date, default: new Date() },
+        verifierReason  : { type : String },
+        company         : { type : String }
+    }, { collection: 'timesheets', timestamps: { createdAt: 'created_at' } });
 
-    // TimesheetSchema.pre('save', function(next) {
-    //     var timesheet = this;
-    //     if (!timesheet.requestedDate) timesheet.requestedDate = new Date();
-    //     next();
-    // });
+// ****************************************** Project ***********************************************
+    var ProjectSchema = new Schema({
+        crm_id: { type: String, unique: true, required: true },
+        code: { type: String, trim: true, required: true },
+        name: { type: String, trim: true, required: true },
+        alias: { type: String, trim: true },
+        description: { type: String, trim: true },
+        status: { type: String, trim: true, default: "disabled" },
+        enabled: { type : Boolean, index : true, default : true },
+        initDate: { type: Date, default: new Date() },
+        endDate: { type: Date },
+        parentRef: { type: Schema.Types.ObjectId, ref: 'Project' },
+        notes: { type: String, trim: true }
+    }, { collection: 'projects' });
+
+    var ProjectUsersSchema = new Schema({
+        projectId: { type: Schema.Types.ObjectId, ref: 'Project', index: true, required: true },
+        userId: { type: Schema.Types.ObjectId, ref: 'User', index: true, required: true },
+        roles: { type: Array, default: ['WORKER'] },
+        joinDate: { type: Date, default: new Date() },
+        maxHours: { type: Number, default: 8, trim: true }
+    }, { collection: 'project_users' });
+
+// *********************************************** **************************************************
+
+
+
+
 
     // var AbsenceSchema = new Schema({
     //     date: { type: Date, index: true },
@@ -167,26 +190,6 @@ module.exports = function( mongoose ) {
     //     createdAt: { type: Date, default: Date.now }
     // }, { collection: 'notifications' });
 
-    // var ProjectSchema = new Schema({
-    //     crm_id: { type: String, unique: true, required: true },
-    //     code: { type: String, required: true },
-    //     name: { type: String, required: true },
-    //     alias: { type: String },
-    //     description: { type: String, trim: true },
-    //     status: { type: String, default: "disabled" },
-    //     initDate: { type: Date, default: new Date() },
-    //     endDate: { type: Date },
-    //     parentRef: { type: Schema.Types.ObjectId, ref: 'Project' },
-    //     notes: { type: String, trim: true }
-    // }, { collection: 'projects' });
-
-    // var ProjectUsersSchema = new Schema({
-    //     projectId: { type: Schema.Types.ObjectId, ref: 'Project', index: true, required: true },
-    //     userId: { type: Schema.Types.ObjectId, ref: 'User', index: true, required: true },
-    //     roles: { type: Array, default: ['WORKER'] },
-    //     joinDate: { type: Date, default: new Date() },
-    //     maxHours: { type: Number, default: 8 }
-    // }, { collection: 'project_users' });
 
     // var SpentSchema = new Schema({
     //     date: { type: Date, index: true },
@@ -259,7 +262,7 @@ module.exports = function( mongoose ) {
         // Calendar: mongoose.model('Calendar', CalendarSchema),
         Calendar           : mongoose.model( 'Calendar'          , CalendarSchema ),
         User               : mongoose.model( 'User'              , UserSchema ),
-        Enterprises        : mongoose.model( 'Enterprises'       , EnterprisesSchema )
+        Enterprises        : mongoose.model( 'Enterprises'       , EnterprisesSchema ),
         // Absence            : mongoose.model( 'Absence'           , AbsenceSchema ),
         // CalendarUser       : mongoose.model( 'CalendarUser'      , CalendarUserSchema ),
         // ConceptDaily       : mongoose.model( 'ConceptDaily'      , ConceptDailySchema ),
@@ -268,10 +271,10 @@ module.exports = function( mongoose ) {
         // DailyReport        : mongoose.model( 'DailyReport'       , DailyReportSchema ),
         // Holidays           : mongoose.model( 'Holidays'          , HolidaysSchema ),
         // Notification       : mongoose.model( 'Notification'      , NotificationSchema ),
-        // Project            : mongoose.model( 'Project'           , ProjectSchema ),
-        // ProjectUsers       : mongoose.model( 'ProjectUsers'      , ProjectUsersSchema ),
+        Project            : mongoose.model( 'Project'           , ProjectSchema ),
+        ProjectUsers       : mongoose.model( 'ProjectUsers'      , ProjectUsersSchema ),
+        Timesheet          : mongoose.model( 'Timesheet'         , TimesheetSchema )
         // Spent              : mongoose.model( 'Spent'             , SpentSchema ),
-        // Timesheet          : mongoose.model( 'Timesheet'         , TimesheetSchema ),
         // HolidayScheme      : mongoose.model( 'HolidayScheme'     , HolidaySchemeSchema ),
         // HolidaySchemeEntry : mongoose.model( 'HolidaySchemeEntry', HolidaySchemeEntrySchema ),
         // WorkloadScheme     : mongoose.model( 'WorkloadScheme'    , WorkloadSchemeSchema ),
@@ -315,20 +318,28 @@ module.exports = function( mongoose ) {
 
 // ***************************************** *****************************************
 
-    // var TimesheetSchema = new mongoose.Schema( {
-    //     employee        : { type: ObjectId, ref: 'User', required: true },
-    //     project         : { type: ObjectId, ref: 'Project', required: true },
-    //     type            : { type: String, required: true },
-    //     subType         : { type: String, default: 'horas' },
-    //     status          : { type: String, default: 'pending' },
-    //     date            : { type: Date, required: true },
-    //     value           : { type: Number, trim: true },
-    //     comment         : { type: String },
-    //     requestedDate   : { type: Date, default: new Date() },
-    //     processingDate  : { type: Date, default: new Date() },
-    //     verifierReason  : { type : String },
-    //     company         : { type : String }
+// ************************************ OLD TIMESHEET ********************************
+    // var TimesheetSchema = new mongoose.Schema({
+    //     employee: { type: ObjectId, ref: 'User', required: true },
+    //     project: { type: ObjectId, ref: 'Project', required: true },
+    //     container: { type: String, default: 'horas' },
+    //     type: { type: String, required: true },
+    //     status: { type: String, default: 'pending' },
+    //     date: { type: Date, required: true },
+    //     value: {},
+    //     comment: String,
+    //     requestedDate: { type: Date, default: new Date() },
+    //     processingDate: Date,
+    //     verifierReason: String,
+    //     company: String
     // }, { collection: 'timesheets', timestamps: { createdAt: 'created_at' } });
+
+    // TimesheetSchema.pre('save', function(next) {
+    //     var timesheet = this;
+    //     if (!timesheet.requestedDate) timesheet.requestedDate = new Date();
+    //     next();
+    // });
+// ***************************************** *****************************************
 
 
 

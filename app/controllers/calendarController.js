@@ -23,7 +23,7 @@ router.get( '/getCalendarById/:id', managerTokenValidation, function ( req, res 
         calendarID : req.params.id,
         month : req.query.month,
         year : req.query.year
-    }
+    };
     calendarService.getCalendarById( data, function ( data ) {
         globalMethods.successResponse( res, data );
     }, function ( err ) {

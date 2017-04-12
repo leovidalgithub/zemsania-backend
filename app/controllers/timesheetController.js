@@ -5,16 +5,26 @@ var userService      = require( '../services/userService' );
 // var fs = require( 'fs' );
 // var path = require( 'path' );
 
-
-
 // RETURN ALL TIMESHEET BY USER, PROJECT, MONTH AND YEAR
-router.get('/getTimesheets/:userID', function( req, res, next ) { // LEO WORKING HERE
+router.get('/getTimesheets/:userID', function( req, res, next ) { // LEO WAS HERE
         var data = {
             userID     : req.params.userID,
             month      : req.query.month,
             year       : req.query.year
     };
     timesheetService.getTimesheets( data,
+        function ( data ) {
+                globalMethods.successResponse( res, data );
+        }, function ( result ) {
+                globalMethods.errorResponse( res, err );
+        });
+});
+
+// SAVES AND UPDATE ALL TIMESHEETS RECEIVED
+router.post('/setAllTimesheets/:userId', function( req, res, next ) { // LEO WORKING HERE
+    var userId = req.params.userId;
+    var data   = req.body;
+    timesheetService.setAllTimesheets( userId, data,
         function ( data ) {
                 globalMethods.successResponse( res, data );
         }, function ( result ) {

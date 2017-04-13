@@ -1,11 +1,11 @@
-var express             = require( 'express' );
-var router              = express.Router();
-var ObjectId            = require( 'mongoose' ).Types.ObjectId;
+var express  = require( 'express' );
+var router   = express.Router();
+var async    = require( 'async' );
+// var ObjectId = require( 'mongoose' ).Types.ObjectId;
+// var projectUsersService = require( '../services/projectUsersService' );
 // var calendarService     = require( '../services/calendarService' );
-var projectUsersService = require( '../services/projectUsersService' );
 // var moment              = require( 'moment' );
 // var mongoose            = require( 'mongoose' );
-// var async               = require( 'async' );
 // var authnService        = require( '../services/securityService' );
 // var userService         = require( '../services/userService' );
 // var Timesheet           = models.Timesheet;
@@ -62,13 +62,13 @@ console.log('\033c');
                         if( ts[ projectId ][day][type][subType].modified ) {
                             var value = ts[ projectId ][day][type][subType].value;
                             tsArray.push( {
-                                            userId : userId,
+                                            userId    : userId,
                                             projectId : projectId,
-                                            day : day,
-                                            type : type,
-                                            subType : subType,
-                                            value : value,
-                                            status : 'draft'
+                                            date      : new Date ( day ),
+                                            type      : type,
+                                            subType   : subType,
+                                            value     : value,
+                                            status    : 'draft'
                                         });
                         }
                     }
@@ -76,46 +76,55 @@ console.log('\033c');
             }
         }
     });
-
-// HOW TO FIND BY DATE ON MONGO
-// HOW TO FIND BY DATE ON MONGO
-// HOW TO FIND BY DATE ON MONGO
-// HOW TO FIND BY DATE ON MONGO
-// HOW TO FIND BY DATE ON MONGO
-// HOW TO FIND BY DATE ON MONGO
-// HOW TO FIND BY DATE ON MONGO
-// HOW TO FIND BY DATE ON MONGO
-
-    // console.log( tsArray[0] );
-    var userId    = tsArray[0].userId;
-    var projectId = tsArray[0].projectId;
-    var date      = tsArray[0].day;
-    var type      = tsArray[0].type;
-    var subType   = tsArray[0].subType;
-    // console.log(userId);
-    // console.log(projectId);
-    // console.log(date);
-    // console.log(type);
-    // console.log(subType);
-
+    async.each( tsArray, function( ts, callback ) {
         models.Timesheet.findOne( {
-                                        "userId": userId,
-                                        "projectId": projectId,
-                                        // "date": date,
-                                        "type": type,
-                                        "subType": subType,
+                                     $and: [
+                                            { userId    : ts.userId },
+                                            { projectId : ts.projectId },
+                                            { date      : ts.date },
+                                            { type      : ts.type },
+                                            { subType   : ts.subType }
+                                      ]
             })
-            .exec(function(err, timesheet) {
-                console.log(timesheet);
-            });
-
-        onSuccess({ success: true, data : data });
-        // onError( { success: false, code: 500, msg: 'Error getting Projects documents!' } );
-
-
-
-
-
+            .exec( function( err, timesheet ) {
+                if( err ) { // error finding document
+                    callback( 'Error finding a Timesheet document!' );
+                } else if ( timesheet ) { // document found so update it
+                    timesheet.value  = ts.value;
+                    timesheet.status = ts.status;
+                    timesheet.save( function( err, saved ) {
+                        if( err ) { // error updating document
+                            callback( 'Error updating a Timesheet document!' );
+                        } else { // success document updated
+                            callback( null );                            
+                        }
+                    });
+                } else { // document not found so insert a new one
+                    var newTimesheet = new models.Timesheet ({
+                        userId          : ts.userId,
+                        projectId       : ts.projectId,
+                        type            : ts.type,
+                        subType         : ts.subType,
+                        status          : ts.status,
+                        date            : new Date( ts.date ),
+                        value           : ts.value
+                    });
+                    newTimesheet.save( function( err, saved ) {
+                        if ( err ) { // error saving new document
+                            callback( 'Error inserting a new Timesheet document!' );
+                        } else { // success inserting new document
+                            callback( null );            
+                        }
+                    });                    
+                }
+            });     
+    }, function( err ) { // callback when all done
+        if( err ) {
+            onError( { success: false, code: 500, msg: 'Error on set Timesheets documents!', err : err } );
+        } else {
+            onSuccess( { success: true, msg: 'Success on set Timesheets documents!' } );
+        }
+    });
 }
 
 // INTERNAL FUNCTION
@@ -214,48 +223,48 @@ function getTimesheetDataModel( timesheets ) {
 // }
 
 // ***************************************************** *****************************************************
-function saveBulkTimesheets(data, callback) {
-    var timesheets = []
-    async.each(data, function(each, tick) {
-        var dt = new Date(each.date);
-        var startDate = new Date(dt.getFullYear(), dt.getMonth(), dt.getDate(), 0, 0, 0);
-        var endDate = new Date(startDate.getTime());
-        endDate.setDate(endDate.getDate() + 1);
-        Timesheet
-            .findOne({
-                employee: each.employee,
-                project: each.project,
-                container: each.container,
-                type: each.type,
-                date: {
-                    $gte: startDate,
-                    $lt: endDate
-                }
-            })
-            .exec(function(err, timesheet) {
-                if (!err && timesheet) {
-                    timesheet.comment = each.comment;
-                    timesheet.value = each.value;
-                    timesheet.status = each.status;
-                    timesheet.save(function(err) {
-                        if (!err) timesheets.push(timesheet);
-                        tick()
-                    });
-                } else {
-                    saveTimesheet(each, function(err, timesheet) {
-                        if (!err) timesheets.push(timesheet);
-                        tick();
-                    });
-                }
-            });
-    }, function() {
-        callback(timesheets);
-    });
-}
+// function saveBulkTimesheets(data, callback) {
+//     var timesheets = []
+//     async.each(data, function(each, tick) {
+//         var dt = new Date(each.date);
+//         var startDate = new Date(dt.getFullYear(), dt.getMonth(), dt.getDate(), 0, 0, 0);
+//         var endDate = new Date(startDate.getTime());
+//         endDate.setDate(endDate.getDate() + 1);
+//         Timesheet
+//             .findOne({
+//                 employee: each.employee,
+//                 project: each.project,
+//                 container: each.container,
+//                 type: each.type,
+//                 date: {
+//                     $gte: startDate,
+//                     $lt: endDate
+//                 }
+//             })
+//             .exec(function(err, timesheet) {
+//                 if (!err && timesheet) {
+//                     timesheet.comment = each.comment;
+//                     timesheet.value = each.value;
+//                     timesheet.status = each.status;
+//                     timesheet.save(function(err) {
+//                         if (!err) timesheets.push(timesheet);
+//                         tick()
+//                     });
+//                 } else {
+//                     saveTimesheet(each, function(err, timesheet) {
+//                         if (!err) timesheets.push(timesheet);
+//                         tick();
+//                     });
+//                 }
+//             });
+//     }, function() {
+//         callback(timesheets);
+//     });
+// }
 
-function saveTimesheet(data, callback) {
-    new Timesheet(data).save(callback);
-};
+// function saveTimesheet(data, callback) {
+//     new Timesheet(data).save(callback);
+// };
 
 // function query(query, callback) {
 //     if (query instanceof Function) callback = query;

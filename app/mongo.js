@@ -5,14 +5,15 @@ var express   = require( 'express' ),
 // var newId = ObjectId();
 
 router.get( '/fill', function ( req, res ) {
+console.log('\033c');    
 
-// projectsID
-//     58e7600b8edb5b15d05020b6
-//     58e7607801db7d0e4c8a1398
-//     58e760a5ccac571698ef1895
-
-    // models.Project.findOne( { _id: new ObjectId( '582c4106c405b99578f0b7e3' ) }, function( err, doc ){
-    //         res.send( doc );
+    // models.Timesheet.findOne( { _id: new ObjectId( '58e7630deacc350744f34e6a' ) }, function( err, doc ) {
+    //         var date = new Date ( doc.date );
+    //         console.log( date.getDate());
+    //         console.log( date.getMonth());
+    //         models.Timesheet.findOne( { date: date, userId: '58a446acdb8d2617dc208d8a' }, function( err, doc ) {
+    //             res.send( doc );   
+    //         });
     // });
 // ***************************************** INSERT NEW TIMESHEET ****************************************
     // var ts = new models.Timesheet ({

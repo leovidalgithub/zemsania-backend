@@ -1,12 +1,12 @@
 var express          = require( 'express' );
 var router           = express.Router();
 var timesheetService = require( '../services/timesheetService' );
-var userService      = require( '../services/userService' );
+// var userService      = require( '../services/userService' );
 // var fs = require( 'fs' );
 // var path = require( 'path' );
 
 // RETURN ALL TIMESHEET BY USER, PROJECT, MONTH AND YEAR
-router.get('/getTimesheets/:userID', function( req, res, next ) { // LEO WAS HERE
+router.get( '/getTimesheets/:userID', function( req, res, next ) { // LEO WAS HERE
         var data = {
             userID     : req.params.userID,
             month      : req.query.month,
@@ -21,7 +21,7 @@ router.get('/getTimesheets/:userID', function( req, res, next ) { // LEO WAS HER
 });
 
 // SAVES AND UPDATE ALL TIMESHEETS RECEIVED
-router.post('/setAllTimesheets/:userId', function( req, res, next ) { // LEO WORKING HERE
+router.post( '/setAllTimesheets/:userId', function( req, res, next ) { // LEO WAS HERE
     var userId = req.params.userId;
     var data   = req.body;
     timesheetService.setAllTimesheets( userId, data,

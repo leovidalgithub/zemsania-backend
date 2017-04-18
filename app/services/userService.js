@@ -7,8 +7,22 @@ var passwordHash = require( 'password-hash' );
     ObjectId     = require( 'mongoose' ).Types.ObjectId;
     moment       = require( 'moment' );
 
-// USERS FINDER FOR ADVANCED SEARCH IN EMPLOYEE-MANAGER
-function searchUsers( form, onSuccess, onError ) { // LEO WAS HERE
+// API
+// RETURNS ALL USERS
+function getAllUsers( onSuccess, onError ) { // LEO WAS HERE
+    models.User.find( {},
+     function ( err, users ) {
+        if ( err ) {
+            onError( { success: false, code: 500, msg: 'Error getting all users.' } );
+        } else {
+            onSuccess( { success: true, code: 200, msg: 'All users list', users : users } );
+        }
+    });
+}
+
+// API 
+// EMPLOYEE-MANAGER USER ADVANCED SEARCH. FINDS THE SAME STRING IN 4 FIELDS
+function advancedUserSearch( form, onSuccess, onError ) { // LEO WAS HERE
     var textToFind = form.textToFind;
     var regExp = new RegExp( '' + textToFind );
 
@@ -21,7 +35,6 @@ function searchUsers( form, onSuccess, onError ) { // LEO WAS HERE
                                          ] } }
     ];
                     // { $project : { name : 1, username : 1 } }
-
     models.User.aggregate( aggregate, function ( err, users ) {
         if ( err ) {
             onError( { success: false, code: 500, msg: 'Error getting Users Profile.' } );
@@ -29,10 +42,119 @@ function searchUsers( form, onSuccess, onError ) { // LEO WAS HERE
             onSuccess( { success: true, code: 200, msg: 'Users by Advanced search', users: users } );
         }
     });
-
-
 }
 
+// API
+// MANAGER-EMPLOYEE-EDIT: GET USER PROFILE WITH COMPANY-ENTERPRISE POPULATED 
+function newSearchUsers( data, onSuccess, onError ) { // LEO WAS HERE
+    var id = data._id;
+    models.User.findOne( { _id: new ObjectId( id ) })
+        .populate( 'company','enterpriseName' )
+        .exec( function ( err, user ) {
+            if ( err ) {
+                onError( { success: false, code: 500, msg: 'Error getting User Profile.' } );
+            } else {
+                onSuccess( { success: true, code: 200, msg: 'User Profile', user: user } );
+            }
+    });
+}
+
+ // API
+ // USER PROFILE UPDATE. EITHER FOR profile or EmployeeManager
+function updateProfile( userProfile, onSuccess, onError ) { // LEO WAS HERE
+    var userId = userProfile._id;
+    // security roles filter: it verifies if user roles exist in the constant object so save them back to BDD
+    var roles = ['ROLE_USER'];
+    if ( userProfile.roles && userProfile.roles.length > 0 ) {
+        for ( var i = 0; i < userProfile.roles.length; i++ ) {
+            if ( roles.indexOf( userProfile.roles[i] ) == -1 && constants.roles.indexOf( userProfile.roles[i] ) != -1 ) {
+                roles.push( userProfile.roles[i] );
+            };
+        };
+    };
+    models.User.findOne( { _id: new ObjectId( userId ) }, function ( err, user ) {
+        if( err ) {
+            onError( { success: false, code: 500, msg: 'Error getting User.' } );
+        } else if ( user ) {
+            if ( userProfile.birthdate ) { 
+               user.birthdate = moment( userProfile.birthdate, 'DD/MM/YYYY' ).toISOString();
+            };
+            // user.username      = userProfile.username; // do not overwrite email
+            user.enabled          = userProfile.enabled;
+            user.calendarID       = userProfile.calendarID;
+            user.zimbra_cosID     = userProfile.zimbra_cosID;
+            user.locale           = userProfile.locale;
+            user.nif              = userProfile.nif;
+            user.name             = userProfile.name;
+            user.sex              = userProfile.sex;
+            user.roles            = roles;
+            user.surname          = userProfile.surname;
+            user.birthdate        = userProfile.birthdate;
+            user.lastModifiedDate = Date.now();
+
+            if ( userProfile.workloadScheme ) user.workloadScheme = userProfile.workloadScheme;
+            if ( userProfile.holidayScheme ) user.holidayScheme   = userProfile.holidayScheme;
+            if ( userProfile.superior ) user.superior             = userProfile.superior;
+            if ( userProfile.company ) user.company               = userProfile.company
+
+            user.save( function ( err, doc ) {
+                if ( err ) {
+                    onError( { success: false, code: 500, msg: 'Error saving User Profile.' } );
+                } else {
+                    onSuccess( { success: true, code: 200, msg: 'User Profile updated correctly' } );                    
+                }
+            })            
+        } else {
+            onError( { success: false, code: 500, msg: 'Error updating User Profile!' } );
+        }
+    });
+}
+
+// API
+// VERIFYS IF A GIVEN EMAIL ALREADY EXIST
+function verifyUniqueUserEmail( emailToVerify, onSuccess, onError ) { // LEO WAS HERE
+    models.User.findOne( { 'username' : emailToVerify }, function ( err, emailFound ) {
+        if ( err ) {
+            onError( { success: false, code: 500, msg: 'Error finding email!' } );            
+        } else {
+            if ( emailFound ) {
+                onSuccess( { success: true, code: 200, found: true, msg: 'Email already exists' } );
+            } else {
+                onSuccess( { success: true, code: 200, found: false, msg: 'Email not exists' } );
+            }            
+        };
+    });
+}
+
+// API
+// CHANGE USER PASSWORD
+function changePassword( userId, form, onSuccess, onError ) { // LEO WAS HERE
+    models.User.findOne( { _id: new ObjectId( userId ) }, function ( err, user ) {
+        if ( err ) {
+            onError( { success: false, code: 401, message: 'Error finding User!'} );
+        } else {
+            if ( !user ) {
+                onSuccess( { success: false, code: 101, message: 'User not found.'} );
+            } else {
+                if ( !passwordHash.verify( form.currentPassword, user.password ) ) {
+                    onSuccess( { success: false, code: 102, message: 'Wrong current password!' } );
+                } else {
+                    user.password = passwordHash.generate( form.newPassword );
+                    user.defaultPassword = false;
+                    user.save( function ( err ) {
+                        if ( err ) {
+                            onError( { success: false, code: 402, message: 'Error saving new password!'} );
+                        } else {
+                            onSuccess( { success: true, code: 200, message: 'Password changed successfully!' } );
+                        };
+                    });
+                }
+            }
+        }
+    });
+}
+
+// ******************************************************* *******************************************************
 // OLD FINDING USERS FOR ADVANCED SEARCH
 // function OLDsearchUsers( form, onSuccess, onError ) { // LEO WAS HERE
 //     var query = [];
@@ -118,162 +240,11 @@ function searchUsers( form, onSuccess, onError ) { // LEO WAS HERE
 //     });
 // }
 
-
-
-
-// GET USER PROFILE FOR MANAGER-EMPLOYEE-EDIT WITH COMPANY-ENTERPRISE POPULATED 
-function newSearchUsers( data, onSuccess, onError ) { // LEO WORKING HERE
-    var id = data._id;
-    models.User.findOne( { _id: new ObjectId( id ) })
-        .populate( 'company','enterpriseName' )
-        .exec( function ( err, user ) {
-            if ( err ) {
-                onError( { success: false, code: 500, msg: 'Error getting User Profile.' } );
-            } else {
-                onSuccess( { success: true, code: 200, msg: 'User Profile', user: user } );
-            }
-    });
-}
-
-function queryUsers(query, callback) {
-    models.User.find(query, function(err, users) {
-        callback(err ? [] : users);
-    });
-};
-
-
-/*
- * return all users. No counts enabled
- */
-function getAllUsers( onSuccess, onError ) { // LEO WAS HERE
-    models.User.find( {},
-     function ( err, users ) {
-        if ( err ) {
-            onError( { success: false, code: 500, msg: 'Error getting all users.' } );
-        } else {
-            onSuccess( { success: true, code: 200, msg: 'All users list', users : users } );
-        }
-    });
-}
-
-
-
-
-
-
-
-/**
- * User Profile update. Either from #!/profile or EmployeeManager.
- **/
-function updateProfile( userProfile, onSuccess, onError ) { // ***************** LEO WAS HERE *****************
-    var userId = userProfile._id;
-    // security roles filter: it verifies if user roles exist in the constant object so save them back to BDD
-    var roles = ['ROLE_USER'];
-    if ( userProfile.roles && userProfile.roles.length > 0 ) {
-        for ( var i = 0; i < userProfile.roles.length; i++ ) {
-            if ( roles.indexOf( userProfile.roles[i] ) == -1 && constants.roles.indexOf( userProfile.roles[i] ) != -1 ) {
-                roles.push( userProfile.roles[i] );
-            };
-        };
-    };
-    models.User.findOne({ // global.models (server-app.js)
-        _id: new ObjectId( userId )
-    }, function ( err, user ) {
-        if ( user ) {
-            if ( userProfile.birthdate ) { 
-                   user.birthdate = moment( userProfile.birthdate, 'DD/MM/YYYY' ).toISOString();
-            };
-            // user.username          = userProfile.username; // does not overwirte email
-            user.enabled          = userProfile.enabled;
-            user.calendarID       = userProfile.calendarID;
-            user.zimbra_cosID     = userProfile.zimbra_cosID;
-            user.locale           = userProfile.locale;
-            user.nif              = userProfile.nif;
-            user.name             = userProfile.name;
-            user.sex              = userProfile.sex;
-            user.roles            = roles;
-            user.surname          = userProfile.surname;
-            user.birthdate        = userProfile.birthdate;
-            user.lastModifiedDate = Date.now();
-
-            if ( userProfile.workloadScheme ) user.workloadScheme = userProfile.workloadScheme;
-            if ( userProfile.holidayScheme ) user.holidayScheme   = userProfile.holidayScheme;
-            if ( userProfile.superior ) user.superior             = userProfile.superior;
-            if ( userProfile.company ) user.company               = userProfile.company
-
-            user.save( function ( err, doc ) {
-                if ( err ) {
-                    onError( { success: false, code: 500, msg: 'Error updating User Profile.' } );
-                    // throw err;  
-                } else {
-                    console.log( 'Profile for user %s saved successfully', userId );
-                    onSuccess( { success: true, code: 200, msg: 'User Profile updated correctly' } );                    
-                }
-            });
-        } else {
-            onError( { success: false, code: 500, msg: 'User not found.' } );
-        };
-    });
-}
-/**
-    * verifyUniqueUserEmail - Verifies if email given already exist in BDD
- **/
-function verifyUniqueUserEmail( emailToVerify, onSuccess, onError ) { // ***************** LEO WAS HERE *****************
-    models.User.findOne({ // global.models (server-app.js)
-        'username' : emailToVerify
-    }, function ( err, emailFound ) {
-        if ( err ) {
-            onError( { success: false, code: 500, msg: 'Error on BDD access!' } );            
-        } else {
-            if ( emailFound ) {
-                onSuccess( { success: true, code: 200, found: true, msg: 'Email already exists' } );
-            } else {
-                onSuccess( { success: true, code: 200, found: false, msg: 'Email not exists' } );
-            }            
-        };
-    });
-}
-
-
-/**
- * change password
- **/
-function changePassword( userId, form, onSuccess, onError ) { // LEO WORKING HERE
-// console.log('changePassword');
-// console.log(form);
-// var aa = passwordHash.generate( '1234' );
-// Rush2112_ // sha1$f93499e8$1$905fd45e92568f76c132dbea760cf6fe61875bcc
-// 1234      // sha1$3af50874$1$45fc65cf162f382dd805f13bfd2e82e6890e995b
-// console.log(aa);
-
-    models.User.findOne( {
-        _id: new ObjectId( userId )
-    }, function ( err, user ) {
-
-        if ( err ) {
-            onError( { success: false, code: 401, message: 'Error finding User.'} );
-        } else {
-            if ( !user ) {
-                onSuccess( { success: false, code: 101, message: 'User not found.'} );
-            } else {
-                if ( !passwordHash.verify( form.currentPassword, user.password ) ) {
-                    onSuccess( { success: false, code: 102, message: 'Wrong current password.' } );
-                } else {
-                    user.password = passwordHash.generate( form.newPassword );
-                    user.defaultPassword = false;
-                    user.save( function ( err ) {
-                        if ( err ) {
-                            onError( { success: false, code: 402, message: 'Error saving new password.'} );
-                        } else {
-                            onSuccess( { success: true, code: 200, message: 'Password changed successfully.' } );
-                        };
-                    });
-                }
-            }
-        }
-
-    });
-}
+// function queryUsers(query, callback) {
+//     models.User.find(query, function(err, users) {
+//         callback(err ? [] : users);
+//     });
+// };
 
 /**
  * User delete
@@ -295,28 +266,28 @@ function changePassword( userId, form, onSuccess, onError ) { // LEO WORKING HER
 /**
  * Actualización del perfil del usuario
  **/
-function getProfile( userId, onSuccess, onError ) {
-    models.User.findOne({
-        _id: new ObjectId( userId )
-    }, function ( err, user ) {
-        if ( user ) {
-            onSuccess( user );
-        }
-        else {
-            onSuccess( { success: false, code: 101, message: 'User not found.' } );
-        }
-    });
-}
+// function getProfile( userId, onSuccess, onError ) {
+//     models.User.findOne({
+//         _id: new ObjectId( userId )
+//     }, function ( err, user ) {
+//         if ( user ) {
+//             onSuccess( user );
+//         }
+//         else {
+//             onSuccess( { success: false, code: 101, message: 'User not found.' } );
+//         }
+//     });
+// }
 
 module.exports = {
-    getProfile: getProfile,
     updateProfile: updateProfile,
     verifyUniqueUserEmail : verifyUniqueUserEmail,
-    searchUsers: searchUsers,
+    advancedUserSearch: advancedUserSearch,
     newSearchUsers: newSearchUsers,
-    queryUsers: queryUsers,
     changePassword: changePassword,
     getAllUsers: getAllUsers
+    // getProfile: getProfile,
+    // queryUsers: queryUsers,
     // deleteUser: deleteUser
 };
 

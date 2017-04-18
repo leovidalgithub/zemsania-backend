@@ -8,7 +8,7 @@ var ObjectId = require( 'mongoose' ).Types.ObjectId;
 /*
  * Finds all documents in 'ProjectUsersSchema' by UserID and then returns all projects related in 'ProjectSchema'
  */
-function getProjectsByUserID( userId, onSuccess, onError ) {
+function getProjectsByUserID( userId, onSuccess, onError ) { // LEO WAS HERE
     models.ProjectUsers.find( { userId: new ObjectId( userId ) }, function( err, projectUsers ) {
         if ( err ) {
             onError( { success: false, code: 500, msg: 'Error getting ProjectUser documents!' } );
@@ -21,8 +21,8 @@ function getProjectsByUserID( userId, onSuccess, onError ) {
                         if( err ) {
                             onError( { success: false, code: 500, msg: 'Error getting Projects documents!' } );
                         } else {
-                            var projectObject = project.toObject();
-                            projectObject.userId = projectUser.userId;
+                            var projectObject      = project.toObject();
+                            projectObject.userId   = projectUser.userId;
                             projectObject.maxHours = projectUser.maxHours;
                             projectObject.joinDate = projectUser.joinDate;
                             myProjects.push( projectObject );                            

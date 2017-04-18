@@ -1,31 +1,6 @@
-/**
- * @swagger
- * resourcePath: /mcollections
- * description: Drop de tablas maestras
- */
-var express = require('express');
-var router = express.Router();
-var masterCollectionService = require('../services/masterCollectionsServices');
-
-/**
- * @swagger
- * path: /mcollections/ceco
- * operations:
- *   -  httpMethod: GET
- *      summary: Devuelve la tabla ceco
- *      nickname: getMasterCollectionCeco
- *      consumes:
- *        - application/json
- *
- */
-router.get('/ceco', userTokenValidation, function (req, res) {
-    masterCollectionService.getCecoCollection(function (data) {
-        res.status(200).jsonp(data);
-    }, function (result) {
-        globalMethods.error(res, result, 500);
-    });
-});
-
+var express                 = require( 'express' );
+var router                  = express.Router();
+var masterCollectionService = require( '../services/masterCollectionsServices' );
 
 /**
  * @swagger
@@ -94,7 +69,6 @@ router.get( '/allSupervisors', managerTokenValidation, function ( req, res ) {  
  *      nickname: defaultPassword
  *      consumes:
  *        - application/json
- *
  */
 router.get( '/defaultPassword', managerTokenValidation, function ( req, res ) {  // lEO WAS HERE
     masterCollectionService.getDefaultPassword( function ( data ) {
@@ -139,45 +113,63 @@ router.get( '/defaultPassword', managerTokenValidation, function ( req, res ) { 
 // JUST FOR DEVELOPMENT PURPOSES
 //******************************
 
-
-
+// ****************************************************** ******************************************************
 /**
  * @swagger
- * path: /mcollections/products
+ * path: /mcollections/ceco
  * operations:
  *   -  httpMethod: GET
- *      summary: Devuelve la tabla products
- *      nickname: getMasterCollectionProducts
+ *      summary: Devuelve la tabla ceco
+ *      nickname: getMasterCollectionCeco
  *      consumes:
  *        - application/json
  *
  */
-router.get('/products', userTokenValidation, function (req, res) {
-    masterCollectionService.getProductsCollection(function (data) {
-        res.status(200).jsonp(data);
-    }, function (result) {
-        globalMethods.error(res, result, 500);
-    });
-});
+// router.get('/ceco', userTokenValidation, function (req, res) {
+//     masterCollectionService.getCecoCollection(function (data) {
+//         res.status(200).jsonp(data);
+//     }, function (result) {
+//         globalMethods.error(res, result, 500);
+//     });
+// });
+
+// /**
+//  * @swagger
+//  * path: /mcollections/products
+//  * operations:
+//  *   -  httpMethod: GET
+//  *      summary: Devuelve la tabla products
+//  *      nickname: getMasterCollectionProducts
+//  *      consumes:
+//  *        - application/json
+//  *
+//  */
+// router.get('/products', userTokenValidation, function (req, res) {
+//     masterCollectionService.getProductsCollection(function (data) {
+//         res.status(200).jsonp(data);
+//     }, function (result) {
+//         globalMethods.error(res, result, 500);
+//     });
+// });
 
 
-/**
- * @swagger
- * path: /mcollections/zones
- * operations:
- *   -  httpMethod: GET
- *      summary: Devuelve la tabla zones
- *      nickname: getMasterCollectionZones
- *      consumes:
- *        - application/json
- *
- */
-router.get('/zones', userTokenValidation, function (req, res) {
-    masterCollectionService.getZonesCollection(function (data) {
-        res.status(200).jsonp(data);
-    }, function (result) {
-        globalMethods.error(res, result, 500);
-    });
-});
+// /**
+//  * @swagger
+//  * path: /mcollections/zones
+//  * operations:
+//  *   -  httpMethod: GET
+//  *      summary: Devuelve la tabla zones
+//  *      nickname: getMasterCollectionZones
+//  *      consumes:
+//  *        - application/json
+//  *
+//  */
+// router.get('/zones', userTokenValidation, function (req, res) {
+//     masterCollectionService.getZonesCollection(function (data) {
+//         res.status(200).jsonp(data);
+//     }, function (result) {
+//         globalMethods.error(res, result, 500);
+//     });
+// });
 
 module.exports = router;

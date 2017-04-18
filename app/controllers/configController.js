@@ -21,9 +21,8 @@ var router = express.Router();
  router.get('/', function(req, res) {
  	var data = {
  		success:true	
- 	}
- 	
-	res.status(200).jsonp(data);
+ 	}; 	
+	res.status( 200 ).jsonp( data );
 });
 
 

@@ -14,9 +14,9 @@ router.get( '/getTimesheets/:userID', function( req, res, next ) { // LEO WAS HE
     };
     timesheetService.getTimesheets( data,
         function ( data ) {
-                globalMethods.successResponse( res, data );
-        }, function ( result ) {
-                globalMethods.errorResponse( res, err );
+            globalMethods.successResponse( res, data );
+        }, function ( err ) {
+            globalMethods.errorResponse( res, err );
         });
 });
 

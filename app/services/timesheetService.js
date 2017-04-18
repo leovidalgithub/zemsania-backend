@@ -17,43 +17,30 @@ var async    = require( 'async' );
 // API
 // RETURNS ALL TIMESHEETS BY 'USERID' AND 'DATE-RANGE' (USUALLY A COMPLETE MONTH)
 function getTimesheets( data, onSuccess, onError ) {
-console.log('\033c');    
         data.year  = parseInt( data.year, 10),
         data.month = parseInt( data.month, 10);
         data.firstMonthDay = new Date( data.year, data.month, 1 );
         data.lastMonthDay  = new Date( data.year, data.month + 1, 0);
 
-    // var calendarPromise = new Promise( function( resolve, reject ) {
-    //     calendarService.getCalendarById( data, function ( response ) {
-    //             resolve( response );
-    //         }, function ( err ) {
-    //             reject( err );
-    //         });
-    //     });
-
-    var timeSheetsPromise = models.Timesheet.find( {
+        models.Timesheet.find( {
                                 $and: [
                                   { "userId" : data.userID },
                                   { "date"   : { "$gte" : new Date( data.firstMonthDay ), "$lte" : new Date( data.lastMonthDay ) } }
                               ]
-    });
-
-    Promise.all( [ timeSheetsPromise ] )
-        .then( function( response ) {
-            var timesheets = response[0];
-            var timesheetDataModel = getTimesheetDataModel( timesheets );
-            onSuccess({ success: true, timesheetDataModel : timesheetDataModel });
-        })
-        .catch( function( err ) {
-        });
+                    }, function( err, timesheets ) {
+                        if( err ) {
+                            onError( { success: false, code: 500, msg: 'Error getting Timesheets documents!', err : err } );            
+                        } else {
+                            var timesheetDataModel = getTimesheetDataModel( timesheets );
+                            onSuccess({ success: true, timesheetDataModel : timesheetDataModel });
+                        }
+                    });
 }
 
-// API
+// API : /timesheets/setAllTimesheets/:userId
 // SAVES BACK TO DB ALL NEW AND MODIFIED TIMESHEETS
 function setAllTimesheets( userId, data, onSuccess, onError ) {
-console.log('\033c');
-
-    var tsArray = [];
+    var tsArray = []; // array with all timesheets to insert or to update
     data.forEach( function( ts ) {
         for( var projectId in ts ) {
             for ( var day in ts[ projectId ] ) {
@@ -127,11 +114,11 @@ console.log('\033c');
     });
 }
 
-// INTERNAL FUNCTION
+// INTERNAL FUNCTION USES BY 'getTimesheets()'
 function getTimesheetDataModel( timesheets ) {
     var timesheetDataModel = {};
     timesheets.forEach( function( ts ) {
-        // creating associative arrays
+        // creating associative arrays if not exists
         if( !timesheetDataModel[ ts.projectId ] ) timesheetDataModel[ ts.projectId ] = {};
         if( !timesheetDataModel[ ts.projectId ][ ts.date ] ) timesheetDataModel[ ts.projectId ][ ts.date ] = {};
         if( !timesheetDataModel[ ts.projectId ][ ts.date ][ ts.type ] ) timesheetDataModel[ ts.projectId ][ ts.date ][ ts.type ] = {};

@@ -18,7 +18,7 @@ var projectUsersService = require( '../services/projectUsersService' );
  *      consumes:
  *        - application/json
  */
-router.get( '/getProjectsByUserID/:id', userTokenValidation, function ( req, res ) {
+router.get( '/getProjectsByUserID/:id', userTokenValidation, function ( req, res ) { // LEO WAS HERE
     var userId = req.params.id;
     projectUsersService.getProjectsByUserID( userId,
         function ( data ) {

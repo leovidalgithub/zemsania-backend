@@ -11,7 +11,6 @@ function getCalendarById( data, onSuccess, onError ) {
     var calendarID = data.calendarID,
         month      = data.month,
         year       = data.year;
-
     models.Calendar.findOne( { _id: new ObjectId( calendarID ) }, function ( err, calendar ) {
         if ( err ) {
             onError( { success: false, code: 500, msg: 'Error getting Calendar from DB!' } );

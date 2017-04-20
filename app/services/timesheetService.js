@@ -17,10 +17,10 @@ var async    = require( 'async' );
 // API
 // RETURNS ALL TIMESHEETS BY 'USERID' AND 'DATE-RANGE' (USUALLY A COMPLETE MONTH)
 function getTimesheets( data, onSuccess, onError ) {
-        data.year  = parseInt( data.year, 10),
-        data.month = parseInt( data.month, 10);
+        data.year  = parseInt( data.year, 10 ),
+        data.month = parseInt( data.month, 10 );
         data.firstMonthDay = new Date( data.year, data.month, 1 );
-        data.lastMonthDay  = new Date( data.year, data.month + 1, 0);
+        data.lastMonthDay  = new Date( data.year, data.month + 1, 0 );
 
         models.Timesheet.find( {
                                 $and: [
@@ -51,7 +51,7 @@ function setAllTimesheets( userId, data, onSuccess, onError ) {
                             tsArray.push( {
                                             userId    : userId,
                                             projectId : projectId,
-                                            date      : new Date ( day ),
+                                            date      : new Date ( parseInt( day, 10 ) ), // from timestamp to date
                                             type      : type,
                                             subType   : subType,
                                             value     : value,
@@ -63,6 +63,7 @@ function setAllTimesheets( userId, data, onSuccess, onError ) {
             }
         }
     });
+
     async.each( tsArray, function( ts, callback ) {
         models.Timesheet.findOne( {
                                      $and: [
@@ -118,15 +119,16 @@ function setAllTimesheets( userId, data, onSuccess, onError ) {
 function getTimesheetDataModel( timesheets ) {
     var timesheetDataModel = {};
     timesheets.forEach( function( ts ) {
+        var timeStamp = new Date( ts.date ).getTime(); // stores in timestamp format
         // creating associative arrays if not exists
         if( !timesheetDataModel[ ts.projectId ] ) timesheetDataModel[ ts.projectId ] = {};
-        if( !timesheetDataModel[ ts.projectId ][ ts.date ] ) timesheetDataModel[ ts.projectId ][ ts.date ] = {};
-        if( !timesheetDataModel[ ts.projectId ][ ts.date ][ ts.type ] ) timesheetDataModel[ ts.projectId ][ ts.date ][ ts.type ] = {};
-        if( !timesheetDataModel[ ts.projectId ][ ts.date ][ ts.type ][ ts.subType ] ) timesheetDataModel[ ts.projectId ][ ts.date ][ ts.type ][ ts.subType ] = {};
+        if( !timesheetDataModel[ ts.projectId ][ timeStamp ] ) timesheetDataModel[ ts.projectId ][ timeStamp ] = {};
+        if( !timesheetDataModel[ ts.projectId ][ timeStamp ][ ts.type ] ) timesheetDataModel[ ts.projectId ][ timeStamp ][ ts.type ] = {};
+        if( !timesheetDataModel[ ts.projectId ][ timeStamp ][ ts.type ][ ts.subType ] ) timesheetDataModel[ ts.projectId ][ timeStamp ][ ts.type ][ ts.subType ] = {};
         // storing available data
-        timesheetDataModel[ ts.projectId ][ ts.date ][ ts.type ][ ts.subType ].value    = ts.value;
-        timesheetDataModel[ ts.projectId ][ ts.date ][ ts.type ][ ts.subType ].status   = ts.status;
-        timesheetDataModel[ ts.projectId ][ ts.date ][ ts.type ][ ts.subType ].modified = false;
+        timesheetDataModel[ ts.projectId ][ timeStamp ][ ts.type ][ ts.subType ].value    = ts.value;
+        timesheetDataModel[ ts.projectId ][ timeStamp ][ ts.type ][ ts.subType ].status   = ts.status;
+        timesheetDataModel[ ts.projectId ][ timeStamp ][ ts.type ][ ts.subType ].modified = false;
     });
     return timesheetDataModel;
 }

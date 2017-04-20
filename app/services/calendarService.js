@@ -78,7 +78,7 @@ function getHours( calendar, year, month ) {
                     type.days.days.forEach( function( day ) { // saving all day according required month(s)
                         day = new Date( day );
                         if( monthArray.indexOf( day.getMonth() ) != -1 ) {
-                            eventDates[ new Date( day ) ] = { date : new Date( day ), type : type.type };
+                            eventDates[ new Date( day ).getTime() ] = { date : new Date( day ), timeStamp : new Date( day ).getTime(), type : type.type };
                         }
                     });
                 });
@@ -91,7 +91,6 @@ function getHours( calendar, year, month ) {
                 });    
             }
         });
-
         // fills 'totalPerType' object: CALCULATES TOTAL OF HOURS WORKING PER DAY FOR EACH TYPE
         eventHours.forEach( function( year ) {
             var totalPerType = {};
@@ -141,7 +140,7 @@ function getHours( calendar, year, month ) {
             // fills 'totalWorkingHours' by month with total of milliseconds by type according to days stores in 'eventDates' 
             for( var day in year.eventDates ) { // all days on current year
                 var type = year.eventDates[ day ].type;
-                    day  = new Date( day );
+                    day  = new Date( parseInt( day, 10 ) );
                 totalWorkingHours[ day.getMonth() ][ 'milliseconds' ] += millisecondsByType[ type ] || 0 ;
             }
 

@@ -4,8 +4,11 @@ var express   = require( 'express' ),
     ObjectId  = require( 'mongoose' ).Types.ObjectId;
 // var newId = ObjectId();
 
-router.get( '/fill', function ( req, res ) {
-console.log('\033c');    
+router.post( '/fill', function ( req, res ) {
+console.log('\033c');
+
+console.log( req.body );
+res.send(req.body);
 
     // models.Timesheet.findOne( { _id: new ObjectId( '58e7630deacc350744f34e6a' ) }, function( err, doc ) {
     //         var date = new Date ( doc.date );

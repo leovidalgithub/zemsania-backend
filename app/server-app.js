@@ -8,7 +8,7 @@ var express          = require( 'express' ),
     multer           = require( 'multer' ),
     Grid             = require( 'gridfs-stream' ),
     expressValidator = require( 'express-validator' ),
-    cors             = require( 'cors' ),
+    cors             = require( 'cors' );
     mongoose.Promise = Promise;
 
 //--> https://github.com/andris9/Nodemailer

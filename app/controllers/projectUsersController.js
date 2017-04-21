@@ -23,7 +23,7 @@ router.get( '/getProjectsByUserID/:id', userTokenValidation, function ( req, res
     projectUsersService.getProjectsByUserID( userId,
         function ( data ) {
            globalMethods.successResponse( res, data );
-        }, function ( result ) {
+        }, function ( err ) {
             globalMethods.errorResponse( res, err );
         });
 });

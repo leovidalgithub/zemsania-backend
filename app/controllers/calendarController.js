@@ -24,7 +24,8 @@ router.get( '/getCalendarById/:id', managerTokenValidation, function ( req, res 
         month : req.query.month,
         year : req.query.year
     };
-    calendarService.getCalendarById( data, function ( data ) {
+    calendarService.getCalendarById( data, 
+       function ( data ) {
         globalMethods.successResponse( res, data );
     }, function ( err ) {
         globalMethods.errorResponse( res, err );

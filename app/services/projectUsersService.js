@@ -5,43 +5,106 @@ var ObjectId = require( 'mongoose' ).Types.ObjectId;
 // var moment   = require( 'moment' );
 // var async    = require( 'async' );
 
+// function getProjectsByUserID( userId, onSuccess, onError ) { // LEO WAS HERE
+//     var myPromises = [];
+//     var myProjects = [];
+//     models.ProjectUsers.find( { userId: new ObjectId( userId ) }, function( err, projectUsers ) {
+//         if ( err ) {
+//             onError( { success: false, code: 500, msg: 'Error getting ProjectUser documents!' } );
+//             return;
+//         } else if ( projectUsers ) {
+//                 projectUsers.forEach( function( projectUser ) {
+//                     myPromises.push( models.Project.findOne( { _id: new ObjectId( projectUser.projectId ) }, function( err, project ) {
+//                         if( !err && project ) {
+//                             var projectObject      = project.toObject();
+//                             projectObject.userId   = projectUser.userId;
+//                             projectObject.maxHours = projectUser.maxHours;
+//                             projectObject.joinDate = projectUser.joinDate;
+//                             myProjects.push( projectObject );                            
+//                         }
+//                     }) );
+//                 });            
+//         } else {
+//             onSuccess( { success: false, code: 501, msg: 'ProjectsUser not found!', projects : null } );
+//             return;
+//         }
+//         Promise.all( myPromises )
+//             .then( function( data ) {
+//                 onSuccess( { success: true, code: 200, msg: 'ProjectsUser documents', projects : myProjects } );
+//             })
+//             .catch( function( err ) {
+//                     onError( { success: false, code: 502, msg: 'Error getting ProjectsUser documents!', err: err } );
+//             });
+//     });
+// }
+
+// ***************************************************** *****************************************************
+// ***************************************************** *****************************************************
 /*
  * Finds all documents in 'ProjectUsersSchema' by UserID and then returns all projects related in 'ProjectSchema'
  */
+ // TERMINAR DE RESOLVER ESTE MISTERIO
+ // TERMINAR DE RESOLVER ESTE MISTERIO
+ // TERMINAR DE RESOLVER ESTE MISTERIO
+ // TERMINAR DE RESOLVER ESTE MISTERIO
+ // Y RESOLVER LO DE QUE LOS PROYECTOS DE USUARIO QUE LLEGAN PARA EL SELECT DEBEN COINCIDIR CON LOS PROYECTOS QUE SE CONSIGUEN
+ // EN TODOS LOS DÍAS DEL TIMESHEET DEL MES EN CURSO.
+ // SI EN PROJECTUSER EL USUARIO TIENE LOS PROYECTOS A,B,C, CUANDO LLENO EL OBJECTO TIMESHEETMODEL SOLAMENTE DEBERÍAN EXISTIR
+ // LOS PROYECTOS A,B,C O MENOS.
+
+
+ 
 function getProjectsByUserID( userId, onSuccess, onError ) { // LEO WAS HERE
+            var myPromises = [];
+            var myProjects = [];
+    var cont = 0;
     models.ProjectUsers.find( { userId: new ObjectId( userId ) }, function( err, projectUsers ) {
         if ( err ) {
             onError( { success: false, code: 500, msg: 'Error getting ProjectUser documents!' } );
-        } else {
-            if ( projectUsers ) {
-                var myPromises = [];
-                var myProjects = [];
-                projectUsers.forEach( function( projectUser, key ) {
-                    myPromises.push( models.Project.findOne( { _id: new ObjectId( projectUser.projectId ) }, function( err, project ) {
+            return;
+        } else if ( projectUsers ) {
+    console.log('*************************');
+            projectUsers.forEach( function( projectUser, key ) {
+                myPromises.push ( new Promise( function( resolve, reject ) {
+                    return models.Project.findOne( { _id: new ObjectId( projectUser.projectId ) }, function( err, project ) {
                         if( err ) {
-                            onError( { success: false, code: 500, msg: 'Error getting Projects documents!' } );
-                        } else {
+                            reject( { success: false, code: 500, msg: 'Error getting Projects documents!' } );
+                        } else if ( project ) {
+                            console.log( project.name );
                             var projectObject      = project.toObject();
                             projectObject.userId   = projectUser.userId;
                             projectObject.maxHours = projectUser.maxHours;
                             projectObject.joinDate = projectUser.joinDate;
-                            myProjects.push( projectObject );                            
+                            myProjects.push( projectObject );
+                            resolve();
+                        } else {
+                            resolve();
                         }
-                    }) );
-                });
-                Promise.all( myPromises )
-                    .then( function( data ) {
-                        onSuccess({ success: true, projects : myProjects });
-                    })
-                    .catch( function( err ) {
-                            onError( { success: false, code: 500, msg: 'Error getting Projects documents!' } );
+                        cont++;
+                        console.log(myProjects.length);
                     });
-            } else {
-                onError( { success: false, code: 500, msg: 'Not projects found!', projects : null } );
-            }
-        }
+                }) );
+            }); // for each
+        } else {
+            onError( { success: false, code: 500, msg: 'Not projects found!', projects : null } );
+            return;
+        };
+    
+        console.log('myPromises.length ' + myPromises.length );
+            Promise.all( myPromises )
+                .then( function( data ) {
+                    console.log('cont ' + cont);
+                    onSuccess({ success: true, projects : myProjects });
+                })
+                .catch( function( err ) {
+                        console.log('ERR');
+                        console.log(err);
+                        onError( { success: false, code: 500, msg: 'Error getting Projects documents!' } );
+                });
     });
 }
+// ***************************************************** *****************************************************
+// ***************************************************** *****************************************************
 
 
 // ***************************************************** *****************************************************

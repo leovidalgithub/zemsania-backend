@@ -13,10 +13,12 @@ function getCalendarById( data, onSuccess, onError ) {
         year       = data.year;
     models.Calendar.findOne( { _id: new ObjectId( calendarID ) }, function ( err, calendar ) {
         if ( err ) {
-            onError( { success: false, code: 500, msg: 'Error getting Calendar from DB!' } );
-        } else {
+            onError( { success: false, code: 500, msg: 'Error getting Calendar from DB!', err: err } );
+        } else if ( calendar ) {
             var eventHours = getHours( calendar, year, month );
-            onSuccess( { success: true, code: 200, msg: 'Complete Calendar object from DB and EventHours object', calendar: calendar, eventHours : eventHours } );                
+            onSuccess( { success: true, code: 200, msg: 'Calendar and EventHours object', calendar: calendar, eventHours : eventHours } );
+        } else {
+            onSuccess( { success: false, code: 501, msg: 'Calendar not found!' } );
         }
     });
 }
@@ -31,9 +33,12 @@ function getRefreshCalendarData( calendar, onSuccess, onError ) {
 function getCalendarNames( onSuccess, onError ) {
     models.Calendar.find( { "enabled" : 1 }, { "name" : 1, "description" : 1, "enabled" : 1 }, function ( err, calendars ) {
         if ( err ) {
-            onError( { success: false, code: 500, msg: 'Error getting Calendar.' } );
-        } else {
+            onError( { success: false, code: 500, msg: 'Error getting Calendar.', err: err } );
+        } else if ( calendars ) {
             onSuccess( { success: true, code: 200, msg: 'Calendar', calendars : calendars } );
+        }
+         else {
+            onSuccess( { success: false, code: 501, msg: 'Calendars not found!' } );
         }
     });
 }
@@ -198,7 +203,7 @@ function getHours( calendar, year, month ) {
 //     models.Calendar.find( {}, 
 //         function ( err, calendars ) {
 //             if ( err ) {
-//                 onError( { success: false, code: 500, msg: 'Error getting all Calendars.' } );
+//                 onError( { success: false, code: 500, msg: 'Error getting all Calendars.', err: err } );
 //             } else {
 //                 onSuccess( { success: true, code: 200, msg: 'All Calendars', calendars: calendars } );
 //             }
@@ -212,7 +217,7 @@ function getHours( calendar, year, month ) {
 //         year = data.year;
 //     models.Calendar.findOne( { _id: new ObjectId( calendarID ) }, function ( err, calendar ) {
 //         if ( err ) {
-//             onError( { success: false, code: 500, msg: 'Error getting Calendar.' } );
+//             onError( { success: false, code: 500, msg: 'Error getting Calendar.', err: err } );
 //         } else {
 //             var eventDates = [];
 //             var months     = [ 'january' ,'february' ,'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december' ];

@@ -30,9 +30,12 @@ function getTimesheets( data, onSuccess, onError ) {
                     }, function( err, timesheets ) {
                         if( err ) {
                             onError( { success: false, code: 500, msg: 'Error getting Timesheets documents!', err : err } );            
-                        } else {
+                        } else if ( timesheets ) {
                             var timesheetDataModel = getTimesheetDataModel( timesheets );
-                            onSuccess({ success: true, timesheetDataModel : timesheetDataModel });
+                            onSuccess( { success: true, code: 200, msg: 'Timesheets Model', timesheetDataModel : timesheetDataModel } );
+                        }
+                        else {
+                            onSuccess( { success: false, code: 501, msg : 'No timesheets found!' } );
                         }
                     });
 }

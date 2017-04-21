@@ -27,7 +27,7 @@ router.post( '/setAllTimesheets/:userId', function( req, res, next ) { // LEO WA
     timesheetService.setAllTimesheets( userId, data,
         function ( data ) {
                 globalMethods.successResponse( res, data );
-        }, function ( result ) {
+        }, function ( err ) {
                 globalMethods.errorResponse( res, err );
         });
 });

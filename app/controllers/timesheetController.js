@@ -32,7 +32,6 @@ router.post( '/setAllTimesheets/:userId', function( req, res, next ) { // LEO WA
         });
 });
 
-
 // ***************************************************** *****************************************************
 // /* POST /timesheet */
 // router.post('/', function(req, res, next) {

@@ -103,11 +103,18 @@ module.exports = function( mongoose ) {
         maxHours: { type: Number, default: 8, trim: true }
     }, { collection: 'project_users' });
 
+    var NotificationSchema = new Schema({
+        senderId: { type: Schema.Types.ObjectId, ref: 'User', index: true },
+        receiverId: { type: Schema.Types.ObjectId, ref: 'User', index: true },        
+        type: { type: String, trim: true, index: true },
+        status: { type: String, index: true, default: constants.notification_status_unread },        
+        text: { type: String, trim: true },
+        initDate: { type: Date, default: Date.now },
+        endDate: { type: Date, default: Date.now },
+        createdAt: { type: Date, default: Date.now }
+    }, { collection: 'notifications' });
+
 // *********************************************** **************************************************
-
-
-
-
 
     // var AbsenceSchema = new Schema({
     //     date: { type: Date, index: true },
@@ -178,18 +185,6 @@ module.exports = function( mongoose ) {
     //     status: { type: String, index: true, default: constants.requested },
     //     createdAt: { type: Date, default: Date.now }
     // }, { collection: 'holidays' });
-
-    // var NotificationSchema = new Schema({
-    //     senderId: { type: Schema.Types.ObjectId, ref: 'User', index: true },
-    //     receiverId: { type: Schema.Types.ObjectId, ref: 'User', index: true },
-    //     type: { type: String, trim: true, index: true },
-    //     status: { type: String, index: true, default: constants.unread },
-    //     text: { type: String, trim: true },
-    //     initDate: { type: Date, default: Date.now },
-    //     endDate: { type: Date, default: Date.now },
-    //     createdAt: { type: Date, default: Date.now }
-    // }, { collection: 'notifications' });
-
 
     // var SpentSchema = new Schema({
     //     date: { type: Date, index: true },
@@ -270,7 +265,7 @@ module.exports = function( mongoose ) {
         // ConceptAbsence     : mongoose.model( 'ConceptAbsence'    , ConceptAbsenceSchema ),
         // DailyReport        : mongoose.model( 'DailyReport'       , DailyReportSchema ),
         // Holidays           : mongoose.model( 'Holidays'          , HolidaysSchema ),
-        // Notification       : mongoose.model( 'Notification'      , NotificationSchema ),
+        Notification       : mongoose.model( 'Notification'      , NotificationSchema ),
         Project            : mongoose.model( 'Project'           , ProjectSchema ),
         ProjectUsers       : mongoose.model( 'ProjectUsers'      , ProjectUsersSchema ),
         Timesheet          : mongoose.model( 'Timesheet'         , TimesheetSchema )

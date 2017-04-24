@@ -3,10 +3,31 @@
  * resourcePath: /notifications
  * description: Utilidades para notificaciones
  */
-var express = require('express');
-var router = express.Router();
-var notificationService = require('../services/notificationService');
+var express             = require( 'express' );
+var router              = express.Router();
+var notificationService = require( '../services/notificationService' );
 
+/**
+ * @swagger
+ * path: /notifications/unreads
+ * operations:
+ *   -  httpMethod: GET
+ *      summary: Returns al unreads notifications by UserId
+ *      notes: userTokenAutentication is required (x-auth-token).
+ *      nickname: notificationsUnread
+ *      consumes:
+ *        - application/json
+ */
+router.get( '/unreads', userTokenValidation, function ( req, res ) { // LEO WORKING HERE
+    notificationService.getNotificationsUnread( req.userId,
+        function ( data ) {
+            globalMethods.successResponse( res, data );
+        }, function ( err ) {
+            globalMethods.errorResponse( res, err );
+        });
+});
+
+// ***************************************************** *****************************************************
 /**
  * @swagger
  * path: /notifications
@@ -19,50 +40,14 @@ var notificationService = require('../services/notificationService');
  *        - application/json
  *
  */
-
-// router.use(function ( req, res, next ) {
-//     console.log( 'EPA from Controller 111!' );
-//     next();
+// router.get('/', userTokenValidation, function (req, res) {
+//     notificationService.getNotifications(req.userId,
+//         function (data) {
+//             res.status(200).jsonp(data);
+//         }, function (result) {
+//             globalMethods.error(res, result, 500);
+//         });
 // });
-
-router.get('/', userTokenValidation, function (req, res) {
-    notificationService.getNotifications(req.userId,
-        function (data) {
-            res.status(200).jsonp(data);
-        }, function (result) {
-            globalMethods.error(res, result, 500);
-        });
-});
-
-/**
- * @swagger
- * path: /notifications/unreads
- * operations:
- *   -  httpMethod: GET
- *      summary: Devuelve las notificaciones sin leer de usuario
- *      notes: Requiere token de autenticación (x-auth-token).
- *      nickname: notificationsUnread
- *      consumes:
- *        - application/json
- *
- */
-
-
-router.get('/unreads', function ( req, res, next ) {
-    console.log( 'unreads MIDDLEWARE 1!' );
-    next();
-});
-
-router.get('/unreads', userTokenValidation, function (req, res) {
-    console.log( 'unreads INSIDE!' );
-    notificationService.getNotificationsUnread(req.userId,
-        function (data) {
-            res.status(200).jsonp(data);
-        }, function (result) {
-            globalMethods.error(res, result, 500);
-        });
-
-});
 
 
 /**

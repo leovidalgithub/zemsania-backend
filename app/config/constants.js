@@ -7,6 +7,7 @@ var constants = {
     sent: 'sent',
     validated: 'validated',
     delivery: 'delivery',
+    
     hours_sent: 'hours_sent',
     hours_validated: 'hours_validated',
     hours_rejected: 'hours_rejected',
@@ -16,8 +17,20 @@ var constants = {
     absences_approved: 'absences_approved',
     absences_rejected: 'absences_rejected',
     absences_sent: 'absences_sent',
-    read: 'read',
-    unread: 'unread',
+
+    // NOTIFICATIONS
+    notification_status_read   : 'read',
+    notification_status_unread : 'unread',
+
+//  user to gestor
+    notification_type_holiday_req : 'holiday_req',
+    notification_type_hours_req : 'hours_req',
+
+//  gestor to user
+    notification_type_hours_validated : 'hours_validated',
+    notification_type_hours_rejected : 'hours_rejected',
+    notification_type_hours_pending_req : 'hours_pending_req',
+
     requested: 'requested',
     holidaysTotal: 23,
     approved: 'approved',

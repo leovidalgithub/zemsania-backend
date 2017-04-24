@@ -4,11 +4,8 @@ var express   = require( 'express' ),
     ObjectId  = require( 'mongoose' ).Types.ObjectId;
 // var newId = ObjectId();
 
-router.post( '/fill', function ( req, res ) {
+router.get( '/fill', function ( req, res ) {
 console.log('\033c');
-
-console.log( req.body );
-res.send(req.body);
 
     // models.Timesheet.findOne( { _id: new ObjectId( '58e7630deacc350744f34e6a' ) }, function( err, doc ) {
     //         var date = new Date ( doc.date );
@@ -18,6 +15,18 @@ res.send(req.body);
     //             res.send( doc );   
     //         });
     // });
+    // **************************************** INSERT NEW NOTIFICATION ***********************************
+    var nt = new models.Notification ({
+        senderId: '588896327f2dca0f940fd99c', // lorenzo barja
+        receiverId: '58a446acdb8d2617dc208d8a', // leo rdgz
+        type: constants.notification_type_hours_validated,
+        text: 'Felicidades, todas sus horas fueron exitosamente validadas por su Gestor!',
+    });
+    nt.save( function(err,data) {
+        if ( err ) console.log( err );
+        console.log('saved!');
+        res.send(data);
+    });
 // ***************************************** INSERT NEW TIMESHEET ****************************************
     // var ts = new models.Timesheet ({
     //     userId          : '58a446acdb8d2617dc208d8a',

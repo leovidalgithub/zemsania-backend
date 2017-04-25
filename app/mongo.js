@@ -6,27 +6,28 @@ var express   = require( 'express' ),
 
 router.get( '/fill', function ( req, res ) {
 console.log('\033c');
+res.end();
 
     // models.Timesheet.findOne( { _id: new ObjectId( '58e7630deacc350744f34e6a' ) }, function( err, doc ) {
     //         var date = new Date ( doc.date );
     //         console.log( date.getDate());
     //         console.log( date.getMonth());
-    //         models.Timesheet.findOne( { date: date, userId: '58a446acdb8d2617dc208d8a' }, function( err, doc ) {
+    //         models.Timesheet.findOne( { date: date, userId: '58a446acdb8d2617dc208d8a' }, function( err,     doc ) {
     //             res.send( doc );   
     //         });
     // });
     // **************************************** INSERT NEW NOTIFICATION ***********************************
-    var nt = new models.Notification ({
-        senderId: '588896327f2dca0f940fd99c', // lorenzo barja
-        receiverId: '58a446acdb8d2617dc208d8a', // leo rdgz
-        type: constants.notification_type_hours_validated,
-        text: 'Felicidades, todas sus horas fueron exitosamente validadas por su Gestor!',
-    });
-    nt.save( function(err,data) {
-        if ( err ) console.log( err );
-        console.log('saved!');
-        res.send(data);
-    });
+    // var nt = new models.Notification ({
+    //     senderId: '588896327f2dca0f940fd99c', // lorenzo barja
+    //     receiverId: '58a446acdb8d2617dc208d8a', // leo rdgz
+    //     type: constants.notification_type_hours_req,
+    //     text: 'Todo bien!',
+    // });
+    // nt.save( function(err,data) {
+    //     if ( err ) console.log( err );
+    //     console.log('saved!');
+    //     res.send(data);
+    // });
 // ***************************************** INSERT NEW TIMESHEET ****************************************
     // var ts = new models.Timesheet ({
     //     userId          : '58a446acdb8d2617dc208d8a',
@@ -641,3 +642,25 @@ console.log('\033c');
 
 
 module.exports = router;
+
+
+// **************************************** RANDOM FUNCTION TO FILL USER CANDIDATEID ********************************************
+    // models.User.find( {}, function( err, users ) {
+    //     if( users ) {
+    //         users.forEach( function( user ) {
+    //             var code = generateRandomEmployeeCode();
+    //             user.candidatoId = code;
+    //             user.save();
+    //         });
+    //     }
+    // });
+    // function generateRandomEmployeeCode() {
+    //     var charLength = 8,
+    //     charSet        = '0123456789ABCDEFGHIJKLMNPQRSTUVWXYZ',
+    //     charRetVal     = '';
+    //     for ( var i = 0, n = charSet.length; i < charLength; ++i ) {
+    //         charRetVal += charSet.charAt( Math.floor( Math.random() * n ) );
+    //     };
+    //     return charRetVal;
+    // };
+// ******************************************************************************************************************************

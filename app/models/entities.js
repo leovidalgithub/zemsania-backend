@@ -25,28 +25,30 @@ module.exports = function( mongoose ) {
                     groupDays : [ groupDays ]
                 };
 
+
     var UserSchema = new Schema( {
-        candidatoId :      { type : Number, trim : true },
-        username :         { type : String, trim : true, index : true },
-        password :         { type : String, trim : true },
-        name :             { type : String, trim : true, index : true },
-        surname :          { type : String, trim : true, index : true },
-        nif :              { type : String, trim : true, index : true },
-        enabled :          { type : Boolean, index : true, default : true },
-        defaultPassword :  { type : Boolean, index : true, default : true },
-        activationDate :   { type : Date, default : Date.now },
-        lastLoginDate :    { type : Date, default : Date.now },
-        birthdate :        { type : Date },
-        locale :           { type : String, trim : true, default : 'es' },
-        sex :              { type : String, trim : true },
-        phone :            { type : String, trim : true },
-        uuid :             { type : String, trim : true, index : true },
-        roles :            { type : Array, default : ['ROLE_USER'] },
-        zimbra_cosID :     { type : String, trim : true, index : true },
-        zimbra_server :    { type : String, trim : true, index : true },
-        calendarID :       { type : Schema.Types.ObjectId, ref : 'Calendar' },
-        superior :         { type : Schema.Types.ObjectId, ref : 'User' },
-        company :          { type : Schema.Types.ObjectId, ref : 'Enterprises' }
+        candidatoId :     { type : String, trim : true },
+        cp :              { type : String, trim : true },
+        username :        { type : String, trim : true, index : true },
+        password :        { type : String, trim : true },
+        name :            { type : String, trim : true, index : true },
+        surname :         { type : String, trim : true, index : true },
+        nif :             { type : String, trim : true, index : true },
+        enabled :         { type : Boolean, index : true, default : true },
+        defaultPassword : { type : Boolean, index : true, default : true },
+        activationDate :  { type : Date, default : Date.now },
+        lastLoginDate :   { type : Date, default : Date.now },
+        birthdate :       { type : Date },
+        locale :          { type : String, trim : true, default : 'es' },
+        sex :             { type : String, trim : true },
+        phone :           { type : String, trim : true },
+        uuid :            { type : String, trim : true, index : true },
+        roles :           { type : Array, default : ['ROLE_USER'] },
+        zimbra_cosID :    { type : String, trim : true, index : true },
+        zimbra_server :   { type : String, trim : true, index : true },
+        calendarID :      { type : Schema.Types.ObjectId, ref : 'Calendar' },
+        superior :        { type : Schema.Types.ObjectId, ref : 'User' },
+        company :         { type : Schema.Types.ObjectId, ref : 'Enterprises' }
     }, { collection: 'users', timestamps: { createdAt: 'created_at' } });
 
     var EnterprisesSchema = new Schema({

@@ -77,7 +77,7 @@ function verifyUuid( uuidEmail, uuidUser ) { // LEO WAS HERE
         return new Date( int_millisec );
     };
 
-// GENERATE RANDOM PASSWORD
+    // GENERATE RANDOM PASSWORD
     function generateRandomPassword() { // LEO WAS HERE
         var charLength = 5,
         numLength      = 2,

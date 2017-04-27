@@ -25,8 +25,7 @@ function getAllUsers( onSuccess, onError ) { // LEO WAS HERE
 function advancedUserSearch( form, onSuccess, onError ) { // LEO WAS HERE
     var textToFind = form.textToFind;
     var regExp = new RegExp( '' + textToFind );
-
-    aggregate = [
+    var aggregate = [
                     { '$match' : { '$or' : [ 
                                                 { name     : { '$regex' : regExp, '$options' : 'i' } },
                                                 { username : { '$regex' : regExp, '$options' : 'i' } },

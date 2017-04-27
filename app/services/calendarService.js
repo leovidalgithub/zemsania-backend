@@ -43,6 +43,28 @@ function getCalendarNames( onSuccess, onError ) {
     });
 }
 
+// API 
+// CALENDAR ADVANCED SEARCH. FINDS THE SAME STRING IN 'NAME' AND 'DESCRIPTION' FIELDS
+function advancedCalendarSearch( form, onSuccess, onError ) { // LEO WAS HERE
+    var textToFind = form.textToFind;
+    var regExp = new RegExp( '' + textToFind );
+    var aggregate = [
+                    { '$match' : { '$or' : [ 
+                                                { name        : { '$regex' : regExp, '$options' : 'i' } },
+                                                { description : { '$regex' : regExp, '$options' : 'i' } }
+                                         ] } }
+    ];
+                    // { $project : { name : 1, username : 1 } }
+    models.Calendar.aggregate( aggregate, function ( err, calendars ) {
+        if ( err ) {
+            onError( { success: false, code: 500, msg: 'Error getting Calendars Profile.' } );
+        } else {
+            onSuccess( { success: true, code: 200, msg: 'Calendars by Advanced search', calendars: calendars } );
+        }
+    });
+}
+
+
 // ****************************************** INTERNAL FUNCTIONS ******************************************
 // INTERNAL SERVICE FUNCTION USED BY getCalendarById() and getRefreshCalendarData()
 // CALCULATES DEPENDS OVER PARAMETERS (one year, all years, one month, all months)
@@ -393,7 +415,8 @@ function getHours( calendar, year, month ) {
 module.exports = {
     getCalendarById        : getCalendarById,
     getCalendarNames       : getCalendarNames,
-    getRefreshCalendarData : getRefreshCalendarData
+    getRefreshCalendarData : getRefreshCalendarData,
+    advancedCalendarSearch : advancedCalendarSearch
     // getAllNameCalendar: getAllNameCalendar,
     // getCalendar: getCalendar,
     // saveCalendar: saveCalendar,

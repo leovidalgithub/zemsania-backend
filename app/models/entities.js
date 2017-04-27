@@ -109,6 +109,7 @@ module.exports = function( mongoose ) {
         senderId: { type: Schema.Types.ObjectId, ref: 'User', index: true },
         receiverId: { type: Schema.Types.ObjectId, ref: 'User', index: true },        
         type: { type: String, trim: true, index: true },
+        // NOT IN USE AT THIS TIME issueDate: { type: Date }, // to land on date of issue (ex. hours_req feb-2017 Ir a ello) to store month and year of the notification
         status: { type: String, index: true, default: constants.notification_status_unread },        
         text: { type: String, trim: true },
         initDate: { type: Date, default: Date.now },

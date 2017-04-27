@@ -18,8 +18,28 @@ var notificationService = require( '../services/notificationService' );
  *      consumes:
  *        - application/json
  */
-router.get( '/unreads', userTokenValidation, function ( req, res ) { // LEO WORKING HERE
+router.get( '/unreads', userTokenValidation, function ( req, res ) { // LEO WAS HERE
     notificationService.getNotificationsUnread( req.userId,
+        function ( data ) {
+            globalMethods.successResponse( res, data );
+        }, function ( err ) {
+            globalMethods.errorResponse( res, err );
+        });
+});
+
+/**
+ * @swagger
+ * path: /notifications/insertNewNotification
+ * operations:
+ *   -  httpMethod: POST
+ *      summary: Inserts a new notification
+ *      notes: userTokenAutentication is required (x-auth-token).
+ *      nickname: insertNewNotification
+ *      consumes:
+ *        
+ */
+router.post( '/insertNewNotification', userTokenValidation, function ( req, res ) { // LEO WORKING HERE
+    notificationService.insertNewNotification( req.body,
         function ( data ) {
             globalMethods.successResponse( res, data );
         }, function ( err ) {
@@ -66,22 +86,22 @@ router.get( '/unreads', userTokenValidation, function ( req, res ) { // LEO WORK
  *          dataType: NotificationID
  *
  */
-router.post('/markRead', userTokenValidation, function (req, res) {
-    req.checkBody('notificationId', 'required').notEmpty();
-    var errors = req.validationErrors();
+// router.post('/markRead', userTokenValidation, function (req, res) {
+//     req.checkBody('notificationId', 'required').notEmpty();
+//     var errors = req.validationErrors();
 
-    if (errors) {
-        res.json({success: false, errors: errors});
-    }
-    else {
-        notificationService.markNotificationsReaded(req.userId, req.body.notificationId,
-            function (data) {
-                res.status(200).jsonp(data);
-            }, function (result) {
-                globalMethods.error(res, result, 401);
-            });
-    }
-});
+//     if (errors) {
+//         res.json({success: false, errors: errors});
+//     }
+//     else {
+//         notificationService.markNotificationsReaded(req.userId, req.body.notificationId,
+//             function (data) {
+//                 res.status(200).jsonp(data);
+//             }, function (result) {
+//                 globalMethods.error(res, result, 401);
+//             });
+//     }
+// });
 
 /**
  * @swagger

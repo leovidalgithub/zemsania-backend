@@ -71,8 +71,28 @@ router.get( '/getCalendarNames', managerTokenValidation, function ( req, res ) {
     });
 });
 
-
-
+/**
+ * @swagger
+ * path: /calendar/advancedCalendarSearch
+ * operations:
+ *   -  httpMethod: POST
+ *      summary: find a string either on name or description
+ *      notes: manager token autentication is requiered (x-auth-token).
+ *      nickname: advancedCalendarSearch
+ *      consumes:
+ *        - application/json
+ *      parameters:
+ *        - name: data
+ *          paramType: body
+ *          dataType: SearchCalendar
+ */
+router.post( '/advancedCalendarSearch', managerTokenValidation, function ( req, res ) { // LEO WAS HERE
+    calendarService.advancedCalendarSearch( req.body, function ( data ) {
+        globalMethods.successResponse( res, data );
+    }, function ( err ) {
+        globalMethods.errorResponse( res, err );
+    });
+});
 
 // *********************************************** ***********************************************
 // *********************************************** ***********************************************

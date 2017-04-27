@@ -50,7 +50,8 @@ function setAllTimesheets( userId, data, onSuccess, onError ) {
                 for ( var type in ts[ projectId ][day] ) {
                     for ( var subType in ts[ projectId ][day][type] ) {
                         if( ts[ projectId ][day][type][subType].modified ) {
-                            var value = ts[ projectId ][day][type][subType].value;
+                            var value  = ts[ projectId ][day][type][subType].value;
+                            var status = ts[ projectId ][day][type][subType].status;
                             tsArray.push( {
                                             userId    : userId,
                                             projectId : projectId,
@@ -58,7 +59,7 @@ function setAllTimesheets( userId, data, onSuccess, onError ) {
                                             type      : type,
                                             subType   : subType,
                                             value     : value,
-                                            status    : 'draft'
+                                            status    : status
                                         });
                         }
                     }

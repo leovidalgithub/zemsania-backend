@@ -22,6 +22,35 @@ function getNotificationsUnread( userId, onSuccess, onError ) { // LEO WORKING H
             }
     });
 }
+// API
+// INSERTS A NEW NOTIFICATION
+function insertNewNotification( data, onSuccess, onError ) {
+    var senderId   = data.senderId;
+    var receiverId = data.receiverId;
+    var type       = data.type;
+    var text       = data.text;
+
+    var newNotification = new models.Notification ({
+        senderId: senderId,
+        receiverId: receiverId,
+        type: type,
+        status: constants.notification_status_unread,
+        text: text
+    });
+
+    // console.log(newNotification);
+    // onSuccess( { success: true, code: 200, msg: 'New Notification saved!' } );
+    // return;
+    
+    newNotification.save( function( err, notification ) {
+        if ( err ) {
+        } else if ( notification ) {
+            onSuccess( { success: true, code: 200, msg: 'New Notification saved!', notification : notification } );
+        } else {
+            onError( { success: false, code: 500, msg: 'Error saving new Notifications!', err : err } );
+        }
+    });
+}
 
 // ***************************************************** *****************************************************
 
@@ -39,6 +68,7 @@ function getNotificationsUnread( userId, onSuccess, onError ) { // LEO WORKING H
 /*
  * Marca como leida la notificación.
  */
+
 // function markNotificationsReaded(receiverId, notificationId, onSuccess, onError) {
 //     models.Notification.findOne({
 //         _id: new ObjectId(notificationId), receiverId: new ObjectId(receiverId)
@@ -54,24 +84,10 @@ function getNotificationsUnread( userId, onSuccess, onError ) { // LEO WORKING H
 //     onSuccess({success: true});
 // }
 
-// function createNotification(senderId, receiverId, type, text, initDate, endDate) {
-//     var notification = new models.Notification();
-//     notification.senderId = senderId;
-//     notification.receiverId = receiverId;
-//     notification.type = type;
-//     notification.status = constants.notification_status_unread;
-//     notification.text = text;
-//     notification.initDate = initDate;
-//     notification.endDate = endDate;
-//     notification.save(function (err) {
-//         if (err) throw err;
-//     });
-// }
-
 module.exports = {
+    getNotificationsUnread: getNotificationsUnread,
+    insertNewNotification: insertNewNotification
     // getNotifications: getNotifications,
-    getNotificationsUnread: getNotificationsUnread
     // markNotificationsReaded: markNotificationsReaded,
-    // createNotification: createNotification
 };
 

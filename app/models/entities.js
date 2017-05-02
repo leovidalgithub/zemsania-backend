@@ -82,7 +82,6 @@ module.exports = function( mongoose ) {
         company         : { type : String }
     }, { collection: 'timesheets', timestamps: { createdAt: 'created_at' } });
 
-// ****************************************** Project ***********************************************
     var ProjectSchema = new Schema({
         crm_id: { type: String, unique: true, required: true },
         code: { type: String, trim: true, required: true },

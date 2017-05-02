@@ -109,7 +109,8 @@ app.use( '/mcollections' , require( './controllers/masterCollectionsController' 
 app.use( '/user'         , require( './controllers/userController' ) );
 app.use( '/verify'       , require( './controllers/verifyController' ) );
 app.use( '/projectUsers' , require( './controllers/projectUsersController' ) );
-app.use( '/timesheets'   , userTokenValidation, require( './controllers/timesheetController' ) );
+app.use( '/timesheets'   , require( './controllers/timesheetController' ) );
+app.use( '/approval'     , require( './controllers/approvalController' ) );
 // app.use('/absences', require('./controllers/absencesController'));
 // app.use('/config', require('./controllers/configController'));
 // app.use('/dailyReport', require('./controllers/dailyReportController'));

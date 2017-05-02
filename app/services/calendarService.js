@@ -7,7 +7,7 @@ var moment   = require( 'moment' );
 
 // API - RETURNS A CALENDAR BY ITS ID / RANGE OF HOURS BY TYPE / TOTAL OF HOURS BY TYPE, BY MONTH AND BY YEAR
 // IT CAN RETURNS AN SPECIFIC YEAR OR ALL YEARS INSIDE CALENDAR OBJECT. ALSO FOR MONTHS
-function getCalendarById( data, onSuccess, onError ) {
+function getCalendarById( data, onSuccess, onError ) { // LEO WAS HERE
     var calendarID = data.calendarID,
         month      = data.month,
         year       = data.year;
@@ -24,13 +24,13 @@ function getCalendarById( data, onSuccess, onError ) {
 }
 
 // API - WHEN CALENDAR IS EDITED, IT RECEIVES IT AND REFRESH AND RETURNS ITS 'eventHours' OBJECT
-function getRefreshCalendarData( calendar, onSuccess, onError ) {
+function getRefreshCalendarData( calendar, onSuccess, onError ) { // LEO WAS HERE
     var eventHours = getHours( calendar );
     onSuccess( { success: true, code: 200, msg: 'Complete Calendar object and EventHours object refreshed', calendar: calendar, eventHours : eventHours } );        
 }
 
 // API - RETURNS ALL ENABLED CALENDARS NAME AND DESCRIPTION
-function getCalendarNames( onSuccess, onError ) {
+function getCalendarNames( onSuccess, onError ) { // LEO WAS HERE
     models.Calendar.find( { "enabled" : 1 }, { "name" : 1, "description" : 1, "enabled" : 1 }, function ( err, calendars ) {
         if ( err ) {
             onError( { success: false, code: 500, msg: 'Error getting Calendar.', err: err } );
@@ -70,7 +70,7 @@ function advancedCalendarSearch( form, onSuccess, onError ) { // LEO WAS HERE
 // CALCULATES DEPENDS OVER PARAMETERS (one year, all years, one month, all months)
 //             TOTAL OF LABORABLE HOURS PER TYPE (FRIDAY, INTENSIVE, SPECIAL, WORKING, NON-WORKING, HOLIDAYS)
 //             TOTAL OF LABORABLE HOURS PER EACH YEAR AND MONTH
-function getHours( calendar, year, month ) {
+function getHours( calendar, year, month ) { // LEO WAS HERE
         var eventHours   = []; // main object
         var yearArray    = []; // array with all years required
         var monthArray   = []; // array with all months required

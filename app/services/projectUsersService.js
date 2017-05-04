@@ -5,14 +5,9 @@ var ObjectId = require( 'mongoose' ).Types.ObjectId;
 // var moment   = require( 'moment' );
 // var async    = require( 'async' );
 
-/*
+/* API
  * Finds all documents in 'ProjectUsersSchema' by UserID and then returns all projects related in 'ProjectSchema'
  */
- // Y RESOLVER LO DE QUE LOS PROYECTOS DE USUARIO QUE LLEGAN PARA EL SELECT DEBEN COINCIDIR CON LOS PROYECTOS QUE SE CONSIGUEN
- // EN TODOS LOS DÍAS DEL TIMESHEET DEL MES EN CURSO.
- // SI EN PROJECTUSER EL USUARIO TIENE LOS PROYECTOS A,B,C, CUANDO LLENO EL OBJECTO TIMESHEETMODEL SOLAMENTE DEBERÍAN EXISTIR
- // LOS PROYECTOS A,B,C O MENOS.
-
 function getProjectsByUserID( userId, onSuccess, onError ) { // LEO WAS HERE
     models.ProjectUsers.find( { userId: new ObjectId( userId ) }, function( err, projectUsers ) {
         if ( err ) {
@@ -54,9 +49,12 @@ function getProjectsByUserID( userId, onSuccess, onError ) { // LEO WAS HERE
             });
     }
 }
-// ***************************************************** *****************************************************
-// ***************************************************** *****************************************************
 
+// INTERNAL API
+// RETURNS PROJECT NAME BY ITS ID
+function getProjectName( projectId ) { // LEO WAS HERE
+    return models.Project.findOne( { _id: new ObjectId( projectId ) }, { "name" : 1 });
+}
 
 // ***************************************************** *****************************************************
 // /*
@@ -390,7 +388,8 @@ function getProjectsByUserID( userId, onSuccess, onError ) { // LEO WAS HERE
 
 
 module.exports = {
-    getProjectsByUserID: getProjectsByUserID
+    getProjectsByUserID: getProjectsByUserID,
+    getProjectName: getProjectName
     // checkProjectUserDate: checkProjectUserDate,
     // deleteProjectUser: deleteProjectUser,
     // getProjectsByUserIDBetweenDates: getProjectsByUserIDBetweenDates,

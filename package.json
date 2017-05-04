@@ -41,7 +41,7 @@
     "normalize-for-search": "~1.2.0",
     "password-hash": "^1.2.2",
     "path": "~0.11.14",
-    "request": "~2.67.0",
+    "request": "^2.67.0",
     "swagger-express": "^1.0.5"
   },
   "scripts": {

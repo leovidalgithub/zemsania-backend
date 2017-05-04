@@ -1,9 +1,10 @@
 'use strict';
-var mongoose         = require( 'mongoose' );
-var ObjectId         = require( 'mongoose' ).Types.ObjectId;
-var async            = require( 'async' );
-var timesheetService = require( '../services/timesheetService' );
-var calendarService = require( '../services/calendarService' );
+var mongoose            = require( 'mongoose' );
+var ObjectId            = require( 'mongoose' ).Types.ObjectId;
+var async               = require( 'async' );
+var timesheetService    = require( '../services/timesheetService' );
+var calendarService     = require( '../services/calendarService' );
+var projectUsersService = require( '../services/projectUsersService' );
 
 // API - RETURNS ALL EMPLOYEES TIMESHEET INFO AND CALENDARS INFO BY MANAGERID AND DATE RANGE (MONTH AND YEAR)
 function getEmployeesTimesheets( data, onSuccess, onError ) { // LEO WORKING HERE
@@ -51,15 +52,15 @@ function getTimesheetsArray( data, employees, onSuccess, onError ) {
 // INTERNAL FUNCTION FOR getTimesheetsArray()
 // ONCE ALL EMPLOYEES TIMESHEETS INFO IS GATHERED, IT RETURNS ALL CALENDARS INFO
 function getCalendarsInfo( data, employeesArray, onSuccess, onError ) {
-    var calendarsObj = {};
+    var calendars = {};
     async.each( employeesArray, function( employee, callback ) {
         data.calendarID = employee.calendarID;
-        if( !calendarsObj[ employee.calendarID ] ) {
-            calendarsObj[ employee.calendarID ] = {};
+        if( !calendars[ employee.calendarID ] ) {
+            calendars[ employee.calendarID ] = {};
             calendarService.getCalendarById( data, 
                function ( response ) {
                     if( response.success ) {
-                        calendarsObj[ employee.calendarID ] = response;
+                        calendars[ employee.calendarID ] = response;
                     }
                     callback( null );
             }, function ( err ) {
@@ -72,9 +73,47 @@ function getCalendarsInfo( data, employeesArray, onSuccess, onError ) {
         if( err ) {
             onError( { success: false, code: 500, msg: 'Error getting Calendars info!', err: err } );
         } else {
-            onSuccess( { success: true, code: 200, msg: 'Employees timesheets and Calendars info', employeesArray: employeesArray, calendarsObj : calendarsObj } );
+            getProjectsInfo( employeesArray, calendars, onSuccess, onError );
+            // onSuccess( { success: true, code: 200, msg: 'Employees timesheets and Calendars info', employees: employeesArray, calendars : calendars } );
+
         }
     });
+}
+
+// INTERNAL FUNCTION FOR getProjectsInfo()
+// GET PROJECTS INFO (NAME)
+function getProjectsInfo( employeesArray, calendars, onSuccess, onError ) {
+    // store all promises to get name from Project entity
+    var myPromises = [];
+    employeesArray.forEach( function( employee ) {
+        for( var projectId in employee.timesheetDataModel ) {
+            myPromises.push( projectUsersService.getProjectName( projectId ) );
+        }
+    });
+
+    Promise.all( myPromises )
+        .then( function( data ) {
+            var projectInfo = {}; // prepare this object to be able to access easily to any name
+            data.forEach( function( project ) {
+                if( !projectInfo[ project._id ] ) projectInfo[ project._id ] = {};
+                projectInfo[ project._id ].name = project.name;
+            });
+            employeesArray.forEach( function( employee ) {
+                for( var projectId in employee.timesheetDataModel ) {
+                    if( projectInfo[ projectId ] ) {
+                        // inside each project we create an object called 'info' to put all necessary info
+                        if( !employee.timesheetDataModel[ projectId ].info ) employee.timesheetDataModel[ projectId ].info = {};
+                        // 'tables' to store all tables for the frontend inside each project (Horas_Hora, Guardias_Turnicidad, etc.)
+                        if( !employee.timesheetDataModel[ projectId ].info.tables ) employee.timesheetDataModel[ projectId ].info.tables = {};
+                        employee.timesheetDataModel[ projectId ].info.name = projectInfo[ projectId ].name; // store name into 'employeesArray'
+                    }
+                }
+            });
+            onSuccess( { success: true, code: 200, msg: 'Employees timesheets and Calendars info', employees: employeesArray, calendars : calendars } );
+        })
+        .catch( function( err ) {
+            onError( { success: false, code: 500, msg: 'Error getting Projects name!', err: err } );
+        });
 }
 
 // // INTERNAL FUNCTION FOR getCalendarArray()

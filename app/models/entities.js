@@ -83,18 +83,18 @@ module.exports = function( mongoose ) {
     }, { collection: 'timesheets', timestamps: { createdAt: 'created_at' } });
 
     var ProjectSchema = new Schema({
-        crm_id: { type: String, unique: true, required: true },
-        code: { type: String, trim: true, required: true },
-        name: { type: String, trim: true, required: true },
+        crm_id: { type: String, unique: true, required: true }, // CONCAT: idOrigen + origenTipo
+        code: { type: String, trim: true, required: true }, // codigo
+        name: { type: String, trim: true, required: true }, // description
         alias: { type: String, trim: true },
         description: { type: String, trim: true },
         status: { type: String, trim: true, default: "disabled" },
         enabled: { type : Boolean, index : true, default : true },
-        initDate: { type: Date, default: new Date() },
+        initDate: { type: Date, default: new Date() }, // fechaInicio
         endDate: { type: Date },
         parentRef: { type: Schema.Types.ObjectId, ref: 'Project' },
         notes: { type: String, trim: true }
-    }, { collection: 'projects' });
+    }, { collection: 'projects', timestamps: { createdAt: 'created_at' } });
 
     var ProjectUsersSchema = new Schema({
         projectId: { type: Schema.Types.ObjectId, ref: 'Project', index: true, required: true },

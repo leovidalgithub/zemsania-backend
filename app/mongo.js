@@ -2,11 +2,41 @@ var express   = require( 'express' ),
     router    = express.Router(),
     mongoose  = require( 'mongoose' ),
     ObjectId  = require( 'mongoose' ).Types.ObjectId;
+
+    var request = require('request');
+    var fs = require("fs");
+
+
 // var newId = ObjectId();
 
 router.get( '/fill', function ( req, res ) {
 console.log('\033c');
-res.end();
+
+// var url = 'https://itrh-stg.zemsania.com:8443/ZemsaniaITRH/wszt/getSampleParam';
+var url = 'https://itrh-stg.zemsania.com:8443/ZemsaniaITRH/wszt/getProyectos';
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+// {"getProyectos":{"username":"zemtime","secret":"$Zemtime$"}}
+
+request.post(
+    url,
+    { json: { "username":"zemtime","secret":"$Zemtime$" } },
+    function ( error, response, body ) {
+        if( error ) console.log( error );
+        if ( !error && response.statusCode == 200 ) {
+            res.json( body );
+            body.proyectoList.forEach( function( el ) {
+                console.log(el.codigo);
+            });
+        }
+    }
+);
+
+// .pipe( fs.createWriteStream( 'data.json' ) );
+
+
+
+
+// res.end();
 
     // models.Timesheet.findOne( { _id: new ObjectId( '58e7630deacc350744f34e6a' ) }, function( err, doc ) {
     //         var date = new Date ( doc.date );

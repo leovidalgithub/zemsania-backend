@@ -88,7 +88,7 @@ function setAllTimesheets( userId, data, onSuccess, onError ) {
                         if( err ) { // error updating document
                             callback( 'Error updating a Timesheet document!' );
                         } else { // success document updated
-                            callback( null );                            
+                            callback( null );
                         }
                     });
                 } else { // document not found so insert a new one

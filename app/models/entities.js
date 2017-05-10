@@ -1,30 +1,11 @@
 'use strict';
-var mongoose   = require( 'mongoose' );
-var FormatDate = mongoose.Schema.Types.FormatDate = require( 'mongoose-schema-formatdate' );
-var Schema     = mongoose.Schema;
-var ObjectId   = Schema.Types.ObjectId;
-var constants  = require( '../config/constants' );
+var mongoose  = require( 'mongoose' );
+var Schema    = mongoose.Schema;
+var ObjectId  = Schema.Types.ObjectId;
+var constants = require( '../config/constants' );
+// var FormatDate = mongoose.Schema.Types.FormatDate = require( 'mongoose-schema-formatdate' );
 
 module.exports = function( mongoose ) {
-
-    // CALENDARS
-    var hours = {
-                    initialHour : { type : String, required: true },
-                    endHour     : { type : String, required: true }
-                };
-
-    var groupDays = {
-                        type : { type  : String, index: true, required: true },
-                        days : { days  : [ { type : Date } ],
-                                 hours : [ hours ]
-                               }
-                    };
-
-    var years = {
-                    year :  { type : Number, trim : true },
-                    groupDays : [ groupDays ]
-                };
-
 
     var UserSchema = new Schema( {
         candidatoId :     { type : String, trim : true },
@@ -58,6 +39,22 @@ module.exports = function( mongoose ) {
         disabledAt     : { type : Date, default : Date.now }
     }, { collection : 'enterprises', timestamps: { createdAt: 'created_at' } });
 
+        // CALENDARS
+    var hours = {
+                    initialHour : { type : String, required: true },
+                    endHour     : { type : String, required: true }
+                };
+    var groupDays = {
+                        type : { type  : String, index: true, required: true },
+                        days : { days  : [ { type : Date } ],
+                                 hours : [ hours ]
+                               }
+                    };
+    var years = {
+                    year :  { type : Number, trim : true },
+                    groupDays : [ groupDays ]
+                };
+                
     var CalendarSchema = new Schema({
         isLocal       : { type : Boolean, required: true },
         inheritedFrom : { type : Schema.Types.ObjectId, ref: 'Calendar' },
@@ -108,8 +105,8 @@ module.exports = function( mongoose ) {
         senderId: { type: Schema.Types.ObjectId, ref: 'User', index: true },
         receiverId: { type: Schema.Types.ObjectId, ref: 'User', index: true },        
         type: { type: String, trim: true, index: true },
-        // NOT IN USE AT THIS TIME issueDate: { type: Date }, // to land on date of issue (ex. hours_req feb-2017 Ir a ello) to store month and year of the notification
-        status: { type: String, index: true, default: constants.notification_status_unread },        
+        issueDate: { type: Object }, // stores month/year of each notification. This is to land on 'approval page' from 'Ir a ello' button
+        status: { type: String, index: true, default: constants.notification_status_unread },
         text: { type: String, trim: true },
         initDate: { type: Date, default: Date.now },
         endDate: { type: Date, default: Date.now },
@@ -253,7 +250,6 @@ module.exports = function( mongoose ) {
     // }, { collection: 'test', timestamps: { createdAt: 'created_at' } });
 // ***************************************** *****************************************
 
-
     var models = {
         // Thing: mongoose.model('Thing', thingSchema),
         // Calendar: mongoose.model('Calendar', CalendarSchema),
@@ -337,173 +333,3 @@ module.exports = function( mongoose ) {
     //     next();
     // });
 // ***************************************** *****************************************
-
-
-
-// var obj = [
-// {
-//     employee : '58dd07eecbcb6303e41ef404',
-//     project : 'PRO-1',
-//     type : 'Horas',
-//     subType : "Hora",
-//     date : '12-mar-2016',
-//     value : 8,
-//     status : 'Draft'
-// },
-// {
-//     employee : '58dd07eecbcb6303e41ef404',
-//     project : 'PRO-2',
-//     type : 'Horas',
-//     subType : "Hora",
-//     date : '15-mar-2016',
-//     value : 6,
-//     status : 'Draft'
-// },
-// {
-//     employee : '58dd07eecbcb6303e41ef404',
-//     project : 'PRO-1',
-//     type : 'Horas',
-//     subType : "Hora",
-//     date : '21-mar-2016',
-//     value : 8,
-//     status : 'Draft'
-// },
-// {
-//     employee : '58dd07eecbcb6303e41ef404',
-//     project : 'PRO-2',
-//     type : 'Horas',
-//     subType : "Hora",
-//     date : '30-mar-2016',
-//     value : 5,
-//     status : 'Draft'
-// },
-// {
-//     employee : '58dd07eecbcb6303e41ef404',
-//     project : 'PRO-1',
-//     type : 'Horas',
-//     subType : "Hora",
-//     date : '04-jun-2016',
-//     value : 8,
-//     status : 'Draft'
-// },
-// {
-//     employee : '58dd07eecbcb6303e41ef404',
-//     project : 'PRO-2',
-//     type : 'Horas',
-//     subType : "Hora",
-//     date : '05-jun-2016',
-//     value : 8,
-//     status : 'Draft'
-// },
-// {
-//     employee : '58dd07eecbcb6303e41ef404',
-//     project : 'PRO-2',
-//     type : 'Horas',
-//     subType : "Hora",
-//     date : '17-jun-2016',
-//     value : 8,
-//     status : 'Draft'
-// },
-// {
-//     employee : '58dd07eecbcb6303e41ef404',
-//     project : 'PRO-2',
-//     type : 'Horas',
-//     subType : "Hora",
-//     date : '22-jun-2016',
-//     value : 7,
-//     status : 'Draft'
-// },
-
-
-// //*******
-// {
-//     employee : '58dd07eecbcb6303e41ef404',
-//     project : 'PRO-2',
-//     type : 'Guardias',
-//     subType : "Turnicidad",
-//     date : '23-jun-2016',
-//     value : 1,
-//     status : 'Draft'
-// },
-// {
-//     employee : '58dd07eecbcb6303e41ef404',
-//     project : 'PRO-1',
-//     type : 'Guardias',
-//     subType : "Turnicidad",
-//     date : '24-jun-2016',
-//     value : 1,
-//     status : 'Draft'
-// },
-// {
-//     employee : '58dd07eecbcb6303e41ef404',
-//     project : 'PRO-2',
-//     type : 'Guardias',
-//     subType : "Turnicidad",
-//     date : '25-jun-2016',
-//     value : 1,
-//     status : 'Draft'
-// },
-// {
-//     employee : '58dd07eecbcb6303e41ef404',
-//     project : 'PRO-2',
-//     type : 'Guardias',
-//     subType : "Turnicidad",
-//     date : '26-jun-2016',
-//     value : 0,
-//     status : 'Draft'
-// },
-// {
-//     employee : '58dd07eecbcb6303e41ef404',
-//     project : 'PRO-2',
-//     type : 'Guardias',
-//     subType : "Guardia",
-//     date : '27-jun-2016',
-//     value : 1,
-//     status : 'Draft'
-// },
-// {
-//     employee : '58dd07eecbcb6303e41ef404',
-//     project : 'PRO-2',
-//     type : 'Guardias',
-//     subType : "Guardia",
-//     date : '28-jun-2016',
-//     value : 1,
-//     status : 'Draft'
-// },
-// {
-//     employee : '58dd07eecbcb6303e41ef404',
-//     project : 'PRO-2',
-//     type : 'Guardias',
-//     subType : "Guardia",
-//     date : '29-jun-2016',
-//     value : 0,
-//     status : 'Draft'
-// },
-// {
-//     employee : '58dd07eecbcb6303e41ef404',
-//     project : 'PRO-1',
-//     type : 'Guardias',
-//     subType : "Turnicidad",
-//     date : '30-jun-2016',
-//     value : 1,
-//     status : 'Draft'
-// },
-// {
-//     employee : '58dd07eecbcb6303e41ef404',
-//     project : 'PRO-2',
-//     type : 'Guardias',
-//     subType : "Turnicidad",
-//     date : '01-jul-2016',
-//     value : 1,
-//     status : 'Draft'
-// },
-// {
-//     employee : '58dd07eecbcb6303e41ef404',
-//     project : 'PRO-2',
-//     type : 'Guardias',
-//     subType : "Turnicidad",
-//     date : '02-jul-2016',
-//     value : 1,
-//     status : 'Draft'
-// }
-// ];

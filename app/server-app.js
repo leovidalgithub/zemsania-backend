@@ -132,6 +132,6 @@ app.use( '/approval'     , require( './controllers/approvalController' ) );
 
 app.use( '/mongo', require( './mongo' ) ); // only for database developer purposes
 // Start server
-app.listen( 3000, function () {
-    console.log( 'Zemtime server running on port 3000 from process: ' + process.pid );
+app.listen( 4000, function () {
+    console.log( 'Zemtime server running on port 4000 from process: ' + process.pid );
 });

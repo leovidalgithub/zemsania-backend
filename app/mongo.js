@@ -3,37 +3,34 @@ var express   = require( 'express' ),
     mongoose  = require( 'mongoose' ),
     ObjectId  = require( 'mongoose' ).Types.ObjectId;
 
-    var request = require('request');
-    var fs = require("fs");
-
-
-// var newId = ObjectId();
+var request = require('request');
+var fs = require("fs");
 
 router.get( '/fill', function ( req, res ) {
 console.log('\033c');
+// var newId = ObjectId();
+// res.end();
 
+//**************************************************************************************************************
 // var url = 'https://itrh-stg.zemsania.com:8443/ZemsaniaITRH/wszt/getSampleParam';
-var url = 'https://itrh-stg.zemsania.com:8443/ZemsaniaITRH/wszt/getProyectos';
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 // {"getProyectos":{"username":"zemtime","secret":"$Zemtime$"}}
-
-request.post(
-    url,
-    { json: { "username":"zemtime","secret":"$Zemtime$" } },
-    function ( error, response, body ) {
-        if( error ) console.log( error );
-        if ( !error && response.statusCode == 200 ) {
-            res.json( body );
-            body.proyectoList.forEach( function( el ) {
-                console.log(el.codigo);
-            });
-        }
-    }
-);
-
+// var url = 'https://itrh-stg.zemsania.com:8443/ZemsaniaITRH/wszt/getProyectos';
+// process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+// request.post(
+//     url,
+//     { json: { "username":"zemtime","secret":"$Zemtime$" } },
+//     function ( error, response, body ) {
+//         if( error ) console.log( error );
+//         if ( !error && response.statusCode == 200 ) {
+//             res.json( body );
+//             body.proyectoList.forEach( function( el ) {
+//                 console.log(el.codigo);
+//             });
+//         }
+//     }
+// );
 // .pipe( fs.createWriteStream( 'data.json' ) );
-
-
+//**************************************************************************************************************
 
 
 // res.end();
@@ -48,10 +45,10 @@ request.post(
     // });
     // **************************************** INSERT NEW NOTIFICATION ***********************************
     // var nt = new models.Notification ({
-    //     senderId: '588896327f2dca0f940fd99c', // lorenzo barja
-    //     receiverId: '58a446acdb8d2617dc208d8a', // leo rdgz
-    //     type: constants.notification_type_hours_req,
-    //     text: 'Todo bien!',
+    //     senderId: '58a446acdb8d2617dc208d8a', // 
+    //     receiverId: '588896327f2dca0f940fd99c', //
+    //     type: constants.notification_type_holiday_req,
+    //     text: 'Solicitud aprobación de vacaciones',
     // });
     // nt.save( function(err,data) {
     //     if ( err ) console.log( err );
@@ -89,7 +86,7 @@ request.post(
 // ************************************** INSERT NEW PROJECT-USER ***************************************
     // var pru = new models.ProjectUsers ({
     //     projectId: '58e7600b8edb5b15d05020b6',
-    //     userId: '588896327f2dca0f940fd99c', // Cedrik
+    //     userId: '582eb5b0c405b99578f0b860', // 
     //     maxHours: '8'
     // });
     // pru.save( function(err,data) {

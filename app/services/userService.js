@@ -13,7 +13,7 @@ function getAllUsers( onSuccess, onError ) { // LEO WAS HERE
     models.User.find( {},
      function ( err, users ) {
         if ( err ) {
-            onError( { success: false, code: 500, msg: 'Error getting all users.' } );
+            onError( { success: false, code: 500, msg: 'Error getting all users.', err : err } );
         } else {
             onSuccess( { success: true, code: 200, msg: 'All users list', users : users } );
         }
@@ -36,7 +36,7 @@ function advancedUserSearch( form, onSuccess, onError ) { // LEO WAS HERE
                     // { $project : { name : 1, username : 1 } }
     models.User.aggregate( aggregate, function ( err, users ) {
         if ( err ) {
-            onError( { success: false, code: 500, msg: 'Error getting Users Profile.' } );
+            onError( { success: false, code: 500, msg: 'Error getting Users Profile.', err : err } );
         } else {
             onSuccess( { success: true, code: 200, msg: 'Users by Advanced search', users: users } );
         }
@@ -46,12 +46,13 @@ function advancedUserSearch( form, onSuccess, onError ) { // LEO WAS HERE
 // API
 // MANAGER-EMPLOYEE-EDIT: GET USER PROFILE WITH COMPANY-ENTERPRISE POPULATED 
 function newSearchUsers( data, onSuccess, onError ) { // LEO WAS HERE
+    console.log(data);
     var id = data._id;
     models.User.findOne( { _id: new ObjectId( id ) })
         .populate( 'company','enterpriseName' )
         .exec( function ( err, user ) {
             if ( err ) {
-                onError( { success: false, code: 500, msg: 'Error getting User Profile.' } );
+                onError( { success: false, code: 500, msg: 'Error getting User Profile with Enterprise info.', err : err } );
             } else {
                 onSuccess( { success: true, code: 200, msg: 'User Profile', user: user } );
             }

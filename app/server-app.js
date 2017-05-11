@@ -111,12 +111,12 @@ app.use( '/verify'       , require( './controllers/verifyController' ) );
 app.use( '/projectUsers' , require( './controllers/projectUsersController' ) );
 app.use( '/timesheets'   , require( './controllers/timesheetController' ) );
 app.use( '/approval'     , require( './controllers/approvalController' ) );
+app.use( '/project'      , require( './controllers/projectController' ));
 // app.use('/absences', require('./controllers/absencesController'));
 // app.use('/config', require('./controllers/configController'));
 // app.use('/dailyReport', require('./controllers/dailyReportController'));
 // app.use('/holidays', require('./controllers/holidaysController'));
 // app.use('/files', require('./controllers/filesApi'));
-// app.use('/project', require('./controllers/projectController'));
 // app.use('/spents', require('./controllers/spentsController'));
 // app.use('/holidaySchemes', userTokenValidation, require('./controllers/holidaySchemesController'));
 // app.use('/workloadSchemes', userTokenValidation, require('./controllers/workloadSchemesController'))

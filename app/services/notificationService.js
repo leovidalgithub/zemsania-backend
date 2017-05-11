@@ -47,8 +47,15 @@ function insertNewNotification( data, onSuccess, onError ) { // LEO WAS HERE
             .exec( function( err, notification ) {
                 if( err ) { // error finding notification
                     callback( 'Error finding notification document!' );
-                } else if ( notification ) { // notification found, so we do nothing
-                    callback( null );
+                } else if ( notification ) { // notification found, so we just set on 'unread' again
+                    notification.status = constants.notification_status_unread;
+                    notification.save( function( err, notification ) {
+                        if ( err ) {
+                            callback( 'Error updating Notification document!' );
+                        } else {
+                            callback( null );
+                        }
+                    });
                 } else { // notification not found, so we insert a new one
                     var newNotification = new models.Notification ({
                         senderId: senderId,

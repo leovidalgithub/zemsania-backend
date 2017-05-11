@@ -1,3 +1,33 @@
+var express        = require( 'express' );
+var router         = express.Router();
+var projectService = require( '../services/projectService' );
+
+// /**
+//  * @swagger
+//  * path: /project/search
+//  * operations:
+//  *   -  httpMethod: POST
+//  *      summary: Search project by name, description, code, alias.
+//  *      notes: manager token is required (x-auth-token).
+//  *      nickname: profile
+//  *      consumes:
+//  *        - application/json
+//  *      parameters:
+//  *        - name: data
+//  *          paramType: body
+//  *          dataType: SearchProjectScheme
+//  */
+router.post( '/search', managerTokenValidation, function( req, res ) {
+    projectService.advancedProjectSearch( req.body,
+        function( data ) {
+            globalMethods.successResponse( res, data );
+        },
+        function( err ) {
+            globalMethods.errorResponse( res, err );
+        });
+});
+
+// ***************************************************************************************************************
 // /**
 //  * @swagger
 //  * resourcePath: /project
@@ -90,32 +120,6 @@
 //  *          dataType: PaginationDto
 //  */
 // router.post('/getAll', managerTokenValidation, function(req, res) {
-//     projectService.searchProject(req.body,
-//         function(data) {
-//             res.status(200).jsonp(data);
-//         },
-//         function(result) {
-//             globalMethods.error(res, result, 500);
-//         });
-// });
-
-// /**
-//  * @swagger
-//  * path: /project/search
-//  * operations:
-//  *   -  httpMethod: POST
-//  *      summary: Busca y Devuelve los proyectos paginados
-//  *      notes: Requiere token de autenticación manager (x-auth-token).
-//  *      nickname: profile
-//  *      consumes:
-//  *        - application/json
-//  *      parameters:
-//  *        - name: data
-//  *          description: DTO para buscar proyectos
-//  *          paramType: body
-//  *          dataType: SearchProjectScheme
-//  */
-// router.post('/search', managerTokenValidation, function(req, res) {
 //     projectService.searchProject(req.body,
 //         function(data) {
 //             res.status(200).jsonp(data);
@@ -391,4 +395,4 @@
 //  *         required: true
 //  */
 
-// module.exports = router;
+module.exports = router;

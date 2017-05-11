@@ -20,7 +20,7 @@ function getAllUsers( onSuccess, onError ) { // LEO WAS HERE
     });
 }
 
-// API 
+// API
 // EMPLOYEE-MANAGER USER ADVANCED SEARCH. FINDS THE SAME STRING IN 4 FIELDS
 function advancedUserSearch( form, onSuccess, onError ) { // LEO WAS HERE
     var textToFind = form.textToFind;

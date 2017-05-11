@@ -12,24 +12,107 @@ console.log('\033c');
 // res.end();
 
 //**************************************************************************************************************
-// var url = 'https://itrh-stg.zemsania.com:8443/ZemsaniaITRH/wszt/getSampleParam';
-// {"getProyectos":{"username":"zemtime","secret":"$Zemtime$"}}
-// var url = 'https://itrh-stg.zemsania.com:8443/ZemsaniaITRH/wszt/getProyectos';
-// process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-// request.post(
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+// var url = 'https://itrh-stg.zemsania.com:8443/ZemsaniaITRH/wszt/getTokenParam';
+// request.get(
 //     url,
-//     { json: { "username":"zemtime","secret":"$Zemtime$" } },
 //     function ( error, response, body ) {
-//         if( error ) console.log( error );
-//         if ( !error && response.statusCode == 200 ) {
-//             res.json( body );
-//             body.proyectoList.forEach( function( el ) {
-//                 console.log(el.codigo);
-//             });
-//         }
+//         res.send(body);
+//         // if ( !error && response.statusCode == 200 ) { res.json( body ) }
 //     }
-// );
-// .pipe( fs.createWriteStream( 'data.json' ) );
+// )
+// .pipe( fs.createWriteStream( 'myData' ) );
+
+console.time('start');
+
+var myJSON = { json : { "username":"zemtime","secret":"$Zemtime$" } };
+var url = 'https://itrh-stg.zemsania.com:8443/ZemsaniaITRH/wszt/getToken';
+request.post(
+    url, myJSON,
+    function ( error, response, body ) {
+        if( error ) console.log( error );
+        if ( !error && response.statusCode == 200 ) {
+            // res.json( body );
+            var token = body;
+            // getProjects( token );
+            getUsers( token );
+        }
+    }
+);
+
+function getProjects( token ) {
+    var url = 'https://itrh-stg.zemsania.com:8443/ZemsaniaITRH/wszt/proyectos/' + token;
+    request.get( url,
+        function ( error, response, body ) {
+            var projects = JSON.parse( body );
+            res.json( projects );
+            // ************************ INSERT NEW PROJECT ************************
+            projects.proyectoList.forEach( function( project ) {
+                var newProject = new models.Project ({
+                                    idOrigen   : project.idOrigen,
+                                    origenTipo : project.origenTipo,
+                                    code: project.codigo,
+                                    name: project.descripcion,
+                                    description: project.descripcion,
+                                    alias: project.codigo,
+                                    initDate: new Date( project.fechaInicio ),
+                                    lastModifiedDate: new Date( project.fechaUltimoCambio )
+                });
+                // newProject.save( function( err, savedProject ) {
+                //     if ( err ) {
+                //         console.log( 'ERROR' );
+                //         console.log( err ); 
+                //     } else {
+                //         console.log( 'Great!');                       
+                //     }
+                // });
+            });
+            console.timeEnd('start');
+        }
+    );
+}
+
+
+                                // lastLoginDate :   { type : Date, default : Date.now },
+
+function getUsers( token ) {
+    var url = 'https://itrh-stg.zemsania.com:8443/ZemsaniaITRH/wszt/empleados/' + token + '/6/2';
+    request.get( url,
+        function ( error, response, body ) {
+            var users = JSON.parse( body );
+            res.json( users );
+            // ************************ INSERT NEW USER ************************
+            users.empleadoList.forEach( function( user ) {
+                var newUser = new models.User ({
+                                candidatoId : user.candidatoId,
+                                cp : user.empleadoContratoCp,
+                                username : user.candidatoEmailInterno,
+                                password : 'sha1$a735bef9$1$7792945a539a78e254d05e5e6919112346cf99e1',
+                                name : user.candidatoNombre,
+                                surname : user.candidatoApellidos,
+                                nif : user.candidatoIdentificacion,
+                                birthdate : user.candidatoNacimiento,
+                                sex : user.candidatoSexo ? ( user.candidatoSexo === '1' ? 'male' : 'female') : '',
+                                phone : user.candidatoTelefono1 + ' / ' + user.candidatoTelefono2,
+                });
+                newUser.save( function( err, savedUser ) {
+                    if ( err ) {
+                        console.log( 'ERROR' );
+                        console.log( err ); 
+                    } else {
+                        console.log( 'Great!');                       
+                    }
+                });
+            });
+            console.timeEnd('start');
+        }
+    );
+}
+
+
+
+
+
 //**************************************************************************************************************
 
 

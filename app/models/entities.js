@@ -8,25 +8,25 @@ var constants = require( '../config/constants' );
 module.exports = function( mongoose ) {
 
     var UserSchema = new Schema( {
-        candidatoId :     { type : String, trim : true },
-        cp :              { type : String, trim : true },
-        username :        { type : String, trim : true, index : true },
+        candidatoId :     { type : String, trim : true, index: { unique: true } }, // candidatoId
+        cp :              { type : String, trim : true, index: { unique: true } }, // empleadoContratoCp
+        username :        { type : String, trim : true, index: { unique: true } }, // candidatoEmailInterno
         password :        { type : String, trim : true },
-        name :            { type : String, trim : true, index : true },
-        surname :         { type : String, trim : true, index : true },
-        nif :             { type : String, trim : true, index : true },
+        name :            { type : String, trim : true }, // candidatoNombre
+        surname :         { type : String, trim : true }, // candidatoApellidos
+        nif :             { type : String, trim : true, index: { unique: true } }, // candidatoIdentificacion
         enabled :         { type : Boolean, index : true, default : true },
         defaultPassword : { type : Boolean, index : true, default : true },
-        activationDate :  { type : Date, default : Date.now },
+        // activationDate :  { type : Date, default : Date.now },
         lastLoginDate :   { type : Date, default : Date.now },
-        birthdate :       { type : Date },
+        birthdate :       { type : Date }, // candidatoNacimiento
         locale :          { type : String, trim : true, default : 'es' },
-        sex :             { type : String, trim : true },
-        phone :           { type : String, trim : true },
+        sex :             { type : String, trim : true }, // candidatoSexo (llega 1 male, 2 female o nada)
+        phone :           { type : String, trim : true }, // CONCAT: candidatoTelefono1 + candidatoTelefono2
         uuid :            { type : String, trim : true, index : true },
         roles :           { type : Array, default : ['ROLE_USER'] },
-        zimbra_cosID :    { type : String, trim : true, index : true },
-        zimbra_server :   { type : String, trim : true, index : true },
+        zimbra_cosID :    { type : String, trim : true },
+        zimbra_server :   { type : String, trim : true },
         calendarID :      { type : Schema.Types.ObjectId, ref : 'Calendar' },
         superior :        { type : Schema.Types.ObjectId, ref : 'User' },
         company :         { type : Schema.Types.ObjectId, ref : 'Enterprises' }
@@ -80,15 +80,16 @@ module.exports = function( mongoose ) {
     }, { collection: 'timesheets', timestamps: { createdAt: 'created_at' } });
 
     var ProjectSchema = new Schema({
-        crm_id: { type: String, unique: true, required: true }, // CONCAT: idOrigen + origenTipo
-        code: { type: String, trim: true, required: true }, // codigo
-        name: { type: String, trim: true, required: true }, // description
-        alias: { type: String, trim: true },
-        description: { type: String, trim: true },
-        status: { type: String, trim: true, default: "disabled" },
+        idOrigen: { type: String, required: true }, // idOrigen
+        origenTipo: { type: String, required: true }, // origenTipo
+        code: { type: String, trim: true, required: true, index: { unique: true } }, // código (prohibido modificarlo)
+        name: { type: String, trim: true, required: true }, // descripción (prohibido modificarlo)
+        alias: { type: String, trim: true }, // código (se permite modificarse)
+        description: { type: String, trim: true }, // descripción (se permite modificarse)
+        // status: { type: String, trim: true, default: "disabled" }, // 
         enabled: { type : Boolean, index : true, default : true },
         initDate: { type: Date, default: new Date() }, // fechaInicio
-        endDate: { type: Date },
+        lastModifiedDate: { type: Date }, // fechaUltimoCambio
         parentRef: { type: Schema.Types.ObjectId, ref: 'Project' },
         notes: { type: String, trim: true }
     }, { collection: 'projects', timestamps: { createdAt: 'created_at' } });

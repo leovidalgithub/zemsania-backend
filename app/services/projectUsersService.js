@@ -53,7 +53,7 @@ function getProjectsByUserID( userId, onSuccess, onError ) { // LEO WAS HERE
 // INTERNAL API
 // RETURNS PROJECT NAME BY ITS ID
 function getProjectName( projectId ) { // LEO WAS HERE
-    return models.Project.findOne( { _id: new ObjectId( projectId ) }, { "name" : 1 });
+    return models.Project.findOne( { _id: new ObjectId( projectId ) }, { "name" : 1 } );
 }
 
 // ***************************************************** *****************************************************

@@ -95,8 +95,10 @@ function getProjectsInfo( employeesArray, calendars, onSuccess, onError ) {
         .then( function( data ) {
             var projectInfo = {}; // prepare this object to be able to access easily to any name
             data.forEach( function( project ) {
-                if( !projectInfo[ project._id ] ) projectInfo[ project._id ] = {};
-                projectInfo[ project._id ].name = project.name;
+                if( project ) {
+                    if( !projectInfo[ project._id ] ) projectInfo[ project._id ] = {};
+                    projectInfo[ project._id ].name = project.name;                    
+                }
             });
             employeesArray.forEach( function( employee ) {
                 for( var projectId in employee.timesheetDataModel ) {

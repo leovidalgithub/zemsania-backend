@@ -24,7 +24,6 @@ process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 // .pipe( fs.createWriteStream( 'myData' ) );
 
 console.time('start');
-
 var myJSON = { json : { "username":"zemtime","secret":"$Zemtime$" } };
 var url = 'https://itrh-stg.zemsania.com:8443/ZemsaniaITRH/wszt/getToken';
 request.post(
@@ -35,7 +34,8 @@ request.post(
             // res.json( body );
             var token = body;
             // getProjects( token );
-            getUsers( token );
+            // getGestoresPersonales( token );
+            // getUsers( token );
         }
     }
 );
@@ -72,9 +72,7 @@ function getProjects( token ) {
     );
 }
 
-
-                                // lastLoginDate :   { type : Date, default : Date.now },
-
+ // lastLoginDate :   { type : Date, default : Date.now },
 function getUsers( token ) {
     var url = 'https://itrh-stg.zemsania.com:8443/ZemsaniaITRH/wszt/empleados/' + token + '/6/2';
     request.get( url,
@@ -82,37 +80,127 @@ function getUsers( token ) {
             var users = JSON.parse( body );
             res.json( users );
             // ************************ INSERT NEW USER ************************
-            users.empleadoList.forEach( function( user ) {
-                var newUser = new models.User ({
-                                candidatoId : user.candidatoId,
-                                cp : user.empleadoContratoCp,
-                                username : user.candidatoEmailInterno,
-                                password : 'sha1$a735bef9$1$7792945a539a78e254d05e5e6919112346cf99e1',
-                                name : user.candidatoNombre,
-                                surname : user.candidatoApellidos,
-                                nif : user.candidatoIdentificacion,
-                                birthdate : user.candidatoNacimiento,
-                                sex : user.candidatoSexo ? ( user.candidatoSexo === '1' ? 'male' : 'female') : '',
-                                phone : user.candidatoTelefono1 + ' / ' + user.candidatoTelefono2,
-                });
-                newUser.save( function( err, savedUser ) {
-                    if ( err ) {
-                        console.log( 'ERROR' );
-                        console.log( err ); 
-                    } else {
-                        console.log( 'Great!');                       
-                    }
-                });
+            users.empleadoList.forEach( function( user, index ) {
+
+                if ( !user.candidatoEmailInterno) {
+                    var aa = ( user.candidatoNombre + ' ' + user.candidatoApellidos ).split(' ');
+                    if ( !aa[2] ) { aa.push( 'Pedroza' + index ) };
+                    user.candidatoEmailInterno = 'test' + aa[0].substr(0, 1) + aa[1].substr(0, 1) + aa[2].substr(0) + '@zemsania.com' ;
+                    user.candidatoEmailInterno = user.candidatoEmailInterno.toLowerCase();
+                    user.candidatoEmailInterno = user.candidatoEmailInterno.normalize( 'NFD' ).replace(/[\u0300-\u036f]/g, "");
+                }
+
+                // models.User.findOne( { cp : user.empleadoContratoCp } ).exec( function( err, doc ) {
+                //         if( !doc ) {
+                            var superiorEmail = user.empleadoContratoGestorPersonalEmail;
+                            // var superiorId = '';
+                            if ( superiorEmail ) {
+                                models.User.findOne( { username : superiorEmail } )
+                                    .exec( function( err, userDoc ) {
+                                        if( userDoc ) {
+                                            // superiorId = userDoc._id;
+                                            lorenzo(userDoc._id, user);
+                                        } else {
+                                            lorenzo(null, user);
+                                        }
+                                    });
+                            }
+
+                            function lorenzo( superiorId, user ) {
+                                // console.log('************************');
+                                // console.log(superiorEmail);
+                                // console.log(superiorId);
+
+                                var newUser = new models.User ({
+                                                candidatoId : user.candidatoId,
+                                                cp : user.empleadoContratoCp,
+                                                username : user.candidatoEmailInterno,
+                                                password : 'sha1$a735bef9$1$7792945a539a78e254d05e5e6919112346cf99e1',
+                                                name : user.candidatoNombre,
+                                                surname : user.candidatoApellidos,
+                                                nif : user.candidatoIdentificacion,
+                                                birthdate : user.candidatoNacimiento,
+                                                sex : user.candidatoSexo ? ( user.candidatoSexo === '1' ? 'male' : 'female') : 'male',
+                                                phone : user.candidatoTelefono1 + ' / ' + user.candidatoTelefono2,
+                                                calendarID : new ObjectId( '58e3a7feca9d9b15f037fae6' ),
+                                                superior : superiorId ? new ObjectId( superiorId ) : null
+                                });
+
+                                if( user.empleadoContratoCp != 'E1674' ) {                                
+                                    newUser.save( function( err, savedUser ) {
+                                        if ( err ) {
+                                            console.log( 'ERROR' );
+                                            console.log( err ); 
+                                        } else {
+                                            console.log( 'Great!');                       
+                                        }
+                                    });
+                                }
+                            }
+
+                    //     }
+                    // });
+
+
+
+
             });
             console.timeEnd('start');
         }
     );
 }
 
+function getGestoresPersonales( token ) {
+    var url = 'https://itrh-stg.zemsania.com:8443/ZemsaniaITRH/wszt/gestoresPersonalesProyectos/' + token;
+    request.get( url,
+        function ( error, response, body ) {
+            var users = JSON.parse( body );
+            // res.json( users );
+            // ************************ INSERT NEW USER ************************
+            users.empleadoList.forEach( function( user, index ) {
 
+                models.User.findOne( { cp : user.empleadoContratoCp  } )
+                    .exec( function( err, doc ) {
+                        if( !doc ) {
+                            var newUser = new models.User ({
+                                            candidatoId : user.candidatoId,
+                                            cp : user.empleadoContratoCp,
+                                            username : user.candidatoEmailInterno,
+                                            password : 'sha1$a735bef9$1$7792945a539a78e254d05e5e6919112346cf99e1',
+                                            name : user.candidatoNombre,
+                                            surname : user.candidatoApellidos,
+                                            nif : user.candidatoIdentificacion,
+                                            birthdate : user.candidatoNacimiento,
+                                            sex : user.candidatoSexo ? ( user.candidatoSexo === '1' ? 'male' : 'female') : 'male',
+                                            phone : user.candidatoTelefono1 + ' / ' + user.candidatoTelefono2,
+                                            calendarID : '58e3a7feca9d9b15f037fae6',
+                                            roles : ['ROLE_USER', 'ROLE_MANAGER']
+                            });
+                            newUser.save( function( err, savedUser ) {
+                                if ( err ) {
+                                    console.log( 'ERROR' );
+                                    console.log( err ); 
+                                } else {
+                                    // console.log( 'Great!');                       
+                                }
+                            });
+                        } 
+                    })
 
+            });
+            console.timeEnd('start');
+        }
+    );
+}
 
-
+//**************************************************************************************************************
+// models.Project.find({}, function( err, projects ) {
+//     projects.forEach( function( project, index ) {
+//         project.name = project.name.substr(0,50);
+//         project.save();
+//     });
+// })
+// res.end();
 //**************************************************************************************************************
 
 
@@ -168,8 +256,8 @@ function getUsers( token ) {
     // });
 // ************************************** INSERT NEW PROJECT-USER ***************************************
     // var pru = new models.ProjectUsers ({
-    //     projectId: '58e7600b8edb5b15d05020b6',
-    //     userId: '582eb5b0c405b99578f0b860', // 
+    //     projectId: '59147b6efa92a507d4d99d49',
+    //     userId: '58a446acdb8d2617dc208d8a', 
     //     maxHours: '8'
     // });
     // pru.save( function(err,data) {

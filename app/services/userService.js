@@ -30,7 +30,8 @@ function advancedUserSearch( form, onSuccess, onError ) { // LEO WAS HERE
                                                 { name     : { '$regex' : regExp, '$options' : 'i' } },
                                                 { username : { '$regex' : regExp, '$options' : 'i' } },
                                                 { surname  : { '$regex' : regExp, '$options' : 'i' } },
-                                                { nif      : { '$regex' : regExp, '$options' : 'i' } }
+                                                { nif      : { '$regex' : regExp, '$options' : 'i' } },
+                                                { cp       : { '$regex' : regExp, '$options' : 'i' } }
                                          ] } }
     ];
                     // { $project : { name : 1, username : 1 } }

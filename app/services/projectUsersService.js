@@ -5,11 +5,11 @@ var ObjectId = require( 'mongoose' ).Types.ObjectId;
 // var moment   = require( 'moment' );
 // var async    = require( 'async' );
 
-/* API
- * Finds all documents in 'ProjectUsersSchema' by UserID and then returns all projects related in 'ProjectSchema'
- */
-function getProjectsByUserID( userId, onSuccess, onError ) { // LEO WAS HERE
-    models.ProjectUsers.find( { userId: new ObjectId( userId ) }, function( err, projectUsers ) {
+// API
+// Finds all documents in 'ProjectUsersSchema' by userID and then returns all projects
+function getProjectsByID( userId, onSuccess, onError ) { // LEO WAS HERE
+    models.ProjectUsers.find( { $or : [ { userId : new ObjectId( userId ) }, { projectId : new ObjectId( userId ) } ] },
+     function( err, projectUsers ) {
         if ( err ) {
             onError( { success: false, code: 500, msg: 'Error getting ProjectUser documents!' } );
         } else if ( projectUsers ) {
@@ -17,7 +17,7 @@ function getProjectsByUserID( userId, onSuccess, onError ) { // LEO WAS HERE
             var myProjects = [];
             projectUsers.forEach( function( projectUser, key ) {
                 myPromises.push ( new Promise( function( resolve, reject ) {
-                    return models.Project.findOne( { _id: new ObjectId( projectUser.projectId ) }, function( err, project ) {
+                    return models.Project.findOne( { _id: new ObjectId( projectUser.projectId ), enabled : true }, function( err, project ) {
                         if( err ) {
                             reject( { success: false, code: 500, msg: 'Error getting Projects documents!' } );
                         } else if ( project ) {
@@ -46,6 +46,51 @@ function getProjectsByUserID( userId, onSuccess, onError ) { // LEO WAS HERE
             })
             .catch( function( err ) {
                     onError( { success: false, code: 500, msg: 'Error getting Projects documents!' } );
+            });
+    }
+}
+
+// API
+// Finds all documents in 'ProjectUsersSchema' by projectID and then returns all users
+function getUsersByID( projectId, onSuccess, onError ) { // LEO WAS HERE
+    models.ProjectUsers.find( { $or : [ { projectId : new ObjectId( projectId ) }, { projectId : new ObjectId( projectId ) } ] },
+     function( err, projectUsers ) {
+        if ( err ) {
+            onError( { success: false, code: 500, msg: 'Error getting ProjectUser documents!' } );
+        } else if ( projectUsers ) {
+            var myPromises = [];
+            var myUsers    = [];
+            projectUsers.forEach( function( projectUser, key ) {
+                myPromises.push ( new Promise( function( resolve, reject ) {
+                    return models.User.findOne( { _id: new ObjectId( projectUser.userId ), enabled : true }, function( err, user ) {
+                        if( err ) {
+                            reject( { success: false, code: 500, msg: 'Error getting Users documents!' } );
+                        } else if ( user ) {
+                            var userObject      = user.toObject();
+                            userObject.userId   = projectUser.userId;
+                            userObject.maxHours = projectUser.maxHours;
+                            userObject.joinDate = projectUser.joinDate;
+                            myUsers.push( userObject );
+                            resolve();
+                        } else {
+                            resolve();
+                        }
+                    });
+                }) );
+            }); // for each
+            promisesResolved( myPromises, myUsers );
+        } else {
+            onError( { success: false, code: 500, msg: 'Not Users found!', users : null } );
+        };
+    });
+
+    function promisesResolved( myPromises, myUsers ) {
+        Promise.all( myPromises )
+            .then( function( data ) {
+                onSuccess({ success: true, users : myUsers });
+            })
+            .catch( function( err ) {
+                    onError( { success: false, code: 500, msg: 'Error getting Users documents!' } );
             });
     }
 }
@@ -388,7 +433,8 @@ function getProjectName( projectId ) { // LEO WAS HERE
 
 
 module.exports = {
-    getProjectsByUserID: getProjectsByUserID,
+    getProjectsByID: getProjectsByID,
+    getUsersByID: getUsersByID,
     getProjectName: getProjectName
     // checkProjectUserDate: checkProjectUserDate,
     // deleteProjectUser: deleteProjectUser,

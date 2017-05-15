@@ -9,18 +9,41 @@ var projectUsersService = require( '../services/projectUsersService' );
 
 /**
  * @swagger
- * path: /projectUsers/getProjectsByUserID
+ * path: /projectUsers/getProjectsById
  * operations:
  *   -  httpMethod: GET
- *      summary: Busca y devuelve los proyectos del usuario
- *      notes: Requiere token de autenticación (x-auth-token).
- *      nickname: getUserProjects
+ *      summary: Finds all documents and returns all Projects
+ *      notes: user token autentication is required (x-auth-token).
+ *      nickname: 
  *      consumes:
  *        - application/json
  */
-router.get( '/getProjectsByUserID/:id', userTokenValidation, function ( req, res ) { // LEO WAS HERE
+router.get( '/getProjectsById/:id', userTokenValidation, function ( req, res ) { // LEO WAS HERE
+	console.log('/getProjectsById');
     var userId = req.params.id;
-    projectUsersService.getProjectsByUserID( userId,
+    projectUsersService.getProjectsByID( userId,
+        function ( data ) {
+           globalMethods.successResponse( res, data );
+        }, function ( err ) {
+            globalMethods.errorResponse( res, err );
+        });
+});
+
+/**
+ * @swagger
+ * path: /projectUsers/getUsersById
+ * operations:
+ *   -  httpMethod: GET
+ *      summary: Finds all documents and returns all Users
+ *      notes: user token autentication is required (x-auth-token).
+ *      nickname: 
+ *      consumes:
+ *        - application/json
+ */
+router.get( '/getUsersById/:id', userTokenValidation, function ( req, res ) { // LEO WAS HERE
+	console.log('/getProjectsById');
+    var projectId = req.params.id;
+    projectUsersService.getUsersByID( projectId,
         function ( data ) {
            globalMethods.successResponse( res, data );
         }, function ( err ) {

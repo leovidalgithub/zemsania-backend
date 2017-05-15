@@ -93,24 +93,18 @@ function getUsers( token ) {
                 // models.User.findOne( { cp : user.empleadoContratoCp } ).exec( function( err, doc ) {
                 //         if( !doc ) {
                             var superiorEmail = user.empleadoContratoGestorPersonalEmail;
-                            // var superiorId = '';
                             if ( superiorEmail ) {
                                 models.User.findOne( { username : superiorEmail } )
                                     .exec( function( err, userDoc ) {
                                         if( userDoc ) {
-                                            // superiorId = userDoc._id;
-                                            lorenzo(userDoc._id, user);
+                                            lorenzo( userDoc._id, user );
                                         } else {
-                                            lorenzo(null, user);
+                                            lorenzo( null, user );
                                         }
                                     });
                             }
 
                             function lorenzo( superiorId, user ) {
-                                // console.log('************************');
-                                // console.log(superiorEmail);
-                                // console.log(superiorId);
-
                                 var newUser = new models.User ({
                                                 candidatoId : user.candidatoId,
                                                 cp : user.empleadoContratoCp,
@@ -202,6 +196,96 @@ function getGestoresPersonales( token ) {
 // })
 // res.end();
 //**************************************************************************************************************
+var obj = [
+            {project_code: '15MS0643IECEC6', user_cp: 'E1613'},
+            {project_code: '15MS0643IECEC6', user_cp: 'E1612'},
+            {project_code: '15MS0160EMTSAU', user_cp: 'E1612'},
+            {project_code: '15MS0160EMTSAU', user_cp: 'E1670'},
+            {project_code: '15MS0160EMTSAU', user_cp: 'E1674'},
+            {project_code: '15MS0160EMTSAU', user_cp: 'E1666'},
+            {project_code: '15MS0160EMTSAU', user_cp: 'E1688'},
+            {project_code: '15MS0160EMTSAU', user_cp: 'E1665'},
+            {project_code: '15MS0642IECAC6', user_cp: 'E1671'},
+            {project_code: '15MS0642IECAC6', user_cp: 'E1608'},
+            {project_code: '15MS0147INDSAU', user_cp: 'E1619'},
+            {project_code: '15MS0147INDSAU', user_cp: 'E1408'},
+            {project_code: '15MS0147INDSAU', user_cp: 'E1415'},
+            {project_code: '15MS0147INDSAU', user_cp: 'E1443'},
+            {project_code: '15MS0147INDSAU', user_cp: 'E1471'},
+            {project_code: '15MS0147INDSAU', user_cp: 'E1472'},
+            {project_code: '15MS0147INDSAU', user_cp: 'E1527'},
+            {project_code: '15MS0147INDSAU', user_cp: 'E1532'},
+            {project_code: '15MS0147INDSAU', user_cp: 'E1551'},
+            {project_code: '15MS0147INDSAU', user_cp: 'E1565'},
+            {project_code: '15MS0147INDSAU', user_cp: 'E1574'},
+            {project_code: '15MS0147INDSAU', user_cp: 'E1802'},
+            {project_code: '15MS0147INDSAU', user_cp: 'E1805'},
+            {project_code: '15MS0147INDSAU', user_cp: 'E1810'},
+            {project_code: '15MS0147INDSAU', user_cp: 'E1815'},
+            {project_code: '15MS0147INDSAU', user_cp: 'E1818'},
+            {project_code: '15MS0147INDSAU', user_cp: 'E1759'},
+            {project_code: '15MS0147INDSAU', user_cp: 'E1654'},
+            {project_code: '15MS0147INDSAU', user_cp: 'E1699'},
+            {project_code: '15MS0147INDSAU', user_cp: 'E1644'},
+            {project_code: '15MS0147INDSAU', user_cp: 'E1701'},
+            {project_code: '15MS0147INDSAU', user_cp: 'E1645'},
+            {project_code: '15MS0147INDSAU', user_cp: 'E1676'},
+            {project_code: '15MS0147INDSAU', user_cp: 'E1675'},
+            {project_code: '15MS0147INDSAU', user_cp: 'E1664'},
+            {project_code: '15MS0147INDSAU', user_cp: 'E1655'},
+            {project_code: '15MS0147INDSAU', user_cp: 'E1684'},
+            {project_code: '15MS0147INDSAU', user_cp: 'E1648'},
+            {project_code: '15MS0147INDSAU', user_cp: 'E1658'},
+            {project_code: '15MS0147INDSAU', user_cp: 'E1646'},
+            {project_code: '15MS0147INDSAU', user_cp: 'E1649'},
+            {project_code: '15MS0147INDSAU', user_cp: 'E1668'},
+            {project_code: '15MS0147INDSAU', user_cp: 'E1698'},
+            {project_code: '15MS0147INDSAU', user_cp: 'E1680'},
+            {project_code: '15MS0147INDSAU', user_cp: 'E1673'},
+            {project_code: '15MS0147INDSAU', user_cp: 'E1758'},
+            {project_code: '15MS0147INDSAU', user_cp: 'E1746'},
+            {project_code: '15MS0147INDSAU', user_cp: 'E1647'},
+            {project_code: '15MS0147INDSAU', user_cp: 'E1672'},
+            {project_code: '15MS0147INDSAU', user_cp: 'E1667'},
+            {project_code: '15MS0147INDSAU', user_cp: 'E1702'},
+            {project_code: '15MS0147INDSAU', user_cp: 'E1685'},
+            {project_code: '15MS0147INDSAU', user_cp: 'E1689'},
+            {project_code: '15MS0147INDSAU', user_cp: 'E1707'},
+            {project_code: '15MS0147INDSAU', user_cp: 'E1677'},
+            {project_code: '15MS0147INDSAU', user_cp: 'E1703'},
+            {project_code: '15MS0147INDSAU', user_cp: 'E1760'},
+            {project_code: '15MS0147INDSAU', user_cp: 'E1739'},
+            {project_code: '15MS0147INDSAU', user_cp: 'E1851'},
+            {project_code: '15MS0147INDSAU', user_cp: 'E1869'},
+            {project_code: '15MS0147INDSAU', user_cp: 'E1879'},
+            {project_code: '15MS0147INDSAU', user_cp: 'E1882'},
+            {project_code: '15MS0147INDSAU', user_cp: 'E1883'},
+            {project_code: '15MS0147INDSAU', user_cp: 'E1893'},
+            {project_code: '15MS0147INDSAU', user_cp: 'E1911'},
+            {project_code: '15MS0147INDSAU', user_cp: 'E1910'},
+            {project_code: '15MS0147INDSAU', user_cp: 'E1958'}
+        ];
+
+//         obj.forEach( function( el ) {
+//                 models.User.findOne( { cp : el.user_cp  }, function( err, user ) {
+//                     models.Project.findOne( { code : el.project_code  }, function( err, project ) {
+//                         // console.log(user._id +  ' - ' + project._id);
+//                         var pru = new models.ProjectUsers ({
+//                             projectId: project._id,
+//                             userId: user._id, 
+//                             maxHours: '8'
+//                         });
+//                         pru.save( function(err,data) {
+//                             if ( err ) console.log( err );
+//                             console.log('saved!');
+//                             // res.send(data);
+//                         });
+//                     })
+//                 })
+//         });
+
+// res.end();
+//**************************************************************************************************************
 
 
 // res.end();
@@ -255,16 +339,16 @@ function getGestoresPersonales( token ) {
     //     res.send(data);
     // });
 // ************************************** INSERT NEW PROJECT-USER ***************************************
-    // var pru = new models.ProjectUsers ({
-    //     projectId: '59147b6efa92a507d4d99d49',
-    //     userId: '58a446acdb8d2617dc208d8a', 
-    //     maxHours: '8'
-    // });
-    // pru.save( function(err,data) {
-    //     if ( err ) console.log( err );
-    //     console.log('saved!');
-    //     res.send(data);
-    // });
+    var pru = new models.ProjectUsers ({
+        projectId: '59147b6efa92a507d4d99c07',
+        userId: '58a446acdb8d2617dc208d8a', 
+        maxHours: '8'
+    });
+    pru.save( function(err,data) {
+        if ( err ) console.log( err );
+        console.log('saved!');
+        res.send(data);
+    });
 // ************************************************** **************************************************
 // var date  = new Date();
 // var year  = date.getFullYear();

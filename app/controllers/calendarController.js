@@ -18,7 +18,7 @@ var express         = require( 'express' ),
  *      consumes:
  *        - application/json
  */
-router.get( '/getCalendarById/:id', managerTokenValidation, function ( req, res ) {
+router.get( '/getCalendarById/:id', userTokenValidation, function ( req, res ) {
     var data = {
         calendarID : req.params.id,
         month : req.query.month,

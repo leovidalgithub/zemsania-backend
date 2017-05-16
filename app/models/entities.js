@@ -102,6 +102,8 @@ module.exports = function( mongoose ) {
         maxHours: { type: Number, default: 8, trim: true }
     }, { collection: 'project_users' });
 
+    ProjectUsersSchema.index( { projectId : 1, userId : 1 }, { unique : true } );
+
     var NotificationSchema = new Schema({
         senderId: { type: Schema.Types.ObjectId, ref: 'User', index: true },
         receiverId: { type: Schema.Types.ObjectId, ref: 'User', index: true },        

@@ -9,6 +9,7 @@ var fs = require("fs");
 router.get( '/fill', function ( req, res ) {
 console.log('\033c');
 // var newId = ObjectId();
+// console.log(newId);
 // res.end();
 
 //**************************************************************************************************************
@@ -35,6 +36,7 @@ request.post(
             var token = body;
             // getProjects( token );
             // getGestoresPersonales( token );
+            // getGestoresComerciales( token );
             // getUsers( token );
         }
     }
@@ -149,8 +151,6 @@ function getGestoresPersonales( token ) {
     request.get( url,
         function ( error, response, body ) {
             var users = JSON.parse( body );
-            // res.json( users );
-            // ************************ INSERT NEW USER ************************
             users.empleadoList.forEach( function( user, index ) {
 
                 models.User.findOne( { cp : user.empleadoContratoCp  } )
@@ -186,6 +186,75 @@ function getGestoresPersonales( token ) {
         }
     );
 }
+
+function getGestoresComerciales( token ) {
+    var url = 'https://itrh-stg.zemsania.com:8443/ZemsaniaITRH/wszt/gestoresComercialesProyectos/' + token;
+    request.get( url,
+        function ( error, response, body ) {
+            var users = JSON.parse( body );
+            res.json(users);
+            users.empleadoList.forEach( function( user, index ) {
+                models.User.findOne( { cp : user.empleadoContratoCp  } )
+                    .exec( function( err, doc ) {
+                        if( !doc ) {
+                            var newUser = new models.User ({
+                                            candidatoId : user.candidatoId,
+                                            cp : user.empleadoContratoCp,
+                                            username : user.candidatoEmailInterno,
+                                            password : 'sha1$a735bef9$1$7792945a539a78e254d05e5e6919112346cf99e1',
+                                            name : user.candidatoNombre,
+                                            surname : user.candidatoApellidos,
+                                            nif : user.candidatoIdentificacion,
+                                            birthdate : user.candidatoNacimiento,
+                                            sex : user.candidatoSexo ? ( user.candidatoSexo === '1' ? 'male' : 'female') : 'male',
+                                            phone : user.candidatoTelefono1 + ' / ' + user.candidatoTelefono2,
+                                            calendarID : '58e3a7feca9d9b15f037fae6',
+                                            roles : ['ROLE_USER', 'ROLE_DELIVERY']
+                            });
+                            newUser.save( function( err, savedUser ) {
+                                if ( err ) {
+                                    console.log( 'ERROR getGestoresComerciales' );
+                                }
+                            });
+                        } else { // if user already exist, we just add 'ROLE_DELIVERY' to 'roles'
+                            doc.roles.push( 'ROLE_DELIVERY' );
+                            doc.save( function( err, savedUser ) {
+                                if ( err ) {
+                                    console.log( 'ERROR getGestoresComerciales' );
+                                }
+                            });
+                        } 
+                    })
+            });
+            console.timeEnd('start');
+        }
+    );
+}
+
+
+// console.log('/*/*/*/*/');
+//     models.User.find( {}, function( err, docs ) {
+//         console.log(docs._id);
+//     });
+
+//     res.end();
+
+
+    // models.ProjectUsers.find( {}, function( err, docs ) {
+        // docs.forEach( function( el ) {
+    //         models.ProjectUsers.find( { userId : new ObjectId( el.userId ) }, function( err, users ) {
+    //             if( users.length > 1 ) {
+    //             // console.log(users[0].projectId + ' ' + users[1].projectId);                    
+    //                 if ( users[0].projectId.equals(users[1].projectId) ) {
+    //                     // console.log( users );
+    //                     // users[1].remove();
+    //                 }
+    //                 console.log(users.length + ' ' + el.projectId + ' ' + el.userId);
+    //             }
+    //         });
+    //     });
+    // });
+    // res.end();
 
 //**************************************************************************************************************
 // models.Project.find({}, function( err, projects ) {
@@ -339,16 +408,16 @@ var obj = [
     //     res.send(data);
     // });
 // ************************************** INSERT NEW PROJECT-USER ***************************************
-    var pru = new models.ProjectUsers ({
-        projectId: '59147b6efa92a507d4d99c07',
-        userId: '58a446acdb8d2617dc208d8a', 
-        maxHours: '8'
-    });
-    pru.save( function(err,data) {
-        if ( err ) console.log( err );
-        console.log('saved!');
-        res.send(data);
-    });
+    // var pru = new models.ProjectUsers ({
+        // projectId: '59147b6efa92a507d4d99c04',
+    //     userId: '5915b433f9c9a70b70c5caea', 
+    //     maxHours: '8'
+    // });
+    // pru.save( function(err,data) {
+    //     if ( err ) console.log( err );
+    //     console.log('saved!');
+    //     res.send(data);
+    // });
 // ************************************************** **************************************************
 // var date  = new Date();
 // var year  = date.getFullYear();

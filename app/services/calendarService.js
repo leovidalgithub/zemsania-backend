@@ -11,6 +11,12 @@ function getCalendarById( data, onSuccess, onError ) { // LEO WAS HERE
     var calendarID = data.calendarID,
         month      = data.month,
         year       = data.year;
+
+        if( !calendarID || calendarID === 'undefined' ) { // if not calendarId
+            onSuccess( { success: false, code: 501, msg: 'Calendar not found!', calendar : null, eventHours : null } );
+            return;
+        }
+
     models.Calendar.findOne( { _id: new ObjectId( calendarID ) }, function ( err, calendar ) {
         if ( err ) {
             onError( { success: false, code: 500, msg: 'Error getting Calendar from DB!', err: err } );
@@ -18,7 +24,7 @@ function getCalendarById( data, onSuccess, onError ) { // LEO WAS HERE
             var eventHours = getHours( calendar, year, month );
             onSuccess( { success: true, code: 200, msg: 'Calendar and EventHours object', calendar: calendar, eventHours : eventHours } );
         } else {
-            onSuccess( { success: false, code: 501, msg: 'Calendar not found!' } );
+            onSuccess( { success: false, code: 501, msg: 'Calendar not found!', calendar : null, eventHours : null } );
         }
     });
 }

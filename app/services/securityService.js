@@ -106,6 +106,7 @@ function login( form, onSuccess, onError ) { // LEO WAS HERE
  // NEW USER REGISTER
 function signup( credentials, onSuccess, onError ) {  // LEO WAS HERE
     // security roles filter: it verifies if user roles exist in the constant object so save them back to BDD
+    // console.log(credentials);
     var roles = ['ROLE_USER'];
     if ( credentials.roles && credentials.roles.length > 0 ) {
         for ( var i = 0; i < credentials.roles.length; i++ ) {
@@ -125,6 +126,7 @@ function signup( credentials, onSuccess, onError ) {  // LEO WAS HERE
             } else {
                 var user = new models.User( {
                     candidatoId    : credentials.candidatoId,
+                    cp             : credentials.cp,
                     username       : credentials.username,
                     name           : credentials.name,
                     password       : passwordHash.generate( constants.defaultPassword ),
@@ -132,9 +134,9 @@ function signup( credentials, onSuccess, onError ) {  // LEO WAS HERE
                     uuid           : uuid.v4(),
                     surname        : credentials.surname,
                     nif            : credentials.nif,
-                    enabled        : credentials.enabled,
                     birthdate      : moment( credentials.birthdate, 'DD/MM/YYYY' ).toISOString(),
                     locale         : credentials.locale,
+                    phone          : credentials.phone,
                     sex            : credentials.sex,
                     zimbra_cosID   : credentials.zimbra_cosID,
                     zimbra_server  : credentials.zimbra_server,

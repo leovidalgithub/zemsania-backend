@@ -24,7 +24,7 @@ var url = require('url');
  *          dataType: RememberPasswordDto
  *
  */
-router.post( '/password/remember', function ( req, res ) { // ********** LEO WORKING HERE **********
+router.post( '/password/remember', function ( req, res ) { // LEO WAS HERE
     // req.checkBody('email', 'required').notEmpty();
     // req.checkBody('email', 'email').isEmail();
     // var errors = req.validationErrors();
@@ -124,7 +124,7 @@ router.get('/validate/:uuid', function (req, res) {
  *          dataType: UserSignup
  *
  */
-router.post( '/signup', backofficeTokenValidation, function ( req, res ) { // LEO WORKING HERE
+router.post( '/signup', backofficeTokenValidation, function ( req, res ) { // LEO WAS HERE
     //Form validation
     // req.checkBody( 'username', 'required' ).notEmpty();
     // req.checkBody( 'username', 'email' ).isEmail();
@@ -137,10 +137,8 @@ router.post( '/signup', backofficeTokenValidation, function ( req, res ) { // LE
     // } else {
         authnService.signup( req.body,
             function ( data ) {
-                // res.status( 200 ).jsonp( data );
                 globalMethods.successResponse( res, data );
             }, function ( err ) {
-                // globalMethods.error( res, result, 500 );
                 globalMethods.errorResponse( res, err );
             });
     // }

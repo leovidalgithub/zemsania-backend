@@ -7,7 +7,7 @@ var ObjectId = require( 'mongoose' ).Types.ObjectId;
 
 // API
 // Finds all documents in 'ProjectUsersSchema' by userID and then returns all projects
-function getProjectsByID( userId, onSuccess, onError ) { // LEO WAS HERE
+function getProjectsByUserId( userId, onSuccess, onError ) { // LEO WAS HERE
     models.ProjectUsers.find( { $or : [ { userId : new ObjectId( userId ) }, { projectId : new ObjectId( userId ) } ] },
      function( err, projectUsers ) {
         if ( err ) {
@@ -52,7 +52,7 @@ function getProjectsByID( userId, onSuccess, onError ) { // LEO WAS HERE
 
 // API
 // Finds all documents in 'ProjectUsersSchema' by projectID and then returns all users
-function getUsersByID( projectId, onSuccess, onError ) { // LEO WAS HERE
+function getUsersByProjectId( projectId, onSuccess, onError ) { // LEO WAS HERE
     models.ProjectUsers.find( { $or : [ { projectId : new ObjectId( projectId ) }, { projectId : new ObjectId( projectId ) } ] },
      function( err, projectUsers ) {
         if ( err ) {
@@ -184,7 +184,7 @@ function getProjectName( projectId ) { // LEO WAS HERE
 // /*
 //  * Usuarios por proyectoID
 //  */
-// function getUsersByProjectID(projectId, onSuccess, onError) {
+// function getUsersByProjectId(projectId, onSuccess, onError) {
 //     models.ProjectUsers.find({ projectId: new ObjectId(projectId) }, function(err, projectUsers) {
 //         if (err) throw err;
 //         if (projectUsers) {
@@ -433,13 +433,13 @@ function getProjectName( projectId ) { // LEO WAS HERE
 
 
 module.exports = {
-    getProjectsByID: getProjectsByID,
-    getUsersByID: getUsersByID,
+    getProjectsByUserId: getProjectsByUserId,
+    getUsersByProjectId: getUsersByProjectId,
     getProjectName: getProjectName
     // checkProjectUserDate: checkProjectUserDate,
     // deleteProjectUser: deleteProjectUser,
-    // getProjectsByUserIDBetweenDates: getProjectsByUserIDBetweenDates,
-    // getUsersByProjectID: getUsersByProjectID,
+    // getProjectsByUserIdBetweenDates: getProjectsByUserIdBetweenDates,
+    // getUsersByProjectId: getUsersByProjectId,
     // saveProjectUser: saveProjectUser,
     // getUsersBySupervisor: getUsersBySupervisor,
     // searchProjectUsers: searchProjectUsers,

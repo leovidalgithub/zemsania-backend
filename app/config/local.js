@@ -1,6 +1,6 @@
 var ids = {
     //database: 'mongodb://dev-db.zemsania.com:27017/zemtime',
-    database: 'mongodb://192.168.16.40:27017/zemtimedev',
+    database: 'mongodb://192.168.16.40:27017/zemtime',
     itrhUrl: 'http://192.168.0.131:8080',
     //database: 'mongodb://localhost:27017/zemtime',
     //user: zemtime

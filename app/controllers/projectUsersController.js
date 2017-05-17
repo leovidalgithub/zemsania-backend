@@ -9,19 +9,18 @@ var projectUsersService = require( '../services/projectUsersService' );
 
 /**
  * @swagger
- * path: /projectUsers/getProjectsById
+ * path: /projectUsers/getProjectsByUserId
  * operations:
  *   -  httpMethod: GET
- *      summary: Finds all documents and returns all Projects
+ *      summary: Finds all documents in ProjectUsers entity by UserId and then finds and returns all Projects
  *      notes: user token autentication is required (x-auth-token).
  *      nickname: 
  *      consumes:
  *        - application/json
  */
-router.get( '/getProjectsById/:id', userTokenValidation, function ( req, res ) { // LEO WAS HERE
-	console.log('/getProjectsById');
+router.get( '/getProjectsByUserId/:id', userTokenValidation, function ( req, res ) { // LEO WAS HERE
     var userId = req.params.id;
-    projectUsersService.getProjectsByID( userId,
+    projectUsersService.getProjectsByUserId( userId,
         function ( data ) {
            globalMethods.successResponse( res, data );
         }, function ( err ) {
@@ -31,19 +30,18 @@ router.get( '/getProjectsById/:id', userTokenValidation, function ( req, res ) {
 
 /**
  * @swagger
- * path: /projectUsers/getUsersById
+ * path: /projectUsers/getUsersByProjectId
  * operations:
  *   -  httpMethod: GET
- *      summary: Finds all documents and returns all Users
+ *      summary: Finds all documents in ProjectUsers entity by ProjectId and then finds and returns all Projects
  *      notes: user token autentication is required (x-auth-token).
  *      nickname: 
  *      consumes:
  *        - application/json
  */
-router.get( '/getUsersById/:id', userTokenValidation, function ( req, res ) { // LEO WAS HERE
-	console.log('/getProjectsById');
+router.get( '/getUsersByProjectId/:id', userTokenValidation, function ( req, res ) { // LEO WAS HERE
     var projectId = req.params.id;
-    projectUsersService.getUsersByID( projectId,
+    projectUsersService.getUsersByProjectId( projectId,
         function ( data ) {
            globalMethods.successResponse( res, data );
         }, function ( err ) {

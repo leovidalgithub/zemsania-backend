@@ -8,8 +8,8 @@ var constants = require( '../config/constants' );
 module.exports = function( mongoose ) {
 
     var UserSchema = new Schema( {
-        candidatoId :     { type : String, trim : true, index: { unique: true } }, // candidatoId
-        cp :              { type : String, trim : true, index: { unique: true } }, // empleadoContratoCp
+        candidatoId :     { type : String, trim : true }, // candidatoId - index: { unique: true }
+        cp :              { type : String, trim : true }, // empleadoContratoCp - index: { unique: true }
         username :        { type : String, trim : true, index: { unique: true } }, // candidatoEmailInterno
         password :        { type : String, trim : true },
         name :            { type : String, trim : true }, // candidatoNombre

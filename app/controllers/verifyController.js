@@ -3,7 +3,7 @@ var express       = require( 'express' ),
     verifyService = require( '../services/verifyService' );
 
 // VERIFY RESETPASSWORD-TOKEN IS VALID TO GENERATE A NEW PASSWORD AND SEND TO USER EMAIL
-router.get( '/:username', function ( req, res ) { // ***************** LEO WORKING HERE *****************
+router.get( '/:username', function ( req, res ) { // ***************** LEO WAS HERE *****************
     var data = {
             username : req.params.username,
             token    : req.query.token

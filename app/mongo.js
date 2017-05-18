@@ -409,8 +409,8 @@ var obj = [
     // });
 // ************************************** INSERT NEW PROJECT-USER ***************************************
     // var pru = new models.ProjectUsers ({
-        // projectId: '59147b6efa92a507d4d99c04',
-    //     userId: '5915b433f9c9a70b70c5caea', 
+    //     projectId: '59147b6efa92a507d4d99c07',
+    //     userId: '588896327f2dca0f940fd99c', 
     //     maxHours: '8'
     // });
     // pru.save( function(err,data) {
@@ -418,6 +418,12 @@ var obj = [
     //     console.log('saved!');
     //     res.send(data);
     // });
+    // 588896327f2dca0f940fd99c Lorenzo
+    // 591ad0ad3fb10c0d00e31e06 Cedric
+    // 591c13784010630d7676ec33 carolina
+    // 591c4a17e3a0211105594954 víctor
+    // 5915b4255fb4c81bf03372d8 guillem
+    // 59147b6efa92a507d4d99c07 projectId
 // ************************************************** **************************************************
 // var date  = new Date();
 // var year  = date.getFullYear();

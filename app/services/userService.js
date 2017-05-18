@@ -35,11 +35,18 @@ function advancedUserSearch( form, onSuccess, onError ) { // LEO WAS HERE
                                          ] } }
     ];
                     // { $project : { name : 1, username : 1 } }
-    models.User.aggregate( aggregate, function ( err, users ) {
+    models.User.aggregate( aggregate )
+    .exec( function ( err, users ) {
         if ( err ) {
             onError( { success: false, code: 500, msg: 'Error getting Users Profile.', err : err } );
         } else {
-            onSuccess( { success: true, code: 200, msg: 'Users by Advanced search', users: users } );
+            models.User.populate( users, [ { path :'superior', select :'name surname' }, { path : 'calendarID', select : 'name' } ], function( err, results ) {
+                if( err ) {
+                    onError( { success: false, code: 501, msg: 'Error populate results.', err : err } );
+                } else {
+                    onSuccess( { success: true, code: 200, msg: 'Users by Advanced search', users: results } );
+                }
+            });
         }
     });
 }

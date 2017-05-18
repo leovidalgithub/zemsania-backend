@@ -108,7 +108,8 @@ router.get( '/profile/:emailToVerify', userTokenValidation, function ( req, res 
  *          dataType: SearchUserProfile
  */
 router.post( '/advancedUserSearch', managerTokenValidation, function ( req, res ) { // LEO WAS HERE
-    userService.advancedUserSearch( req.body, function ( data ) {
+    userService.advancedUserSearch( req.body, 
+    function ( data ) {
         globalMethods.successResponse( res, data );
     }, function ( err ) {
         globalMethods.errorResponse( res, err );

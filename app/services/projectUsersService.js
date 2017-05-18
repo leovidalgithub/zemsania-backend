@@ -62,7 +62,9 @@ function getUsersByProjectId( projectId, onSuccess, onError ) { // LEO WAS HERE
             var myUsers    = [];
             projectUsers.forEach( function( projectUser, key ) {
                 myPromises.push ( new Promise( function( resolve, reject ) {
-                    return models.User.findOne( { _id: new ObjectId( projectUser.userId ), enabled : true }, function( err, user ) {
+                    return models.User.findOne( { _id: new ObjectId( projectUser.userId ), enabled : true } )
+                    .populate( [ { path :'superior', select :'name surname' }, { path : 'calendarID', select : 'name' } ] )
+                    .exec( function( err, user ) {
                         if( err ) {
                             reject( { success: false, code: 500, msg: 'Error getting Users documents!' } );
                         } else if ( user ) {

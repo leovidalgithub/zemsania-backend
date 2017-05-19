@@ -1,7 +1,10 @@
 var ids = {
-    //database: 'mongodb://dev-db.zemsania.com:27017/zemtime',
-    database: 'mongodb://192.168.16.40:27017/zemtimedev',
+
+    // database: 'mongodb://192.168.16.40:27017/zemtime', // PRODUCTION
+    database: 'mongodb://192.168.16.40:27017/zemtimedev', // DEV
+
     itrhUrl: 'http://192.168.0.131:8080',
+    //database: 'mongodb://dev-db.zemsania.com:27017/zemtime',
     //database: 'mongodb://localhost:27017/zemtime',
     //user: zemtime
     //password: 58yd4rtf68g7y

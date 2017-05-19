@@ -131,7 +131,18 @@ app.use( '/project'      , require( './controllers/projectController' ));
 // });
 
 app.use( '/mongo', require( './mongo' ) ); // only for database developer purposes
-// Start server
-app.listen( 4000, function () {
-    console.log( 'Zemtime server running on port 4000 from process: ' + process.pid );
+
+// Start server OLD
+// app.listen( 3000, function () {
+//     console.log( 'Zemtime server running on port 3000 from process: ' + process.pid );
+// });
+
+// Start server PRODUCTION
+// app.listen( 4000, function () {
+//     console.log( 'Zemtime server running on port 4000 from process: ' + process.pid );
+// });
+
+// Start server DEV
+app.listen( 5000, function () {
+    console.log( 'Zemtime server running on port 5000 from process: ' + process.pid );
 });

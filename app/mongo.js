@@ -24,23 +24,23 @@ process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 // )
 // .pipe( fs.createWriteStream( 'myData' ) );
 
-console.time('start');
-var myJSON = { json : { "username":"zemtime","secret":"$Zemtime$" } };
-var url = 'https://itrh-stg.zemsania.com:8443/ZemsaniaITRH/wszt/getToken';
-request.post(
-    url, myJSON,
-    function ( error, response, body ) {
-        if( error ) console.log( error );
-        if ( !error && response.statusCode == 200 ) {
-            // res.json( body );
-            var token = body;
-            // getProjects( token );
-            // getGestoresPersonales( token );
-            // getGestoresComerciales( token );
-            // getUsers( token );
-        }
-    }
-);
+// console.time('start');
+// var myJSON = { json : { "username":"zemtime","secret":"$Zemtime$" } };
+// var url = 'https://itrh-stg.zemsania.com:8443/ZemsaniaITRH/wszt/getToken';
+// request.post(
+//     url, myJSON,
+//     function ( error, response, body ) {
+//         if( error ) console.log( error );
+//         if ( !error && response.statusCode == 200 ) {
+//             // res.json( body );
+//             var token = body;
+//             // getProjects( token );
+//             // getGestoresPersonales( token );
+//             // getGestoresComerciales( token );
+//             // getUsers( token );
+//         }
+//     }
+// );
 
 function getProjects( token ) {
     var url = 'https://itrh-stg.zemsania.com:8443/ZemsaniaITRH/wszt/proyectos/' + token;
@@ -230,7 +230,6 @@ function getGestoresComerciales( token ) {
         }
     );
 }
-
 
 // console.log('/*/*/*/*/');
 //     models.User.find( {}, function( err, docs ) {

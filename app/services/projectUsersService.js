@@ -103,6 +103,32 @@ function getProjectName( projectId ) { // LEO WAS HERE
     return models.Project.findOne( { _id: new ObjectId( projectId ) }, { "name" : 1 } );
 }
 
+// API
+// Removes a document from 'ProjectUsers' entity
+function demarcateUserProject( data, onSuccess, onError ) { // LEO WAS HERE
+    var user    = data.user;
+    var project = data.project;
+    models.ProjectUsers.findOneAndRemove( { $and: [ { userId : new ObjectId( user._id ) } ,{ projectId : new ObjectId( project._id ) } ] } )
+        .exec( function( err, result ) {
+            if( err ) {
+            } else if ( result ) {
+                onSuccess( { success: true, msg: 'ProjectUser relationship demarcated corretly', result : result } );
+            } else {
+                onError( { success: false, code: 501, msg: 'Error: ProjectUser relationship not found!', result : null } );
+            }
+    });
+}
+
+// API
+// Returns the occurences of 'id' either on projectId or userId
+function countOcurrences( id, onSuccess, onError ) { // LEO WAS HERE
+    models.ProjectUsers.count( { $or : [ { projectId : new ObjectId( id ) },
+                                         { userId    : new ObjectId( id ) } ] },
+                                    function( err, count ) {
+        onSuccess( { success: true, msg: 'ProjectUser ocurrences', count : count || 0 } );
+    });
+}
+
 // ***************************************************** *****************************************************
 // /*
 //  * Elimina la asignación del Proyecto Usuario por el ID
@@ -437,7 +463,9 @@ function getProjectName( projectId ) { // LEO WAS HERE
 module.exports = {
     getProjectsByUserId: getProjectsByUserId,
     getUsersByProjectId: getUsersByProjectId,
-    getProjectName: getProjectName
+    getProjectName: getProjectName,
+    demarcateUserProject: demarcateUserProject,
+    countOcurrences: countOcurrences
     // checkProjectUserDate: checkProjectUserDate,
     // deleteProjectUser: deleteProjectUser,
     // getProjectsByUserIdBetweenDates: getProjectsByUserIdBetweenDates,

@@ -13,7 +13,7 @@ var projectUsersService = require( '../services/projectUsersService' );
  * operations:
  *   -  httpMethod: GET
  *      summary: Finds all documents in ProjectUsers entity by UserId and then finds and returns all Projects
- *      notes: user token autentication is required (x-auth-token).
+ *      notes: user token autentication is required (x-auth-token)
  *      nickname: 
  *      consumes:
  *        - application/json
@@ -34,7 +34,7 @@ router.get( '/getProjectsByUserId/:id', userTokenValidation, function ( req, res
  * operations:
  *   -  httpMethod: GET
  *      summary: Finds all documents in ProjectUsers entity by ProjectId and then finds and returns all Projects
- *      notes: user token autentication is required (x-auth-token).
+ *      notes: user token autentication is required (x-auth-token)
  *      nickname: 
  *      consumes:
  *        - application/json
@@ -49,8 +49,47 @@ router.get( '/getUsersByProjectId/:id', userTokenValidation, function ( req, res
         });
 });
 
+/**
+ * @swagger
+ * path: /projectUsers/demarcateUserProject
+ * operations:
+ *   -  httpMethod: POST
+ *      summary: Removes a document from 'ProjectUsers' entity
+ *      notes: user token autentication is required (x-auth-token)
+ *      nickname: 
+ *      consumes:
+ *        - application/json
+ */
+router.post( '/demarcateUserProject', userTokenValidation, function ( req, res ) { // LEO WAS HERE
+    var data = req.body;
+    projectUsersService.demarcateUserProject( data,
+        function ( data ) {
+           globalMethods.successResponse( res, data );
+        }, function ( err ) {
+            globalMethods.errorResponse( res, err );
+        });
+});
 
-
+/**
+ * @swagger
+ * path: /projectUsers/countOcurrences
+ * operations:
+ *   -  httpMethod: GET
+ *      summary: Returns the occurences of 'id' either on projectId or userId
+ *      notes: user token autentication is required (x-auth-token)
+ *      nickname: 
+ *      consumes:
+ *        - application/json
+ */
+router.get( '/countOcurrences/:id', function ( req, res ) { // LEO WAS HERE
+    var id = req.params.id;
+    projectUsersService.countOcurrences( id,
+        function ( data ) {
+           globalMethods.successResponse( res, data );
+        }, function ( err ) {
+            globalMethods.errorResponse( res, err );
+        });
+});
 
 // ***************************************************** *****************************************************
 // /**
@@ -59,7 +98,7 @@ router.get( '/getUsersByProjectId/:id', userTokenValidation, function ( req, res
 //  * operations:
 //  *   -  httpMethod: POST
 //  *      summary: Devuelve todos los usuarios dado un email de supervisor
-//  *      notes: Requiere token de autenticación manager (x-auth-token).
+//  *      notes: Requiere token de autenticación manager (x-auth-token)
 //  *      nickname: getUsersBySupervisor
 //  *      consumes:
 //  *        - application/json
@@ -85,7 +124,7 @@ router.get( '/getUsersByProjectId/:id', userTokenValidation, function ( req, res
 //  * operations:
 //  *   -  httpMethod: POST
 //  *      summary: Devuelve todas las asignaciones de proyectos asignados, paginados
-//  *      notes: Requiere token de autenticación manager (x-auth-token).
+//  *      notes: Requiere token de autenticación manager (x-auth-token)
 //  *      nickname: all
 //  *      consumes:
 //  *        - application/json
@@ -111,7 +150,7 @@ router.get( '/getUsersByProjectId/:id', userTokenValidation, function ( req, res
 //  * operations:
 //  *   -  httpMethod: DELETE
 //  *      summary: Elimina la asignación proyecto-usuario
-//  *      notes: Requiere token de autenticación manager (x-auth-token).
+//  *      notes: Requiere token de autenticación manager (x-auth-token)
 //  *      nickname: delete
 //  *      consumes:
 //  *        - application/json
@@ -143,7 +182,7 @@ router.get( '/getUsersByProjectId/:id', userTokenValidation, function ( req, res
 //  * operations:
 //  *   -  httpMethod: POST
 //  *      summary: Busca y devuelve los usuarios de un proyecto
-//  *      notes: Requiere token de autenticación manager (x-auth-token).
+//  *      notes: Requiere token de autenticación manager (x-auth-token)
 //  *      nickname: getUserProjects
 //  *      consumes:
 //  *        - application/json
@@ -175,7 +214,7 @@ router.get( '/getUsersByProjectId/:id', userTokenValidation, function ( req, res
 //  * operations:
 //  *   -  httpMethod: POST
 //  *      summary: Busca y devuelve los proyectos del usuario
-//  *      notes: Requiere token de autenticación manager (x-auth-token).
+//  *      notes: Requiere token de autenticación manager (x-auth-token)
 //  *      nickname: searchUserProjects
 //  *      consumes:
 //  *        - application/json
@@ -207,7 +246,7 @@ router.get( '/getUsersByProjectId/:id', userTokenValidation, function ( req, res
 //  * operations:
 //  *   -  httpMethod: POST
 //  *      summary: Asigna proyecto usuario
-//  *      notes: Requiere token de autenticación manager (x-auth-token).
+//  *      notes: Requiere token de autenticación manager (x-auth-token)
 //  *      nickname: profile
 //  *      consumes:
 //  *        - application/json
@@ -242,7 +281,7 @@ router.get( '/getUsersByProjectId/:id', userTokenValidation, function ( req, res
 //  * operations:
 //  *   -  httpMethod: PUT
 //  *      summary: Actaliza las fechas asginadas
-//  *      notes: Requiere token de autenticación manager (x-auth-token).
+//  *      notes: Requiere token de autenticación manager (x-auth-token)
 //  *      nickname: update
 //  *      consumes:
 //  *        - application/json

@@ -99,7 +99,7 @@ module.exports = function( mongoose ) {
         userId: { type: Schema.Types.ObjectId, ref: 'User', index: true, required: true },
         roles: { type: Array, default: ['WORKER'] },
         joinDate: { type: Date, default: new Date() },
-        maxHours: { type: Number, default: 8, trim: true }
+        maxHours: { type: Number, default: 0, trim: true }
     }, { collection: 'project_users' });
 
     ProjectUsersSchema.index( { projectId : 1, userId : 1 }, { unique : true } );

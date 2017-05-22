@@ -111,10 +111,40 @@ function demarcateUserProject( data, onSuccess, onError ) { // LEO WAS HERE
     models.ProjectUsers.findOneAndRemove( { $and: [ { userId : new ObjectId( user._id ) } ,{ projectId : new ObjectId( project._id ) } ] } )
         .exec( function( err, result ) {
             if( err ) {
+                onError( { success: false, code: 500, msg: 'Error demarcate ProjectUser!', result : null } );
             } else if ( result ) {
                 onSuccess( { success: true, msg: 'ProjectUser relationship demarcated corretly', result : result } );
             } else {
-                onError( { success: false, code: 501, msg: 'Error: ProjectUser relationship not found!', result : null } );
+                onError( { success: false, code: 501, msg: 'Error demarcate ProjectUser: document not found!', result : null } );
+            }
+    });
+}
+
+// API
+// Finds a document by user and project ID, if not exists, inserts a new document to 'ProjectUsers' entity
+function marcateUserProject( data, onSuccess, onError ) { // LEO WAS HERE
+    var userId    = data.userId;
+    var projectId = data.projectId;
+    var maxHours  = data.maxHours;
+    models.ProjectUsers.findOne( { $and: [ { userId : new ObjectId( userId ) } ,{ projectId : new ObjectId( projectId ) } ] } )
+        .exec( function( err, result ) {
+            if( err ) {
+                onError( { success: false, code: 500, msg: 'Error: marcate ProjectUser!', err : err } );
+            } else if ( result ) { // if document already exists, do nothing
+                onSuccess( { success: true, msg: 'Document already exists. ProjectUser marcated corretly', result : result } );
+            } else { // if document is not found, we insert a new one
+                var newProjectUser = new models.ProjectUsers ({
+                                    userId    : userId,
+                                    projectId : projectId,
+                                    maxHours  : maxHours
+                });
+                newProjectUser.save( function( err, data ) {
+                    if ( err ) {
+                        onError( { success: false, code: 501, msg: 'Error: insert new ProjectUser!', err : err } );
+                    } else {
+                        onSuccess( { success: true, msg: 'Marcated: New ProjectUser inserted corretly', result : data } );
+                    }
+                });
             }
     });
 }
@@ -465,6 +495,7 @@ module.exports = {
     getUsersByProjectId: getUsersByProjectId,
     getProjectName: getProjectName,
     demarcateUserProject: demarcateUserProject,
+    marcateUserProject: marcateUserProject,
     countOcurrences: countOcurrences
     // checkProjectUserDate: checkProjectUserDate,
     // deleteProjectUser: deleteProjectUser,

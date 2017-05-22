@@ -72,6 +72,27 @@ router.post( '/demarcateUserProject', userTokenValidation, function ( req, res )
 
 /**
  * @swagger
+ * path: /projectUsers/marcateUserProject
+ * operations:
+ *   -  httpMethod: POST
+ *      summary: Inserts a new document to 'ProjectUsers' entity
+ *      notes: user token autentication is required (x-auth-token)
+ *      nickname: 
+ *      consumes:
+ *        - application/json
+ */
+router.post( '/marcateUserProject', userTokenValidation, function ( req, res ) { // LEO WAS HERE
+    var data = req.body;
+    projectUsersService.marcateUserProject( data,
+        function ( data ) {
+           globalMethods.successResponse( res, data );
+        }, function ( err ) {
+            globalMethods.errorResponse( res, err );
+        });
+});
+
+/**
+ * @swagger
  * path: /projectUsers/countOcurrences
  * operations:
  *   -  httpMethod: GET

@@ -102,9 +102,9 @@ router.post( '/marcateUserProject', userTokenValidation, function ( req, res ) {
  *      consumes:
  *        - application/json
  */
-router.get( '/countOcurrences/:id', function ( req, res ) { // LEO WAS HERE
-    var id = req.params.id;
-    projectUsersService.countOcurrences( id,
+router.post( '/countOcurrences', function ( req, res ) { // LEO WAS HERE
+    var idObj = req.body;
+    projectUsersService.countOcurrences( idObj,
         function ( data ) {
            globalMethods.successResponse( res, data );
         }, function ( err ) {

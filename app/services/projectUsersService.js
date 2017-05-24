@@ -8,7 +8,7 @@ var ObjectId = require( 'mongoose' ).Types.ObjectId;
 // API
 // Finds all documents in 'ProjectUsersSchema' by userID and then returns all projects
 function getProjectsByUserId( userId, onSuccess, onError ) { // LEO WAS HERE
-    models.ProjectUsers.find( { $or : [ { userId : new ObjectId( userId ) }, { projectId : new ObjectId( userId ) } ] },
+    models.ProjectUsers.find( { userId : new ObjectId( userId ) },
      function( err, projectUsers ) {
         if ( err ) {
             onError( { success: false, code: 500, msg: 'Error getting ProjectUser documents!' } );
@@ -53,7 +53,7 @@ function getProjectsByUserId( userId, onSuccess, onError ) { // LEO WAS HERE
 // API
 // Finds all documents in 'ProjectUsersSchema' by projectID and then returns all users
 function getUsersByProjectId( projectId, onSuccess, onError ) { // LEO WAS HERE
-    models.ProjectUsers.find( { $or : [ { projectId : new ObjectId( projectId ) }, { projectId : new ObjectId( projectId ) } ] },
+    models.ProjectUsers.find( { projectId : new ObjectId( projectId ) },
      function( err, projectUsers ) {
         if ( err ) {
             onError( { success: false, code: 500, msg: 'Error getting ProjectUser documents!' } );
@@ -151,12 +151,24 @@ function marcateUserProject( data, onSuccess, onError ) { // LEO WAS HERE
 
 // API
 // Returns the occurences of 'id' either on projectId or userId
-function countOcurrences( id, onSuccess, onError ) { // LEO WAS HERE
-    models.ProjectUsers.count( { $or : [ { projectId : new ObjectId( id ) },
-                                         { userId    : new ObjectId( id ) } ] },
-                                    function( err, count ) {
-        onSuccess( { success: true, msg: 'ProjectUser ocurrences', count : count || 0 } );
-    });
+function countOcurrences( idObj, onSuccess, onError ) { // LEO WAS HERE
+    var myPromises = [];
+    for( var id in idObj ) {
+        myPromises.push( models.ProjectUsers.count( { $or : [ { projectId : new ObjectId( id ) },
+                                                     { userId    : new ObjectId( id ) } ] } ) 
+            );
+    }
+    Promise.all( myPromises )
+        .then( function( data ) {
+            var index = 0;
+            for( var id in idObj ) {
+                idObj[id].ocurrences =  data[index];
+                index++;
+            }
+            onSuccess( { success: true, msg: 'ProjectUser id ocurrences', idObj : idObj } );
+        })
+        .catch( function( err ) {
+        });
 }
 
 // ***************************************************** *****************************************************

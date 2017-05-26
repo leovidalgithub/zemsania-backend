@@ -56,9 +56,9 @@ function setAllTimesheets( userId, data, onSuccess, onError ) {
                                             userId    : userId,
                                             projectId : projectId,
                                             date      : new Date ( parseInt( day, 10 ) ), // from timestamp to date
-                                            type      : type,
-                                            subType   : subType,
-                                            value     : value,
+                                            type      : parseInt( type, 10 ),
+                                            subType   : parseInt( subType, 10 ),
+                                            value     : parseFloat( value ),
                                             status    : status
                                         });
                         }
@@ -82,32 +82,46 @@ function setAllTimesheets( userId, data, onSuccess, onError ) {
                 if( err ) { // error finding document
                     callback( 'Error finding a Timesheet document!' );
                 } else if ( timesheet ) { // document found so update it
-                    timesheet.value  = ts.value;
-                    timesheet.status = ts.status;
-                    timesheet.save( function( err, saved ) {
-                        if( err ) { // error updating document
-                            callback( 'Error updating a Timesheet document!' );
-                        } else { // success document updated
-                            callback( null );
-                        }
-                    });
+                    if( ts.value == 0 ) { // if new value === 0, we proceed to remove the existing document. Not store elements with value equals to zero
+                        timesheet.remove( function( err ) {
+                            if( err ) {
+                                callback( 'Error removing an existing document with new value to zero!' );
+                            } else {
+                                callback( null );
+                            }
+                        });
+                    } else { // value != 0 so, we proveed to update the document 
+                        timesheet.value  = ts.value;
+                        timesheet.status = ts.status;
+                        timesheet.save( function( err, saved ) {
+                            if( err ) { // error updating document
+                                callback( 'Error updating a Timesheet document!' );
+                            } else { // success document updated
+                                callback( null );
+                            }
+                        });
+                    }
                 } else { // document not found so insert a new one
-                    var newTimesheet = new models.Timesheet ({
-                        userId          : ts.userId,
-                        projectId       : ts.projectId,
-                        type            : ts.type,
-                        subType         : ts.subType,
-                        status          : ts.status,
-                        date            : new Date( ts.date ),
-                        value           : ts.value
-                    });
-                    newTimesheet.save( function( err, saved ) {
-                        if ( err ) { // error saving new document
-                            callback( 'Error inserting a new Timesheet document!' );
-                        } else { // success inserting new document
-                            callback( null );            
-                        }
-                    });                    
+                    if( ts.value != 0 ) { // if value != 0, we proceed to insert a new document
+                        var newTimesheet = new models.Timesheet ({
+                            userId          : ts.userId,
+                            projectId       : ts.projectId,
+                            type            : ts.type,
+                            subType         : ts.subType,
+                            status          : ts.status,
+                            date            : new Date( ts.date ),
+                            value           : ts.value
+                        });
+                        newTimesheet.save( function( err, saved ) {
+                            if ( err ) { // error saving new document
+                                callback( 'Error inserting a new Timesheet document!' );
+                            } else { // success inserting new document
+                                callback( null );            
+                            }
+                        });
+                    } else { // if value === 0, so we do not insert anything
+                        callback( null );        
+                    }
                 }
             });     
     }, function( err ) { // callback when all done

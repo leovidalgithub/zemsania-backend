@@ -46,6 +46,8 @@ Grid.mongo = mongoose.mongo;
 var gfs    = Grid( conn.db );
 global.gfs = gfs;
 
+app.set( 'port', process.env.PORT || 5000 );
+
 // Middlewares
 app.use( bodyParser.urlencoded( { extended: false } ) );
 app.use( bodyParser.json() );
@@ -143,6 +145,6 @@ app.use( '/mongo', require( './mongo' ) ); // only for database developer purpos
 // });
 
 // Start server DEV
-app.listen( 5000, function () {
-    console.log( 'Zemtime server running on port 5000 from process: ' + process.pid );
+app.listen( app.get( 'port' ), function () {
+    console.log( 'Zemtime server running on port ' + app.get( 'port' ) + ' from process: ' + process.pid );
 });

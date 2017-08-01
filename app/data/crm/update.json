@@ -1,0 +1,37 @@
+{
+    "Projects": [
+        {
+            "Crm_id": "c206470a-9014-4474-a2ac-9fba4423c4e3",
+            "ProjectOwners": {
+                "add": [
+                    "jreategui",
+                    "suarez"
+                ],
+                "remove": [
+                    "cramirez"
+                ]
+            },
+            "ProjectWorkers": {
+                "remove": [
+                    "cramirez"
+                ]
+            }
+        },
+        {
+            "Crm_id": "aa858fc6-710f-4300-a83f-b6c67ffe2b93",
+            "ProjectOwners": {
+                "add": [
+                    "cramirez"
+                ],
+                "remove": [
+                    "jreategui"
+                ]
+            },
+            "ProjectWorkers": {
+                "remove": [
+                    "jreategui"
+                ]
+            }
+        }
+    ]
+}

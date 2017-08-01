@@ -1,0 +1,11 @@
+<% include ../../partials/head %>
+<hr>
+<h3>Zemtime - Generar nueva contraseña</h3>
+<br>
+<h4>Para generar una nueva contraseña para el usuario <%= username %>, haga click en el siguiente link:</h4>
+<br>
+<h4><a href="<%= urlLocation %>/verify/<%= username %>?token=<%= user.uuid %>"><%= urlLocation %>/verify/<%= username %>?token=<%= user.uuid %></a></h4>
+<br>
+<p>Recuerde que tiene <%= constants.verifyResetPassTime %> minutos para llevar a cabo esta operación.</p>
+<hr>
+<% include ../../partials/footer %>

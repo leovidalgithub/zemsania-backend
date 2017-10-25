@@ -34,7 +34,7 @@ router.post( '/password/remember', function ( req, res ) { // LEO WAS HERE
     // else {
 
     var urlLocation = getFormattedUrl( req );
-    var data = { 
+    var data = {
             username    : req.body.email,
             urlLocation : urlLocation
             };

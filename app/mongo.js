@@ -63,9 +63,9 @@ function getProjects( token ) {
                 // newProject.save( function( err, savedProject ) {
                 //     if ( err ) {
                 //         console.log( 'ERROR' );
-                //         console.log( err ); 
+                //         console.log( err );
                 //     } else {
-                //         console.log( 'Great!');                       
+                //         console.log( 'Great!');
                 //     }
                 // });
             });
@@ -122,13 +122,13 @@ function getUsers( token ) {
                                                 superior : superiorId ? new ObjectId( superiorId ) : null
                                 });
 
-                                if( user.empleadoContratoCp != 'E1674' ) {                                
+                                if( user.empleadoContratoCp != 'E1674' ) {
                                     newUser.save( function( err, savedUser ) {
                                         if ( err ) {
                                             console.log( 'ERROR' );
-                                            console.log( err ); 
+                                            console.log( err );
                                         } else {
-                                            console.log( 'Great!');                       
+                                            console.log( 'Great!');
                                         }
                                     });
                                 }
@@ -173,12 +173,12 @@ function getGestoresPersonales( token ) {
                             newUser.save( function( err, savedUser ) {
                                 if ( err ) {
                                     console.log( 'ERROR' );
-                                    console.log( err ); 
+                                    console.log( err );
                                 } else {
-                                    // console.log( 'Great!');                       
+                                    // console.log( 'Great!');
                                 }
                             });
-                        } 
+                        }
                     })
 
             });
@@ -223,7 +223,7 @@ function getGestoresComerciales( token ) {
                                     console.log( 'ERROR getGestoresComerciales' );
                                 }
                             });
-                        } 
+                        }
                     })
             });
             console.timeEnd('start');
@@ -243,7 +243,7 @@ function getGestoresComerciales( token ) {
         // docs.forEach( function( el ) {
     //         models.ProjectUsers.find( { userId : new ObjectId( el.userId ) }, function( err, users ) {
     //             if( users.length > 1 ) {
-    //             // console.log(users[0].projectId + ' ' + users[1].projectId);                    
+    //             // console.log(users[0].projectId + ' ' + users[1].projectId);
     //                 if ( users[0].projectId.equals(users[1].projectId) ) {
     //                     // console.log( users );
     //                     // users[1].remove();
@@ -340,7 +340,7 @@ var obj = [
 //                         // console.log(user._id +  ' - ' + project._id);
 //                         var pru = new models.ProjectUsers ({
 //                             projectId: project._id,
-//                             userId: user._id, 
+//                             userId: user._id,
 //                             maxHours: '8'
 //                         });
 //                         pru.save( function(err,data) {
@@ -363,12 +363,12 @@ var obj = [
     //         console.log( date.getDate());
     //         console.log( date.getMonth());
     //         models.Timesheet.findOne( { date: date, userId: '58a446acdb8d2617dc208d8a' }, function( err,     doc ) {
-    //             res.send( doc );   
+    //             res.send( doc );
     //         });
     // });
     // **************************************** INSERT NEW NOTIFICATION ***********************************
     // var nt = new models.Notification ({
-    //     senderId: '58a446acdb8d2617dc208d8a', // 
+    //     senderId: '58a446acdb8d2617dc208d8a', //
     //     receiverId: '588896327f2dca0f940fd99c', //
     //     type: constants.notification_type_holiday_req,
     //     text: 'Solicitud aprobación de vacaciones',
@@ -391,7 +391,7 @@ var obj = [
     // ts.save( function(err,data) {
     //     if ( err ) console.log( err );
     //     console.log('saved!');
-    //     res.send(data);        
+    //     res.send(data);
     // });
 // ***************************************** INSERT NEW PROJECT *****************************************
     // var pr = new models.Project ({
@@ -409,7 +409,7 @@ var obj = [
 // ************************************** INSERT NEW PROJECT-USER ***************************************
     // var pru = new models.ProjectUsers ({
     //     projectId: '59147b6efa92a507d4d99c07',
-    //     userId: '588896327f2dca0f940fd99c', 
+    //     userId: '588896327f2dca0f940fd99c',
     //     maxHours: '8'
     // });
     // pru.save( function(err,data) {
@@ -484,16 +484,16 @@ var obj = [
     //                             {
     //             type    : 'working',
     //             days    : { days  : [  ],
-    //                         hours : [ 
-    //                                     {   
+    //                         hours : [
+    //                                     {
     //                                         initialHour : '0800',
     //                                         endHour     : '1230'
     //                                     },
-    //                                     { 
+    //                                     {
     //                                         initialHour : '0230',
     //                                         endHour     : '1800'
     //                                     }
-    //                                 ]                                            
+    //                                 ]
     //                       }
     //                 },
     //                 {
@@ -504,18 +504,18 @@ var obj = [
     //                                                     {
     //                             type    : 'intensive',
     //                             days    : { days  : [ ],
-    //                                         hours : [ 
-    //                                                     {   
+    //                                         hours : [
+    //                                                     {
     //                                                         initialHour : '0800',
     //                                                         endHour     : '1730'
     //                                                     }
-    //                                                 ]                                            
+    //                                                 ]
     //                                       }
     //                                 },
     //                                 {
     //                             type    : 'friday',
     //                             days    : { days  : [ ],
-    //                                         hours : [ 
+    //                                         hours : [
     //                                                     {
     //                                                         initialHour : '0830',
     //                                                         endHour     : '1130'
@@ -524,18 +524,18 @@ var obj = [
     //                                                         initialHour : '1400',
     //                                                         endHour     : '1830'
     //                                                     }
-    //                                                 ]                                            
+    //                                                 ]
     //                                       }
     //                                 },
     //                                 {
     //                             type    : 'special',
     //                             days    : { days  : [ ],
-    //                                         hours : [ 
+    //                                         hours : [
     //                                                     {
     //                                                         initialHour : '0700',
     //                                                         endHour     : '1445'
     //                                                     }
-    //                                                 ]                                            
+    //                                                 ]
     //                                       }
     //                                 },
     //                                 {

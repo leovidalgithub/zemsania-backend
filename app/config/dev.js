@@ -1,9 +1,10 @@
-var express = require('express');
+// var express = require('express');
 
 var ids = {
 
     // database: 'mongodb://192.168.16.40:27017/zemtime', // PRODUCTION
-    database: 'mongodb://192.168.16.40:27017/zemtimedev', // DEV
+    // database: 'mongodb://192.168.16.40:27017/zemtimedev', // DEV
+    database: 'mongodb://zemtimeUser:pqowpqow@ds159880.mlab.com:59880/zemtime', // mlab
 
     itrhUrl: 'http://192.168.0.131:8080',
     //database: 'mongodb://dev-db.zemsania.com:27017/zemtime',

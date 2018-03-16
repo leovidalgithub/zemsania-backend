@@ -46,7 +46,7 @@ module.exports = function( mongoose ) {
                 };
     var groupDays = {
                         type : { type  : String, index: true, required: true },
-                        days : { days  : [ { type : Date } ],
+                        days : { days  : [ { type : Number, index: true, trim : true } ], // store as milliseconds - before it used Date type
                                  hours : [ hours ]
                                }
                     };

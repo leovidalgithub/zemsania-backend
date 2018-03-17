@@ -8,7 +8,7 @@ var express          = require( 'express' ),
     cors             = require( 'cors' );
     mongoose.Promise = Promise;
 
-var environment     = process.env.NODE_ENV || 'dev',
+var environment = process.env.NODE_ENV || 'development',
     config          = require( './config/' + environment ),
     securityService = require( './services/securityService' ),
     constants       = require( './config/constants' ),
@@ -47,6 +47,12 @@ app.set( 'port', process.env.PORT || 5000 );
 app.use( bodyParser.urlencoded( { extended: false } ) );
 app.use( bodyParser.json() );
 app.use( cors() );
+
+
+app.get('/test', function(req, res,next) {
+    res.send('DONE BY ME!');
+});
+
 app.use( '/uploads', express.static( __dirname + '/uploads' ) );
 
 app.use( '/authn'        , require( './controllers/authController' ) );

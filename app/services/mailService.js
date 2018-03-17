@@ -18,7 +18,7 @@ var SMTP_config = {
 //         sender: "Zemsania Support <" + SMTP_config.auth.user + ">"
 //     };
 
-if ( !global.config ) global.config = require( '../config/dev' );
+if (!global.config) global.config = require( '../config/development' );
 
 function initTransporter() {
     console.log( 'Iinitializing transport smtp once' );

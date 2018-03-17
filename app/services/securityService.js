@@ -276,7 +276,7 @@ function createUserToken( user ) { // LEO WAS HERE
  **/
 // function verityActiveDirectoryUser(form, onFinishCallback) {
 //     // initialize Active directory
-//     var ADConfig = require('../config/dev').activeDriectory,
+//     var ADConfig = require('../config/development').activeDriectory,
 //         AD = new ActiveDirectory(ADConfig);
 
 //     AD.authenticate(form.username, form.password, function(err, authenticated) {

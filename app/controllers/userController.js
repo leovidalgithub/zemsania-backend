@@ -58,26 +58,33 @@ router.post( '/password', userTokenValidation, function ( req, res ) { // LEO WA
  *          dataType: UserProfile
  */
 router.put( '/profile', userTokenValidation, function ( req, res ) { // ******* LEO WAS HERE *******
+    userService.updateProfile(req.body,
+        function (data) {
+            globalMethods.sendResponse(res, data);
+        },
+        function (err) {
+            globalMethods.sendResponse(res, err);
+        });
     // MAKE ALL VALIDATIONS
     // req.checkBody( 'birthdate','is not an email' ).isEmail();
     // req.checkBody( 'nif','is not a number' ).isIxnt();
-    req.getValidationResult().then( function( result ) {
-        if ( !result.isEmpty() ) { // some error found
-            var errors = result.array();
-            errors.forEach( function( element ) {
-                console.log( element.param + ' / ' + element.msg );
-            });
-            globalMethods.sendResponse( res, { success: false, code: 400, msg: 'Error validating User Profile', errors: errors } );
-        } else { // not errors found
-            userService.updateProfile( req.body,
-                function ( data ) {
-                    globalMethods.sendResponse( res, data ); 
-                },
-                function ( err ) {
-                    globalMethods.sendResponse( res, err );
-                });
-        }
-    });
+    // req.getValidationResult().then( function( result ) {
+    //     if ( !result.isEmpty() ) { // some error found
+    //         var errors = result.array();
+    //         errors.forEach( function( element ) {
+    //             console.log( element.param + ' / ' + element.msg );
+    //         });
+    //         globalMethods.sendResponse( res, { success: false, code: 400, msg: 'Error validating User Profile', errors: errors } );
+    //     } else { // not errors found
+    //         userService.updateProfile( req.body,
+    //             function ( data ) {
+    //                 globalMethods.sendResponse( res, data ); 
+    //             },
+    //             function ( err ) {
+    //                 globalMethods.sendResponse( res, err );
+    //             });
+    //     }
+    // });
 });
 
 // VERIFIES IF AN GIVEN EMAIL ALREADY EXIST

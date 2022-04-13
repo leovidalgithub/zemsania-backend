@@ -5,7 +5,7 @@
   "description": "Arquitectura BASE NodeJs - Zemsania",
   "license": "",
   "dependencies": {
-    "async": "~1.4.2",
+    "async": "~3.2.2",
     "body-parser": "^1.5.1",
     "bson": "~0.4.19",
     "cors": "^2.8.4",

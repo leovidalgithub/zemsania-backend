@@ -20,7 +20,7 @@
     "jasmine-node": "~1.14.5",
     "jshint": "~2.9.1-rc2",
     "json2xls": "^0.1.2",
-    "jsonwebtoken": "~1.1.2",
+    "jsonwebtoken": "~9.0.0",
     "method-override": "^2.1.2",
     "moment": "~2.10.6",
     "moment-range": "~2.0.3",
